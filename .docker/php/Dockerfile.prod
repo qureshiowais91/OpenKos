@@ -96,6 +96,11 @@ COPY .docker/entrypoint.sh /usr/local/bin/openkos-entrypoint
 COPY .docker/render-run.sh /usr/local/bin/openkos-render
 COPY .docker/php/php.ini /usr/local/etc/php/php.ini
 
+# The base image grants the binary cap_net_bind_service for ports 80/443; we
+# serve :8080, and platforms with a reduced capability bounding set (Render)
+# refuse to exec file-cap binaries whose caps are not in the bounding set.
+RUN setcap -r /usr/local/bin/frankenphp
+
 RUN mkdir -p \
         bootstrap/cache \
         /config/caddy \
