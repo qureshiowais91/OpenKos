@@ -73,3 +73,4 @@ Search: `rg -i "openkos|open-kos|open kos"` over the full repo (excluding `vendo
 - Pass-B bug found and fixed: facade imports `use OpenKOS\Platform\Facades\OpenKOS;` had their alias segment renamed while `OpenKOS::` usages weren't (5 files restored to the vendor class name).
 - Invoice PDFs are data-driven (`site_name` setting) — no hardcoded brand.
 - Final verification: suite **1394 passed / 1 failed / 2 skipped — identical to the pre-rebrand baseline** (1 failure is pre-existing upstream); docker image builds; all three demo logins OK; titles render "GrihaFlow". See `docs/rebranding-change-log.md` and `docs/deployment-runbook.md`.
+- **Deployed live on Render** (deploy `dep-dbssnoei0phs73e1nar0`): env switched to `GRIHAFLOW_*`, demo emails `@grihaflow.com`, login + portal titles render GrihaFlow. First attempt failed on a stale env snapshot — ordering rule (PUT env vars, then POST deploy) is in the runbook.

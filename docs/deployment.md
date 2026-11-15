@@ -162,7 +162,10 @@ Postgres expires after 30 days, so a free deployment is for evaluation only:
   `POST /v1/services/{id}/deploys`. `PATCH /v1/services/{id}` ignores env
   vars; the working endpoint is `PUT /v1/services/{id}/env-vars`, which
   replaces the entire list — GET the current list first and PUT the merged
-  set.
+  set. Always PUT the env vars **before** creating the deploy: a deploy boots
+  with the env list captured at creation time, so a deploy triggered before
+  the PUT runs with the old values (this bit a real deploy — see the incident
+  log in `docs/deployment-runbook.md`).
 - Demo mode (optional): set `DEMO_MODE=true` and boot seeds the app's native
   demo world (`db:seed` — roles, tenants, `ope-184-demo-*` properties, 17
   leases, invoices, maintenance) and shares three accounts: `budi@grihaflow.com`

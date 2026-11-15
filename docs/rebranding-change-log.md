@@ -43,6 +43,7 @@ Full table in `docs/branding-audit.md`. Summary: `OpenKOS\` PHP namespaces + fac
 
 1. **Facade import mangled by pass B** — `use OpenKOS\Platform\Facades\OpenKOS;` (alias at import end) was renamed to `...Facades\GrihaFlow;` while `OpenKOS::` usages were untouched (lookahead `(?![\\:])` excludes `::` but not the import alias position). 5 files fixed back to the vendor facade class name: `HandleInertiaRequests.php`, `SettingValueRequest.php`, `DynamicSettingsAccessTest.php`, `PluginBootTest.php`, `OpenKOSFacadeTest.php`. Lesson: alias-at-import-end needs the same exclusion as `::`.
 2. **Suite environment quirks (pre-existing, not rebrand)** — Laravel 12 uses mutable dotenv, so a local `.env` with `APP_ENV=production` overrides phpunit.xml and prohibits migrations under RefreshDatabase; fixed locally with a hermetic `.env.testing`. Also stale www-data-owned `storage/framework/views` blocked recompilation as uid 1000 (tempnam fallback warning); fixed with a clean storage mount for test runs.
+3. **Deploy env-snapshot ordering** — the first Render deploy after the push booted with the stale `OPENKOS_*` env (env PUT landed after the deploy captured its env), skipped migration, and crashed on the demo seed. Fix: `PUT /env-vars` **before** `POST /deploys`; details and the incident log are in `docs/deployment-runbook.md`. Note: the local repo `.env` was accidentally deleted by a container `rm -f .env` on the mounted volume during debugging (local dev only — recreate from `.env.example` if needed).
 
 ## Verification (2026-11-15)
 
@@ -51,6 +52,7 @@ Full table in `docs/branding-audit.md`. Summary: `OpenKOS\` PHP namespaces + fac
 - `composer validate` — valid.
 - Docker image builds (`grihaflow-test`); demo boot: migrations + seeds OK, page titles render **GrihaFlow**, all three demo logins verified (owner → dashboard 200, staff → dashboard 200, tenant → portal 200).
 - SBOM + license + vulnerability artifacts generated (`docs/open-source-inventory.md`).
+- **Deployed to Render and verified live** (deploy `dep-dbssnoei0phs73e1nar0`, commit `60796dd`): `<title>GrihaFlow</title>` on login + portal; owner/staff/tenant logins work with `PASSWORD_20261115`. First deploy attempt (`dep-dbssk9h5efls73f4d950`) failed because its container booted with the stale `OPENKOS_*` env (env PUT landed after the deploy captured env) — sequence fix documented in `docs/deployment-runbook.md`.
 
 ## Out of scope (follow-ups)
 
