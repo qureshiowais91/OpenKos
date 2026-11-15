@@ -26,4 +26,7 @@ fi
 while :; do php artisan schedule:work --no-interaction || sleep 5; done &
 while :; do php artisan queue:work --sleep=3 --tries=3 --timeout=90 --no-interaction || sleep 5; done &
 
+# Render assigns PORT (default 10000); honor it, fall back to the image default
+export SERVER_NAME=":${PORT:-8080}"
+
 exec frankenphp run --config /etc/caddy/Caddyfile
