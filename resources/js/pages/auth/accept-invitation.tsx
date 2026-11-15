@@ -77,5 +77,5 @@ export default function AcceptInvitation({
 
 AcceptInvitation.layout = {
     title: 'Accept invitation',
-    description: 'Set your password to activate your OpenKos account',
+    description: 'Set your password to activate your AavaasDesk account',
 };

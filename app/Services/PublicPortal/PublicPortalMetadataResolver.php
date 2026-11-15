@@ -12,7 +12,7 @@ final class PublicPortalMetadataResolver
 {
     private const SOCIAL_IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp'];
 
-    private const DEFAULT_SITE_NAME = 'OpenKOS';
+    private const DEFAULT_SITE_NAME = 'AavaasDesk';
 
     private const DEFAULT_HOMEPAGE_TITLE = 'Find your next place';
 

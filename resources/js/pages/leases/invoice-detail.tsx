@@ -367,7 +367,7 @@ export default function InvoiceDetail({
 
                                     <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
                                         <p>
-                                            {t('OpenKOS reference:')}{' '}
+                                            {t('Reference:')}{' '}
                                             <span className="font-mono text-foreground">
                                                 {attempt.reference ?? '—'}
                                             </span>

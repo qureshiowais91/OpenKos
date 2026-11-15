@@ -83,7 +83,7 @@ export default function Seo({
                                 <CardTitle>{t('SEO and sharing')}</CardTitle>
                                 <CardDescription>
                                     {t(
-                                        'Leave a field blank to use the existing OpenKOS default.',
+                                        'Leave a field blank to use the existing AavaasDesk default.',
                                     )}
                                 </CardDescription>
                             </CardHeader>

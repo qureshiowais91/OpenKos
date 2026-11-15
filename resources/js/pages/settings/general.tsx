@@ -335,7 +335,7 @@ export default function General({
                                             )
                                         }
                                         maxLength={255}
-                                        placeholder="OpenKOS"
+                                        placeholder="AavaasDesk"
                                         required
                                     />
                                     {siteForm.errors.site_name && (

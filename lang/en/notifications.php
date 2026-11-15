@@ -9,8 +9,8 @@ return [
         'view_invoice' => 'View invoice',
     ],
     'tenant_invitation' => [
-        'subject' => 'You have been invited to OpenKos',
-        'greeting' => 'Welcome to OpenKos',
+        'subject' => 'You have been invited to :app',
+        'greeting' => 'Welcome to :app',
         'intro' => 'You have been given access to your tenant portal.',
         'instruction' => 'Set your password to activate your account and access payments, invoices, and lease details.',
         'action' => 'Accept Invitation',

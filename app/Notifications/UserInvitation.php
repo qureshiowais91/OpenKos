@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -27,10 +28,12 @@ class UserInvitation extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $brand = (string) Setting::get('site_name', config('app.name'));
+
         return (new MailMessage)
-            ->subject(__('You are invited to OpenKos'))
-            ->greeting(__('Welcome to OpenKos'))
-            ->line(__('You have been invited to manage properties in OpenKos.'))
+            ->subject(__('You are invited to :app', ['app' => $brand]))
+            ->greeting(__('Welcome to :app', ['app' => $brand]))
+            ->line(__('You have been invited to manage properties in :app.', ['app' => $brand]))
             ->line(__('Accept the invitation to set your password and activate your account.'))
             ->action(__('Accept Invitation'), $this->url)
             ->line(__('If you did not expect this invitation, you may ignore this email.'));

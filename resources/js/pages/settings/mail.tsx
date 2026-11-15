@@ -353,7 +353,7 @@ export default function Mail({
                                                 from_name: e.target.value,
                                             })
                                         }
-                                        placeholder="OpenKOS"
+                                        placeholder="AavaasDesk"
                                     />
                                     {errors['mail_config.from_name'] && (
                                         <p className="text-sm text-red-600">
