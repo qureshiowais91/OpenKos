@@ -86,7 +86,7 @@ it('discovers a plugin declared by Composer metadata', function () {
     expect($plugins)->toBe([ComposerDiscoveryFixturePlugin::class]);
 });
 
-it('ignores packages without OpenKOS plugin metadata', function () {
+it('ignores packages without GrihaFlow plugin metadata', function () {
     $plugins = withComposerDiscoveryFixtures([
         'acme/ordinary-package' => [],
     ], fn (): array => app(ComposerPluginDiscovery::class)->discover());
@@ -170,7 +170,7 @@ it('ignores Composer metadata installed inside the runtime plugin store', functi
     }
 });
 
-it('rejects malformed OpenKOS plugin metadata', function () {
+it('rejects malformed GrihaFlow plugin metadata', function () {
     withComposerDiscoveryFixtures([
         'acme/malformed-plugin' => [
             'extra' => [

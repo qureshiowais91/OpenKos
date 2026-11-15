@@ -5,7 +5,7 @@
 
 ## Context
 
-OpenKOS is open-source and self-hosted first. A hosted ("cloud") offering may exist later. The risk is the common trap where cloud concerns leak into the core: features gated on managed services, code paths that only work on one provider, or open-core crippling where the self-hosted version is a demo.
+GrihaFlow is open-source and self-hosted first. A hosted ("cloud") offering may exist later. The risk is the common trap where cloud concerns leak into the core: features gated on managed services, code paths that only work on one provider, or open-core crippling where the self-hosted version is a demo.
 
 ## Decision
 

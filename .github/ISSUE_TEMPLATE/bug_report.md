@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a reproducible problem in OpenKOS
+about: Report a reproducible problem in GrihaFlow
 title: ''
 labels: ''
 assignees: ''
@@ -26,7 +26,7 @@ assignees: ''
 
 ## Environment
 
-- OpenKOS version or commit:
+- GrihaFlow version or commit:
 - PHP version:
 - PostgreSQL version:
 - Browser and version (if applicable):

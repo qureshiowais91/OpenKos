@@ -38,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/senatroxx/openkos
+          images: grihaflow/app
           tags: |
             type=raw,value=nightly
             type=raw,value=nightly-${{ steps.date.outputs.value }}-${{ github.sha }}
@@ -53,8 +53,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            OPENKOS_BUILD_VERSION=nightly-${{ steps.date.outputs.value }}
-            OPENKOS_BUILD_CHANNEL=nightly
-            OPENKOS_BUILD_COMMIT_SHA=${{ github.sha }}
+            GRIHAFLOW_BUILD_VERSION=nightly-${{ steps.date.outputs.value }}
+            GRIHAFLOW_BUILD_CHANNEL=nightly
+            GRIHAFLOW_BUILD_COMMIT_SHA=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

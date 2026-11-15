@@ -12,13 +12,13 @@ uses()->beforeEach(function () {
 
 it('uses the site_name setting as the display name, not APP_NAME', function () {
     config(['app.name' => 'My Boarding']); // simulate the env value
-    Setting::set('site_name', 'OpenKOS');
+    Setting::set('site_name', 'GrihaFlow');
 
     $response = $this->get('/login');
 
     // Shared Inertia `name` prop drives the client-side title suffix.
-    $response->assertInertia(fn ($page) => $page->where('name', 'OpenKOS'));
+    $response->assertInertia(fn ($page) => $page->where('name', 'GrihaFlow'));
 
     // Server-rendered <title> in the root view.
-    $response->assertSee('<title>OpenKOS</title>', false);
+    $response->assertSee('<title>GrihaFlow</title>', false);
 });

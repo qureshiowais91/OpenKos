@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Hash;
 class DemoRotateCommand extends Command
 {
     private const DEMO_EMAILS = [
-        'budi@openkos.com',        // owner (OwnerSeeder)
-        'demo.staff@openkos.com',  // staff role + permissions (DemoUsersSeeder)
-        'demo.tenant@openkos.com', // tenant with leases (DemoUsersSeeder)
+        'budi@grihaflow.com',        // owner (OwnerSeeder)
+        'demo.staff@grihaflow.com',  // staff role + permissions (DemoUsersSeeder)
+        'demo.tenant@grihaflow.com', // tenant with leases (DemoUsersSeeder)
     ];
 
     protected $signature = 'app:demo-rotate';

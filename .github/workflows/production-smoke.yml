@@ -42,14 +42,14 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Build smoke image
-        run: docker build --file .docker/php/Dockerfile.prod --tag openkos-smoke:ci .
+        run: docker build --file .docker/php/Dockerfile.prod --tag grihaflow-smoke:ci .
 
       - name: Configure smoke environment
         env:
           APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
         run: |
           cat > .env.production <<EOF
-          APP_NAME=OpenKOS Smoke
+          APP_NAME=GrihaFlow Smoke
           APP_ENV=production
           APP_KEY=${APP_KEY}
           APP_DEBUG=false
@@ -58,8 +58,8 @@ jobs:
           DB_CONNECTION=pgsql
           DB_HOST=postgres
           DB_PORT=5432
-          DB_DATABASE=openkos
-          DB_USERNAME=openkos
+          DB_DATABASE=grihaflow
+          DB_USERNAME=grihaflow
           DB_PASSWORD=password
           SESSION_DRIVER=database
           CACHE_STORE=database
@@ -77,28 +77,28 @@ jobs:
               postgres:
                   image: postgres:18-alpine
                   environment:
-                      POSTGRES_DB: openkos
-                      POSTGRES_USER: openkos
+                      POSTGRES_DB: grihaflow
+                      POSTGRES_USER: grihaflow
                       POSTGRES_PASSWORD: password
                   healthcheck:
-                      test: ["CMD-SHELL", "pg_isready -U openkos -d openkos"]
+                      test: ["CMD-SHELL", "pg_isready -U grihaflow -d grihaflow"]
                       interval: 5s
                       timeout: 5s
                       retries: 12
               web:
-                  image: openkos-smoke:ci
+                  image: grihaflow-smoke:ci
                   depends_on:
                       postgres:
                           condition: service_healthy
                   ports:
                       - '127.0.0.1:8080:8080'
               queue:
-                  image: openkos-smoke:ci
+                  image: grihaflow-smoke:ci
                   depends_on:
                       postgres:
                           condition: service_healthy
               scheduler:
-                  image: openkos-smoke:ci
+                  image: grihaflow-smoke:ci
                   depends_on:
                       postgres:
                           condition: service_healthy
@@ -130,13 +130,13 @@ jobs:
 
       - name: Verify login and authenticated Inertia page
         run: |
-          curl --fail --silent --cookie-jar /tmp/openkos-cookies.txt http://127.0.0.1:8080/login >/tmp/openkos-login.html
-          xsrf_token=$(awk '$6 == "XSRF-TOKEN" {print $7}' /tmp/openkos-cookies.txt | tail -1)
+          curl --fail --silent --cookie-jar /tmp/grihaflow-cookies.txt http://127.0.0.1:8080/login >/tmp/grihaflow-login.html
+          xsrf_token=$(awk '$6 == "XSRF-TOKEN" {print $7}' /tmp/grihaflow-cookies.txt | tail -1)
           xsrf_token=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))' "$xsrf_token")
 
           status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
-              --cookie /tmp/openkos-cookies.txt \
-              --cookie-jar /tmp/openkos-cookies.txt \
+              --cookie /tmp/grihaflow-cookies.txt \
+              --cookie-jar /tmp/grihaflow-cookies.txt \
               --request POST \
               --header "X-XSRF-TOKEN: ${xsrf_token}" \
               --header 'Accept: text/html' \
@@ -147,7 +147,7 @@ jobs:
           test "$status" = 302 || test "$status" = 303
 
           dashboard_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
-              --cookie /tmp/openkos-cookies.txt \
+              --cookie /tmp/grihaflow-cookies.txt \
               http://127.0.0.1:8080/dashboard)
 
           test "$dashboard_status" = 200

@@ -12,7 +12,7 @@ While acknowledging differences in social norms, we all strive to meet our commu
 
 With these considerations in mind, we agree to behave mindfully toward each other and act in ways that center our shared values, including:
 
-1. Respecting the **OpenKOS project**, our activities, and our ways of gathering.
+1. Respecting the **GrihaFlow project**, our activities, and our ways of gathering.
 2. Engaging **kindly and honestly** with others.
 3. Respecting **different viewpoints** and experiences.
 4. **Taking responsibility** for our actions and contributions.

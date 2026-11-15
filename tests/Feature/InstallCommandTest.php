@@ -10,7 +10,7 @@ test('install command creates owner account and settings', function () {
         ->expectsQuestion('What is the application URL?', 'http://localhost')
         ->expectsQuestion('What timezone should be used?', 'Asia/Jakarta')
         ->expectsQuestion('What is the owner\'s name?', 'Pak Budi')
-        ->expectsQuestion('What is the owner\'s email address?', 'pakbudi@openkos.com')
+        ->expectsQuestion('What is the owner\'s email address?', 'pakbudi@grihaflow.com')
         ->expectsQuestion('Choose a password for the owner account', 'password123')
         ->expectsQuestion('Confirm the password', 'password123')
         ->assertSuccessful();
@@ -19,7 +19,7 @@ test('install command creates owner account and settings', function () {
 
     expect($user)->not->toBeNull();
     expect($user->name)->toBe('Pak Budi');
-    expect($user->email)->toBe('pakbudi@openkos.com');
+    expect($user->email)->toBe('pakbudi@grihaflow.com');
     expect($user->hasRole('owner'))->toBeTrue();
 
     expect(Setting::get('site_name'))->toBe('Kos Pak Budi');

@@ -329,7 +329,7 @@ export default function Mail({
                                                 from_address: e.target.value,
                                             })
                                         }
-                                        placeholder="noreply@openkos.app"
+                                        placeholder="noreply@grihaflow.app"
                                     />
                                     {errors['mail_config.from_address'] && (
                                         <p className="text-sm text-red-600">
@@ -353,7 +353,7 @@ export default function Mail({
                                                 from_name: e.target.value,
                                             })
                                         }
-                                        placeholder="AavaasDesk"
+                                        placeholder="GrihaFlow"
                                     />
                                     {errors['mail_config.from_name'] && (
                                         <p className="text-sm text-red-600">

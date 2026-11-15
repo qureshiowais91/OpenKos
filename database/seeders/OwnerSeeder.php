@@ -12,7 +12,7 @@ class OwnerSeeder extends Seeder
     public function run(): void
     {
         $user = User::firstOrCreate(
-            ['email' => 'budi@openkos.com'],
+            ['email' => 'budi@grihaflow.com'],
             [
                 'name' => 'Budi',
                 'email_verified_at' => now(),

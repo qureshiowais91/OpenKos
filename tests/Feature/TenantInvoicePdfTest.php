@@ -70,7 +70,7 @@ function renderTenantInvoicePdfView(Invoice $invoice): string
         'currency' => 'IDR',
         'invoice' => $invoice,
         'locale' => 'id',
-        'siteName' => 'OpenKOS',
+        'siteName' => 'GrihaFlow',
     ])->render();
 }
 

@@ -104,7 +104,7 @@ class PluginManagementService
                 'plugins' => [],
                 'updates' => [],
                 'pagination' => $pagination,
-                'error' => __('Marketplace browsing requires a semantic OpenKOS platform version.'),
+                'error' => __('Marketplace browsing requires a semantic GrihaFlow platform version.'),
             ];
         }
 
@@ -308,7 +308,7 @@ class PluginManagementService
             || str_contains($message, 'absent')
             || str_contains($message, 'not bundled')
         ) {
-            return __('This plugin is not compatible with the current OpenKOS or PHP installation.');
+            return __('This plugin is not compatible with the current GrihaFlow or PHP installation.');
         }
 
         return __('The plugin artifact was rejected. Check that it is a valid prepared runtime plugin ZIP.');
@@ -1164,7 +1164,7 @@ class PluginManagementService
         }
 
         return $this->validationStatus($exception) === 'incompatible'
-            ? __('This plugin is not compatible with the current OpenKOS or PHP installation.')
+            ? __('This plugin is not compatible with the current GrihaFlow or PHP installation.')
             : __('This plugin is incomplete or failed validation. Disable or remove it, then install a valid artifact.');
     }
 

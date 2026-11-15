@@ -4,7 +4,7 @@ import process from 'node:process';
 
 const environment = { ...process.env };
 
-const seed = process.env.OPENKOS_E2E_SEED ?? 'e2e/seed-ope-220.php';
+const seed = process.env.GRIHAFLOW_E2E_SEED ?? 'e2e/seed-ope-220.php';
 
 if (seed === 'e2e/seed-ope-220.php') {
     execFileSync('php', ['artisan', 'migrate:fresh', '--seed'], {

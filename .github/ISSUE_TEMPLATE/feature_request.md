@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an improvement for OpenKOS
+about: Suggest an improvement for GrihaFlow
 title: ''
 labels: ''
 assignees: ''

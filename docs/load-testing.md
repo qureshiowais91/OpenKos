@@ -1,7 +1,7 @@
-# OpenKOS Load-Test Dataset
+# GrihaFlow Load-Test Dataset
 
 This document defines the initial OPE-177 persona and dataset contract for
-the standalone OpenKOS k6 project.
+the standalone GrihaFlow k6 project.
 
 ## Setup
 

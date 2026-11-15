@@ -1,6 +1,6 @@
-# Contributing to OpenKOS
+# Contributing to GrihaFlow
 
-Thanks for helping improve OpenKOS. Before participating, please read the [Code of Conduct](CODE_OF_CONDUCT.md).
+Thanks for helping improve GrihaFlow. Before participating, please read the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Get started
 

@@ -9,8 +9,8 @@ return [
         'view_invoice' => 'Lihat invoice',
     ],
     'tenant_invitation' => [
-        'subject' => 'Anda diundang ke OpenKos',
-        'greeting' => 'Selamat datang di OpenKos',
+        'subject' => 'Anda diundang ke GrihaFlow',
+        'greeting' => 'Selamat datang di GrihaFlow',
         'intro' => 'Anda telah diberikan akses ke portal penyewa Anda.',
         'instruction' => 'Atur kata sandi Anda untuk mengaktifkan akun dan mengakses pembayaran, tagihan, dan detail sewa.',
         'action' => 'Terima Undangan',

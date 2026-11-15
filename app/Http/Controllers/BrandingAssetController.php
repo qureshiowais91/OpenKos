@@ -14,7 +14,7 @@ class BrandingAssetController extends Controller
     private const ASSETS = [
         'logo' => [
             'setting' => 'branding_logo_path',
-            'fallback' => 'assets/brand/openkos-logo.svg',
+            'fallback' => 'assets/brand/grihaflow-logo.svg',
             'fallback_mime' => 'image/svg+xml',
             'mimes' => ['image/jpeg', 'image/png', 'image/webp'],
         ],

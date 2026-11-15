@@ -10,13 +10,13 @@ use Inertia\Response as InertiaResponse;
 
 class AboutController extends Controller
 {
-    private const PRODUCT_NAME = 'OpenKOS';
+    private const PRODUCT_NAME = 'GrihaFlow';
 
     private const REPOSITORY_URL = 'https://github.com/senatroxx/OpenKos';
 
     private const LICENSE_NAME = 'Apache License 2.0';
 
-    private const COPYRIGHT = 'OpenKOS contributors';
+    private const COPYRIGHT = 'GrihaFlow contributors, based on OpenKOS by senatroxx (Apache-2.0)';
 
     public function __construct(
         private BuildInfo $buildInfo,
@@ -31,7 +31,7 @@ class AboutController extends Controller
                 'repositoryUrl' => self::REPOSITORY_URL,
                 'licenseName' => self::LICENSE_NAME,
                 'copyright' => self::COPYRIGHT,
-                'logoUrl' => '/assets/brand/openkos-logo.svg',
+                'logoUrl' => '/assets/brand/grihaflow-logo.svg',
             ],
         ]);
     }

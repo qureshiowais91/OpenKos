@@ -211,7 +211,7 @@ function MarketplaceSection({
             <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
                     {t(
-                        'Browse compatible runtime plugins from the OpenKOS Marketplace.',
+                        'Browse compatible runtime plugins from the GrihaFlow Marketplace.',
                     )}
                 </p>
                 <form
@@ -808,7 +808,7 @@ export default function Plugins({
                     <h1 className="text-lg font-medium">{t('Plugins')}</h1>
                     <p className="mt-1 text-sm text-muted-foreground">
                         {t(
-                            'Inspect and manage trusted OpenKOS plugin packages.',
+                            'Inspect and manage trusted GrihaFlow plugin packages.',
                         )}
                     </p>
                 </div>
@@ -1083,7 +1083,7 @@ export default function Plugins({
                                                     <div>
                                                         <dt className="text-muted-foreground">
                                                             {t(
-                                                                'OpenKOS requirement',
+                                                                'GrihaFlow requirement',
                                                             )}
                                                         </dt>
                                                         <dd className="font-mono">
@@ -1323,8 +1323,8 @@ export default function Plugins({
                         <DialogDescription className="break-words">
                             {t(
                                 marketplaceConfirmation?.update
-                                    ? 'Version :version will be downloaded and used to update this plugin on this OpenKOS instance.'
-                                    : 'Version :version will be downloaded and installed on this OpenKOS instance.',
+                                    ? 'Version :version will be downloaded and used to update this plugin on this GrihaFlow instance.'
+                                    : 'Version :version will be downloaded and installed on this GrihaFlow instance.',
                                 {
                                     version:
                                         marketplaceConfirmation?.version ?? '',

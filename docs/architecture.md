@@ -21,7 +21,7 @@
 
 The application uses a **multi-layered domain-oriented** architecture. Files are organized by architectural concern (layer-first), not by feature. The reusable platform layer is maintained in the standalone `openkos/platform` package and consumed through Composer.
 
-Application code lives in `app/` (`App\` namespace). The extensibility platform lives in `src/` (`OpenKOS\` namespace) — registries, the `OpenKOS` facade/manager, and the plugin system. See `docs/platform.md`.
+Application code lives in `app/` (`App\` namespace). The extensibility platform lives in `src/` (`OpenKOS\` namespace) — registries, the `GrihaFlow` facade/manager, and the plugin system. See `docs/platform.md`.
 
 ```
 app/
@@ -328,7 +328,7 @@ The full FK inventory with per-constraint rationale is enforced by `tests/Featur
 ### Polymorphic Media Owner IDs
 
 The reusable `media` foundation stores `mediable_id` as an unsigned BIGINT,
-matching the integer primary keys used by current OpenKOS domain models. A
+matching the integer primary keys used by current GrihaFlow domain models. A
 plugin owner must use a compatible integer key before opting into `HasMedia`.
 UUID or other custom owner keys require a deliberate schema extension rather
 than being silently coerced by the generic media layer.

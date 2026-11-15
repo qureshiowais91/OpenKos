@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "openkos/openkos",
+    "name": "grihaflow/grihaflow",
     "type": "project",
-    "description": "Open-source property management platform for boarding houses, rentals, and apartments.",
+    "description": "Property & Community Management.",
     "keywords": [
         "property-management",
         "property",

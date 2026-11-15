@@ -165,9 +165,9 @@ $renewNormalTenant = $makeTenant('OPE-220 Renew Normal Tenant', 'ope220.renew-no
 $renewNormalLease = $makeUnitLease($renewNormal, $renewNormalUnit, $renewNormalTenant, 'OPE220-RENEW-NORMAL', $endDate);
 
 file_put_contents(
-    getenv('OPENKOS_E2E_FIXTURE_PATH'),
+    getenv('GRIHAFLOW_E2E_FIXTURE_PATH'),
     json_encode([
-        'owner' => ['email' => 'budi@openkos.com', 'password' => 'password'],
+        'owner' => ['email' => 'budi@grihaflow.com', 'password' => 'password'],
         'portal' => ['email' => 'ope220.portal@example.test', 'password' => 'password'],
         'wholeTarget' => ['slug' => $wholeTarget->slug, 'tenant' => $wholeTargetTenant->name],
         'wholeOccupied' => ['slug' => $wholeOccupied->slug, 'lease' => $wholeOccupiedLease->id, 'tenant' => $wholeBlockedTenant->name],

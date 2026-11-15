@@ -5,7 +5,7 @@
 
 ## Context
 
-OpenKOS must be extensible (navigation, dashboards, workspace tabs, settings pages, notification drivers, payment gateways) without forks. The alternatives were:
+GrihaFlow must be extensible (navigation, dashboards, workspace tabs, settings pages, notification drivers, payment gateways) without forks. The alternatives were:
 
 - **Sandboxed plugins** — isolated processes or capability-limited runtimes; safe for untrusted marketplace code, enormously complex.
 - **Hook/filter system** (WordPress-style) — stringly-typed, hard to type-check, invites core monkey-patching.

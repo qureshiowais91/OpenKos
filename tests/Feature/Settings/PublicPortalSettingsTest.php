@@ -69,12 +69,12 @@ it('falls back through public name and homepage defaults when values are blank',
             ->where('metadata.canonical', '/'));
 });
 
-it('falls back to AavaasDesk when the stored site name is blank', function () {
+it('falls back to GrihaFlow when the stored site name is blank', function () {
     Setting::set('site_name', '  ');
     Setting::set('public_site_name', null);
 
     $this->get(route('public.portal.index'))
-        ->assertInertia(fn (Assert $page) => $page->where('metadata.siteName', 'AavaasDesk'));
+        ->assertInertia(fn (Assert $page) => $page->where('metadata.siteName', 'GrihaFlow'));
 });
 
 it('exposes stored overrides separately from resolved settings previews', function () {

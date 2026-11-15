@@ -11,9 +11,9 @@ it('creates with phone and message', function () {
 });
 
 it('creates with optional sender', function () {
-    $message = new WhatsAppMessage('08123456789', 'Hello', 'OpenKOS');
+    $message = new WhatsAppMessage('08123456789', 'Hello', 'GrihaFlow');
 
-    expect($message->sender)->toBe('OpenKOS');
+    expect($message->sender)->toBe('GrihaFlow');
 });
 
 it('defaults sender to null', function () {

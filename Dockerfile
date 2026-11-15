@@ -1,1 +1,134 @@
-.docker/php/Dockerfile.prod
+# syntax=docker/dockerfile:1.7
+
+ARG FRANKENPHP_IMAGE=dunglas/frankenphp:1-php8.4-bookworm
+ARG GRIHAFLOW_BUILD_VERSION=
+ARG GRIHAFLOW_BUILD_CHANNEL=
+ARG GRIHAFLOW_BUILD_COMMIT_SHA=
+
+FROM composer:2 AS composer
+
+FROM ${FRANKENPHP_IMAGE} AS dependencies
+
+ARG GRIHAFLOW_BUILD_VERSION
+ARG GRIHAFLOW_BUILD_CHANNEL
+ARG GRIHAFLOW_BUILD_COMMIT_SHA
+
+WORKDIR /app
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY composer.json composer.lock ./
+
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+    DB_CONNECTION=sqlite \
+    DB_DATABASE=:memory: \
+    SESSION_DRIVER=array \
+    CACHE_STORE=array \
+    QUEUE_CONNECTION=sync
+
+RUN install-php-extensions zip
+
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-progress \
+    --no-scripts \
+    --prefer-dist \
+    --optimize-autoloader
+
+COPY . .
+
+RUN composer dump-autoload \
+        --classmap-authoritative \
+        --no-dev \
+        --no-interaction \
+        --no-scripts \
+    && php artisan package:discover --ansi \
+    && php artisan wayfinder:generate --with-form
+
+FROM dependencies AS frontend
+
+COPY --from=node:22-bookworm-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:22-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
+    && npm ci --ignore-scripts \
+    && npm run build
+
+FROM ${FRANKENPHP_IMAGE} AS runtime
+
+ARG GRIHAFLOW_BUILD_VERSION
+ARG GRIHAFLOW_BUILD_CHANNEL
+ARG GRIHAFLOW_BUILD_COMMIT_SHA
+
+WORKDIR /app
+
+RUN install-php-extensions \
+        bcmath \
+        gd \
+        intl \
+        opcache \
+        pcntl \
+        pdo_pgsql \
+        zip
+
+COPY --from=dependencies /app/vendor /app/vendor
+COPY --from=dependencies /app/app /app/app
+COPY --from=dependencies /app/bootstrap /app/bootstrap
+COPY --from=dependencies /app/config /app/config
+COPY --from=dependencies /app/database /app/database
+COPY --from=dependencies /app/lang /app/lang
+COPY --from=dependencies /app/public /app/public
+COPY --from=dependencies /app/resources /app/resources
+COPY --from=dependencies /app/routes /app/routes
+COPY --from=dependencies /app/src /app/src
+
+COPY --from=dependencies /app/artisan /app/artisan
+COPY --from=dependencies /app/composer.json /app/composer.json
+COPY --from=dependencies /app/composer.lock /app/composer.lock
+COPY --from=dependencies /app/LICENSE /app/LICENSE
+
+COPY --from=frontend /app/public/build /app/public/build
+
+COPY .docker/entrypoint.sh /usr/local/bin/grihaflow-entrypoint
+COPY .docker/render-run.sh /usr/local/bin/grihaflow-render
+COPY .docker/php/php.ini /usr/local/etc/php/php.ini
+
+# The base image grants the binary cap_net_bind_service for ports 80/443; we
+# serve :8080, and platforms with a reduced capability bounding set (Render)
+# refuse to exec file-cap binaries whose caps are not in the bounding set.
+RUN setcap -r /usr/local/bin/frankenphp
+
+RUN mkdir -p \
+        bootstrap/cache \
+        /config/caddy \
+        /config/psysh \
+        /data/caddy \
+        storage/app/private \
+        storage/app/public \
+        storage/framework/cache \
+        storage/framework/sessions \
+        storage/framework/views \
+        storage/logs \
+    && chown -R www-data:www-data /config/caddy /config/psysh /data/caddy bootstrap/cache storage
+
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    SERVER_NAME=:8080 \
+    SERVER_ROOT=public \
+    GRIHAFLOW_BUILD_VERSION=${GRIHAFLOW_BUILD_VERSION} \
+    GRIHAFLOW_BUILD_CHANNEL=${GRIHAFLOW_BUILD_CHANNEL} \
+    GRIHAFLOW_BUILD_COMMIT_SHA=${GRIHAFLOW_BUILD_COMMIT_SHA}
+
+EXPOSE 8080
+
+# Base FrankenPHP image runs as www-data; start as root so the entrypoint can
+# fix volume ownership and drop back to www-data via runuser
+USER root
+
+ENTRYPOINT ["/usr/local/bin/grihaflow-entrypoint"]
+# Default: single-container mode (web + queue + scheduler). Compose splits the
+# roles by overriding CMD per service.
+CMD ["grihaflow-render"]

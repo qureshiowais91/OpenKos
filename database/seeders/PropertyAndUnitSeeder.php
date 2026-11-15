@@ -228,7 +228,7 @@ class PropertyAndUnitSeeder extends Seeder
             'size_sqm' => 16 + ($index * 2),
             'capacity' => $template['capacity'],
             'status' => $status,
-            'notes' => 'OpenKOS demonstration unit.',
+            'notes' => 'GrihaFlow demonstration unit.',
         ])->saveQuietly();
 
         return $unit->refresh();

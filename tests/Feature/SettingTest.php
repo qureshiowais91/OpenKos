@@ -11,9 +11,9 @@ use OpenKOS\Core\Contracts\SettingsStore;
 
 describe('Setting', function () {
     it('sets and gets values', function () {
-        Setting::set('site_name', 'OpenKOS');
+        Setting::set('site_name', 'GrihaFlow');
 
-        expect(Setting::get('site_name'))->toBe('OpenKOS');
+        expect(Setting::get('site_name'))->toBe('GrihaFlow');
     });
 
     it('returns null for missing keys', function () {

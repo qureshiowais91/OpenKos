@@ -1,10 +1,10 @@
-# OpenKOS
+# GrihaFlow
 
 <!-- badges placeholder — add build status, PHP version, license badges when CI is set up -->
 
-**Open-source property management platform for boarding houses (kos), apartments, and rentals.** Self-hosted, extensible, and built with Laravel + React.
+**Property & community management platform for boarding houses (kos), apartments, and rentals.** Self-hosted, extensible, and built with Laravel + React.
 
-OpenKOS handles the full rental lifecycle — properties, units, leases, tenants, invoices, payments, rent reminders, and maintenance — with a plugin architecture that lets you extend without forking.
+GrihaFlow handles the full rental lifecycle — properties, units, leases, tenants, invoices, payments, rent reminders, and maintenance — with a plugin architecture that lets you extend without forking.
 
 ## Features
 
@@ -70,7 +70,7 @@ Load-test fixture setup and persona assumptions are documented in
 
 ## Plugin Development
 
-OpenKOS has a plugin system that lets you register navigation items, dashboard pages, workspace tabs, settings pages, notification drivers, and payment gateways — all from a single plugin class without modifying core.
+GrihaFlow has a plugin system that lets you register navigation items, dashboard pages, workspace tabs, settings pages, notification drivers, and payment gateways — all from a single plugin class without modifying core.
 
 See [docs/platform.md](docs/platform.md) for the full guide, including manifests, versioning, registries, and the example plugin.
 
@@ -96,4 +96,8 @@ Key decisions are recorded as Architecture Decision Records (ADRs) in [`docs/arc
 
 ## License
 
-OpenKOS is open-source software licensed under the [Apache 2.0 license](LICENSE).
+GrihaFlow is open-source software licensed under the [Apache 2.0 license](LICENSE).
+
+## Attribution
+
+GrihaFlow is based on [OpenKOS](https://github.com/senatroxx/OpenKos) by senatroxx (Apache License 2.0). All upstream license notices, copyright statements, and the [Apache 2.0 license](LICENSE) are preserved. See [docs/open-source-inventory.md](docs/open-source-inventory.md) for the full open-source inventory.

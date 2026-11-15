@@ -52,3 +52,4 @@ DESIGN.md
 PRODUCT.md
 /FINDINGS.md
 /.impeccable
+.env.testing

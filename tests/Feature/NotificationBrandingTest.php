@@ -6,17 +6,17 @@ use App\Notifications\UserInvitation;
 use Illuminate\Notifications\Messages\MailMessage;
 
 it('brands invitation emails with the configured site name', function () {
-    Setting::set('site_name', 'AavaasDesk');
+    Setting::set('site_name', 'GrihaFlow');
 
     $tenantMail = (new TenantInvitation('https://example.test/accept'))
         ->toMail((object) [])->toArray()['greeting'] ?? '';
 
     $userMail = (new UserInvitation('https://example.test/accept'))->toMail((object) []);
 
-    expect($tenantMail)->toContain('AavaasDesk')
-        ->and($userMail->subject)->toContain('AavaasDesk')
-        ->and($userMail->greeting)->toContain('AavaasDesk')
-        ->and($userMail->introLines[0])->toContain('AavaasDesk')
+    expect($tenantMail)->toContain('GrihaFlow')
+        ->and($userMail->subject)->toContain('GrihaFlow')
+        ->and($userMail->greeting)->toContain('GrihaFlow')
+        ->and($userMail->introLines[0])->toContain('GrihaFlow')
         ->and($userMail->subject)->not->toContain('OpenKos')
         ->and($userMail->greeting)->not->toContain('OpenKos')
         ->and($tenantMail)->not->toContain('OpenKos');

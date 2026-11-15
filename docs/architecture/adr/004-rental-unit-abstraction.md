@@ -5,7 +5,7 @@
 
 ## Context
 
-OpenKOS started as kos (boarding house) management, but properties come in flavors — kos, apartment, villa, hostel, hotel. The alternatives were:
+GrihaFlow started as kos (boarding house) management, but properties come in flavors — kos, apartment, villa, hostel, hotel. The alternatives were:
 
 - **Kos-specific model** — `rooms` belonging to `boarding_houses`; simplest, but every new property type forces a schema rework.
 - **Per-type models** — separate entities per property type; heavy duplication for near-identical behavior.

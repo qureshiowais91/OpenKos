@@ -1,7 +1,7 @@
 # Production Deployment
 
-OpenKOS production uses the immutable FrankenPHP image published at
-`ghcr.io/senatroxx/openkos`.
+GrihaFlow production uses the immutable FrankenPHP image published at
+`grihaflow/app`.
 
 The production Compose reference contains only the application roles:
 
@@ -68,11 +68,11 @@ remove route caching from the runtime optimization step before deployment.
 To deploy a specific immutable image:
 
 ```bash
-OPENKOS_IMAGE=ghcr.io/senatroxx/openkos:1.2.3 \
+GRIHAFLOW_IMAGE=grihaflow/app:1.2.3 \
 docker compose -f compose.production.yaml up -d
 ```
 
-The Compose file mounts the named `openkos_uploads` volume at
+The Compose file mounts the named `grihaflow_uploads` volume at
 `storage/app/private` for tenant documents and payment proofs. The volume is
 durable across container replacement on the same Docker host, but it is not a
 cross-host or multi-replica filesystem. Back it up with the host's volume
@@ -131,7 +131,7 @@ To deploy the published immutable image instead of building on Render, change
 ```yaml
 runtime: image
 image:
-    url: ghcr.io/senatroxx/openkos:1.2.3
+    url: grihaflow/app:1.2.3
 ```
 
 and move the migrate command to Render Shell or a one-off job per release.
@@ -143,7 +143,7 @@ Postgres expires after 30 days, so a free deployment is for evaluation only:
 
 - Remove the `disk` block and the `databases` entry; uploads and branding
   files are lost on every redeploy.
-- Add the env var `OPENKOS_MIGRATE_ON_BOOT=true` so the container migrates on
+- Add the env var `GRIHAFLOW_MIGRATE_ON_BOOT=true` so the container migrates on
   startup instead of `preDeployCommand`. Keep it `false` on paid plans.
 - Either create a paid Postgres and paste its connection string as `DB_URL`,
   or point `DB_CONNECTION=sqlite` at a path under the (ephemeral) filesystem
@@ -151,8 +151,8 @@ Postgres expires after 30 days, so a free deployment is for evaluation only:
 - The service sleeps after 15 minutes without traffic; the first request
   wakes it with a delay.
 - Because there is no Shell and one-off jobs are paid-only, the first owner
-  account is seeded on boot: set `OPENKOS_OWNER_EMAIL` and
-  `OPENKOS_OWNER_PASSWORD`; the boot script seeds roles and settings
+  account is seeded on boot: set `GRIHAFLOW_OWNER_EMAIL` and
+  `GRIHAFLOW_OWNER_PASSWORD`; the boot script seeds roles and settings
   (`site_name`, `locale=en`, `currency=USD`, `timezone=UTC`) only while no
   users exist. Rotate the password after the first login — without these
   vars the app falls back to its Indonesian default locale
@@ -165,14 +165,14 @@ Postgres expires after 30 days, so a free deployment is for evaluation only:
   set.
 - Demo mode (optional): set `DEMO_MODE=true` and boot seeds the app's native
   demo world (`db:seed` — roles, tenants, `ope-184-demo-*` properties, 17
-  leases, invoices, maintenance) and shares three accounts: `budi@openkos.com`
-  (owner), `demo.staff@openkos.com` (staff role: tenants/leases), and
-  `demo.tenant@openkos.com` (tenant portal, linked to a seeded tenant with an
+  leases, invoices, maintenance) and shares three accounts: `budi@grihaflow.com`
+  (owner), `demo.staff@grihaflow.com` (staff role: tenants/leases), and
+  `demo.tenant@grihaflow.com` (tenant portal, linked to a seeded tenant with an
   active lease). Their password is `PASSWORD_<UTC date, YYYYMMDD>` — it
   rotates every 24h at midnight UTC and old copies stop working
   (`app:demo-rotate`; no-op unless `DEMO_MODE=true`). Every boot reseeds the
   fresh `/tmp` SQLite, so demo changes never persist. With `DEMO_MODE=true`
-  the env-driven owner account is not created — `budi@openkos.com` is the
+  the env-driven owner account is not created — `budi@grihaflow.com` is the
   owner login.
 - The FrankenPHP binary must ship without file capabilities for Render's
   restricted capability set (`setcap -r /usr/local/bin/frankenphp` in the

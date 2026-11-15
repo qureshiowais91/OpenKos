@@ -5,7 +5,7 @@
 
 ## Context
 
-OpenKOS replaces Excel + WhatsApp workflows for a kos (boarding house) owner. Each owner runs their own business with their own data, staff, and configuration. The alternatives were:
+GrihaFlow replaces Excel + WhatsApp workflows for a kos (boarding house) owner. Each owner runs their own business with their own data, staff, and configuration. The alternatives were:
 
 - **Multi-tenant SaaS schema** — every table carries a `tenant_id`, every query is scoped, auth and billing become per-organization.
 - **Single tenant per installation** — one installation serves one kos business; isolation comes from running separate installations.
@@ -14,7 +14,7 @@ Multi-tenancy taxes every feature (scoping bugs are data-leak bugs), and the tar
 
 ## Decision
 
-We will build OpenKOS as a **single-tenant application**: one installation = one kos business = one owner.
+We will build GrihaFlow as a **single-tenant application**: one installation = one kos business = one owner.
 
 Concretely:
 

@@ -76,7 +76,7 @@ final class RuntimePluginGraphValidator
                         $issues,
                         $id,
                         'incompatible',
-                        "Runtime plugin [{$id}] is incompatible with the current OpenKOS version.",
+                        "Runtime plugin [{$id}] is incompatible with the current GrihaFlow version.",
                     );
                 }
             } catch (Throwable) {
@@ -84,7 +84,7 @@ final class RuntimePluginGraphValidator
                     $issues,
                     $id,
                     'incompatible',
-                    "Runtime plugin [{$id}] declares an invalid OpenKOS version constraint.",
+                    "Runtime plugin [{$id}] declares an invalid GrihaFlow version constraint.",
                 );
             }
         }
@@ -503,7 +503,7 @@ final class RuntimePluginGraphValidator
         }
 
         return $this->validationStatus($exception) === 'incompatible'
-            ? 'This plugin is not compatible with the current OpenKOS or PHP installation.'
+            ? 'This plugin is not compatible with the current GrihaFlow or PHP installation.'
             : 'This plugin is incomplete or failed validation.';
     }
 }

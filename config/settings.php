@@ -2,7 +2,7 @@
 
 return [
 
-    'site_name' => ['default' => 'OpenKOS', 'cast' => 'string'],
+    'site_name' => ['default' => 'GrihaFlow', 'cast' => 'string'],
     'public_site_name' => ['default' => '', 'cast' => 'string'],
     'public_homepage_title' => ['default' => '', 'cast' => 'string'],
     'public_homepage_description' => ['default' => '', 'cast' => 'string'],

@@ -40,10 +40,10 @@ export default function About({ build, product }: Props) {
             <Head title={t('About')} />
 
             <div>
-                <h2 className="text-lg font-medium">{t('About OpenKOS')}</h2>
+                <h2 className="text-lg font-medium">{t('About GrihaFlow')}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                     {t(
-                        'Information about the OpenKOS software running this installation.',
+                        'Information about the GrihaFlow software running this installation.',
                     )}
                 </p>
             </div>
@@ -53,7 +53,7 @@ export default function About({ build, product }: Props) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Package className="size-4" aria-hidden="true" />
-                            {t('OpenKOS software')}
+                            {t('GrihaFlow software')}
                         </CardTitle>
                         <CardDescription>
                             {t('Open-source property management software.')}
@@ -121,7 +121,7 @@ export default function About({ build, product }: Props) {
                         </CardTitle>
                         <CardDescription>
                             {t(
-                                'Safe information about this OpenKOS installation.',
+                                'Safe information about this GrihaFlow installation.',
                             )}
                         </CardDescription>
                     </CardHeader>
@@ -146,7 +146,7 @@ export default function About({ build, product }: Props) {
                                     className="size-4"
                                     aria-hidden="true"
                                 />
-                                {t('OpenKOS project repository')}
+                                {t('GrihaFlow project repository')}
                             </a>
                             <a
                                 href={license.url()}

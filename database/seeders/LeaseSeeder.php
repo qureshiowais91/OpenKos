@@ -214,7 +214,7 @@ class LeaseSeeder extends Seeder
             depositRefundAmount: null,
             depositRefundedAt: null,
             rentDueDay: $assignment['rent_due_day'],
-            notes: 'OpenKOS demonstration lease.',
+            notes: 'GrihaFlow demonstration lease.',
         ));
 
         $lease->forceFill(['reference' => $assignment['reference']])->saveQuietly();
@@ -256,7 +256,7 @@ class LeaseSeeder extends Seeder
             'status' => LeaseStatus::Terminated,
             'termination_date' => $endDate,
             'termination_reason' => 'contract_ended',
-            'notes' => 'OpenKOS demonstration historical lease.',
+            'notes' => 'GrihaFlow demonstration historical lease.',
         ]);
 
         $lease->tenants()->sync([$tenantId => ['is_primary' => true]]);
@@ -266,7 +266,7 @@ class LeaseSeeder extends Seeder
 
     private function seedPayments(CarbonInterface $now): void
     {
-        $owner = User::query()->where('email', 'budi@openkos.com')->firstOrFail();
+        $owner = User::query()->where('email', 'budi@grihaflow.com')->firstOrFail();
         $assignments = [...$this->activeAssignments, ...$this->sharedAssignments];
 
         foreach ($assignments as $assignment) {
@@ -290,7 +290,7 @@ class LeaseSeeder extends Seeder
                 amount: $amount,
                 paymentDate: $now->copy()->subDay()->toDateString(),
                 paymentMethod: PaymentMethod::Transfer->value,
-                notes: 'OpenKOS demonstration payment.',
+                notes: 'GrihaFlow demonstration payment.',
             ), $owner, $forcePending);
 
             if ($result->failed() || $result->payment === null) {

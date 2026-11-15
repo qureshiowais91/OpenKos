@@ -17,7 +17,7 @@ use OpenKOS\Core\Contracts\PluginDiscovery;
 use OpenKOS\Plugins\Mail\MailPlugin;
 
 beforeEach(function (): void {
-    $this->runtimePluginPath = sys_get_temp_dir().'/openkos-settings-runtime-'.bin2hex(random_bytes(8));
+    $this->runtimePluginPath = sys_get_temp_dir().'/grihaflow-settings-runtime-'.bin2hex(random_bytes(8));
     $this->originalRuntimePath = config('platform.runtime.path');
     $this->originalBuildVersion = config('app.build.version');
     $this->originalPlatformVersion = config('platform.version');
@@ -706,7 +706,7 @@ it('surfaces and cleans stale runtime artifacts without touching a package', fun
 });
 
 it('surfaces and removes a symlinked runtime package without following it', function (): void {
-    $outside = sys_get_temp_dir().'/openkos-settings-outside-'.bin2hex(random_bytes(8));
+    $outside = sys_get_temp_dir().'/grihaflow-settings-outside-'.bin2hex(random_bytes(8));
     File::makeDirectory($outside, 0750, true);
     File::makeDirectory($this->runtimePluginPath.'/settings', 0750, true);
     symlink($outside, $this->runtimePluginPath.'/settings/runtime');
@@ -738,7 +738,7 @@ it('surfaces and removes a symlinked runtime package without following it', func
 });
 
 it('surfaces and removes a symlinked runtime vendor without following it', function (): void {
-    $outside = sys_get_temp_dir().'/openkos-settings-vendor-'.bin2hex(random_bytes(8));
+    $outside = sys_get_temp_dir().'/grihaflow-settings-vendor-'.bin2hex(random_bytes(8));
     File::makeDirectory($outside, 0750, true);
     File::makeDirectory($this->runtimePluginPath, 0750, true);
     symlink($outside, $this->runtimePluginPath.'/settings');
@@ -1262,7 +1262,7 @@ function makePluginSettingsArtifact(array $overrides = []): array
     $source = str_replace("version: '1.0.0',", "version: '{$manifest['version']}',", $source);
     $source = str_replace("coreVersion: '^0.2',", "coreVersion: '{$manifest['core_version']}',\n            dependencies: {$dependencies},", $source);
 
-    $directory = sys_get_temp_dir().'/openkos-settings-zip-'.bin2hex(random_bytes(8));
+    $directory = sys_get_temp_dir().'/grihaflow-settings-zip-'.bin2hex(random_bytes(8));
     mkdir($directory, 0750, true);
     $zipPath = $directory.'.zip';
     $zip = new ZipArchive;
@@ -1368,7 +1368,7 @@ function fakeMarketplace(
                         'name' => 'Marketplace Runtime Fixture',
                         'summary' => 'Marketplace runtime fixture.',
                         'description' => 'Marketplace runtime fixture.',
-                        'publisher' => ['name' => 'OpenKOS', 'url' => null],
+                        'publisher' => ['name' => 'GrihaFlow', 'url' => null],
                         'repository_url' => null,
                         'homepage_url' => null,
                         'latest_version' => $latest,

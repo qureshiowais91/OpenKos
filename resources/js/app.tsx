@@ -66,7 +66,7 @@ function syncBrandingFavicon(page: PageWithTimezone): void {
 // lives in #app's data-page attribute (client render) or a <script data-page>
 // element (SSR hydration), so check both.
 function resolveAppName(): string {
-    const fallback = import.meta.env.VITE_APP_NAME || 'OpenKOS';
+    const fallback = import.meta.env.VITE_APP_NAME || 'GrihaFlow';
 
     if (typeof document === 'undefined') {
         return fallback;

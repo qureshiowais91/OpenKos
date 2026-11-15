@@ -15,7 +15,7 @@ class InstallCommand extends Command
 {
     protected $signature = 'app:install {--fresh : Wipe all tables before migrating}';
 
-    protected $description = 'Setup the initial owner account for OpenKOS';
+    protected $description = 'Setup the initial owner account for GrihaFlow';
 
     public function handle(): int
     {
@@ -37,7 +37,7 @@ class InstallCommand extends Command
             return self::FAILURE;
         }
 
-        $siteName = $this->ask('What is the name of this installation?', 'OpenKOS');
+        $siteName = $this->ask('What is the name of this installation?', 'GrihaFlow');
 
         $country = $this->choice(
             'What country is this installation for?',
@@ -97,7 +97,7 @@ class InstallCommand extends Command
         $role = SpatieRole::findOrCreate(Role::Owner->value);
         $user->assignRole($role);
 
-        $this->info('OpenKOS has been installed successfully!');
+        $this->info('GrihaFlow has been installed successfully!');
         $this->warn("Owner account created: {$name} ({$email})");
 
         return self::SUCCESS;
@@ -176,7 +176,7 @@ class InstallCommand extends Command
 
         $host = $this->ask('Database host?', '127.0.0.1');
         $port = $this->ask('Database port?', $connection === 'pgsql' ? '5432' : '3306');
-        $database = $this->ask('Database name?', 'openkos');
+        $database = $this->ask('Database name?', 'grihaflow');
         $username = $this->ask('Database username?', 'root');
         $password = $this->secret('Database password?') ?? '';
 

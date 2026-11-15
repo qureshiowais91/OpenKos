@@ -1,11 +1,11 @@
 # Platform Layer & Plugin System
 
 > **Status:** Foundation shipped and consumed (v0.1 Alpha) — registrations render in the sidebar, settings nav, and workspace tabs; plugins carry manifests, subscribe to domain events, and ship their own routes/migrations
-> **Purpose:** The plugin extension strategy — registries, the OpenKOS manager/facade, the plugin lifecycle, manifest/versioning/dependency rules, domain events, and extension boundaries. For general layer conventions see `docs/architecture.md`.
+> **Purpose:** The plugin extension strategy — registries, the GrihaFlow manager/facade, the plugin lifecycle, manifest/versioning/dependency rules, domain events, and extension boundaries. For general layer conventions see `docs/architecture.md`.
 
 ## Why
 
-OpenKOS is becoming an extensible platform. Plugins must be able to add navigation items, dashboard pages, workspace tabs, settings pages, notification drivers, and payment gateways — without forking the app. This layer is the seam that makes that possible. It was introduced additively: no schema changes, no UI changes, no domain rewrites.
+GrihaFlow is becoming an extensible platform. Plugins must be able to add navigation items, dashboard pages, workspace tabs, settings pages, notification drivers, and payment gateways — without forking the app. This layer is the seam that makes that possible. It was introduced additively: no schema changes, no UI changes, no domain rewrites.
 
 ## Namespace & Location
 
@@ -16,12 +16,12 @@ openkos-platform/
 ├── src/Core/                 Contracts, DTOs, and platform-level events
 └── src/Platform/              Registries, manager, facade, and plugin lifecycle
 
-openkos/src/Plugins/
+grihaflow/src/Plugins/
 ├── WhatsApp/                 Built-in plugin: registers application drivers
 └── Example/                  Reference plugin — disabled by default
 ```
 
-The package exposes host-agnostic contracts and events such as `OpenKOS\Core\Events\PaymentRecorded`. OpenKOS may also dispatch its legacy `App\Events` counterparts for application subscribers; the package never imports application events or models.
+The package exposes host-agnostic contracts and events such as `OpenKOS\Core\Events\PaymentRecorded`. GrihaFlow may also dispatch its legacy `App\Events` counterparts for application subscribers; the package never imports application events or models.
 
 Composer package auto-discovery registers `PlatformServiceProvider`; the application does not list it again in `bootstrap/providers.php`. The host merges explicit plugin classes from `config/platform.php` with trusted Composer-discovered plugins when `platform.discovery.enabled` is true.
 
@@ -65,7 +65,7 @@ $platform->settings()->registerSetting(new SettingDefinition(
 
 Supported types: `string`, `boolean`, `integer`, `array`, `encrypted`, `encrypted:array`.
 
-**Reading and writing** goes through `SettingsManager`, accessible via the manager. The package depends only on `OpenKOS\Core\Contracts\SettingsStore`; OpenKOS binds that contract to its Eloquent-backed settings service:
+**Reading and writing** goes through `SettingsManager`, accessible via the manager. The package depends only on `OpenKOS\Core\Contracts\SettingsStore`; GrihaFlow binds that contract to its Eloquent-backed settings service:
 
 ```php
 // In a plugin's controller or Boot method:
@@ -92,7 +92,7 @@ Defaults live in `config/settings.php` and define the core application settings:
 ```php
 // config/settings.php
 return [
-    'site_name' => ['default' => 'OpenKOS', 'cast' => 'string'],
+    'site_name' => ['default' => 'GrihaFlow', 'cast' => 'string'],
     'reminder_enabled' => ['default' => true, 'cast' => 'boolean'],
     'mail_config' => ['default' => [], 'cast' => 'encrypted:array'],
 ];
@@ -111,7 +111,7 @@ Plugins register their own settings via the platform registry instead: `$platfor
 `OpenKOSManager` constructor-injects the six registries and is itself a singleton. Plugins receive it; application code uses the facade:
 
 ```php
-use OpenKOS\Platform\Facades\OpenKOS;
+use OpenKOS\Platform\Facades\GrihaFlow;
 
 OpenKOS::dashboard()->registerPage(...);
 OpenKOS::navigation()->registerItem(...);
@@ -121,7 +121,7 @@ OpenKOS::notifications()->registerDriver(...);
 OpenKOS::payments()->registerGateway(...);
 ```
 
-> **Gotcha:** there is deliberately **no global `OpenKOS` alias** — a root-level alias would collide with the `OpenKOS\` namespace. Always `use OpenKOS\Platform\Facades\OpenKOS;`.
+> **Gotcha:** there is deliberately **no global `GrihaFlow` alias** — a root-level alias would collide with the `OpenKOS\` namespace. Always `use OpenKOS\Platform\Facades\GrihaFlow;`.
 
 ## Writing a Plugin
 
@@ -246,7 +246,7 @@ legacy `App\Events` for host-only subscribers.
 ### Discovery
 
 The standalone package exposes `OpenKOS\Core\Contracts\PluginDiscovery`, but does not
-scan Composer itself. OpenKOS provides the host implementation, which enumerates installed
+scan Composer itself. GrihaFlow provides the host implementation, which enumerates installed
 packages and accepts exactly one plugin class per package through this metadata:
 
 ```json
@@ -262,14 +262,14 @@ packages and accepts exactly one plugin class per package through this metadata:
 The host merges explicit classes first, then discovered classes, and removes duplicates.
 `PluginLoader` still controls dependency order. `platform.discovery.disabled_packages`
 accepts Composer package names for an explicit opt-out. Discovery is disabled by default
-in the standalone package and enabled by the OpenKOS application.
+in the standalone package and enabled by the GrihaFlow application.
 
 Installing a Composer plugin grants trusted in-process PHP execution; disabled packages
 are not sandboxed. Frontend assets remain out of scope and must still be handled by the host.
 
 ### Runtime ZIP plugins
 
-OpenKOS also accepts prepared runtime plugin artifacts without changing the root
+GrihaFlow also accepts prepared runtime plugin artifacts without changing the root
 `composer.json`, `composer.lock`, or `vendor/` directory. Runtime packages live in the
 persistent `storage/app/private/plugins` directory by default and are discovered only
 when enabled in the separate `state.json` file.
@@ -281,7 +281,7 @@ core constraint, PHP constraint, and plugin dependencies must match the entry cl
 Composer metadata.
 
 Runtime installation is intentionally a strict plugin contract. Laravel service
-providers are not runtime entrypoints; a package such as Fonnte must expose an OpenKOS
+providers are not runtime entrypoints; a package such as Fonnte must expose an GrihaFlow
 `Plugin` class and may delegate internally as needed.
 
 The installer validates each artifact in a fresh PHP process before promotion, so an
@@ -308,7 +308,7 @@ Runtime and Composer copies of the same plugin ID or entry class are conflicts; 
 copy is loaded. Runtime artifacts are trusted in-process code, so the installer rejects
 unsafe archive paths, symlinks, executable entries, install scripts, incompatible host
 dependencies, and oversized archives before activation. Host-provided packages such as
-Laravel, Illuminate, Composer Semver, and the OpenKOS platform must not be bundled.
+Laravel, Illuminate, Composer Semver, and the GrihaFlow platform must not be bundled.
 
 ### Security & permission boundaries
 
@@ -355,7 +355,7 @@ Mail drivers may optionally advertise the Laravel mailer they support:
         laravelMailer: 'acme-mail',
     ));
 
-The plugin owns registration of the actual Laravel mailer and transport. Omitting `laravelMailer` keeps the driver valid for OpenKOS custom notifications through `MailManager`, but native Laravel notifications use the Laravel `log` fallback with an explicit warning. The platform does not contain provider-specific mappings.
+The plugin owns registration of the actual Laravel mailer and transport. Omitting `laravelMailer` keeps the driver valid for GrihaFlow custom notifications through `MailManager`, but native Laravel notifications use the Laravel `log` fallback with an explicit warning. The platform does not contain provider-specific mappings.
 
 ## Payment Contracts
 

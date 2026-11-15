@@ -5,8 +5,8 @@ use App\Business\PublicPortal\PublicPortalMetadataComposer;
 it('resolves blank names through the configured fallbacks', function () {
     $composer = new PublicPortalMetadataComposer;
 
-    expect($composer->siteName('  ', 'Installation', 'OpenKOS'))->toBe('Installation')
-        ->and($composer->siteName(null, ' ', 'OpenKOS'))->toBe('OpenKOS');
+    expect($composer->siteName('  ', 'Installation', 'GrihaFlow'))->toBe('Installation')
+        ->and($composer->siteName(null, ' ', 'GrihaFlow'))->toBe('GrihaFlow');
 });
 
 it('composes one consistent metadata contract for social tags', function () {

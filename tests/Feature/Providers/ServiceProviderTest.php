@@ -62,7 +62,7 @@ it('registers application services through dedicated providers', function () {
         ->toBe(app(WhatsAppManager::class));
 });
 
-it('maps OpenKOS mail drivers to valid Laravel mailers', function () {
+it('maps GrihaFlow mail drivers to valid Laravel mailers', function () {
     Setting::set('mail_config', ['driver' => 'openkos/smtp']);
 
     (new NotificationServiceProvider(app()))->boot();
@@ -71,7 +71,7 @@ it('maps OpenKOS mail drivers to valid Laravel mailers', function () {
         ->and(config('mail.mailers'))->toHaveKey(config('mail.default'));
 });
 
-it('uses an advertised Laravel mailer for a registered OpenKOS driver', function () {
+it('uses an advertised Laravel mailer for a registered GrihaFlow driver', function () {
     config(['mail.mailers.test-advertised' => ['transport' => 'log']]);
     app(NotificationRegistry::class)->registerDriver(new NotificationDriverRegistration(
         name: 'test/advertised',
@@ -91,10 +91,10 @@ it('uses an advertised Laravel mailer for a registered OpenKOS driver', function
         ->notify(new UserInvitation('https://example.com/invitation'));
 });
 
-it('falls back with a capability warning for an OpenKOS-only mail driver', function () {
+it('falls back with a capability warning for an GrihaFlow-only mail driver', function () {
     Log::shouldReceive('warning')
         ->once()
-        ->with('OpenKOS mail driver has no Laravel mailer capability; falling back to Laravel log mailer.', [
+        ->with('GrihaFlow mail driver has no Laravel mailer capability; falling back to Laravel log mailer.', [
             'driver' => 'openkos/acme',
             'fallback' => 'log',
             'reason' => 'missing_capability',
@@ -120,7 +120,7 @@ it('falls back with an invalid-capability warning when the advertised mailer is 
 
     Log::shouldReceive('warning')
         ->once()
-        ->with('Configured Laravel mailer for OpenKOS mail driver is unavailable; falling back to Laravel log mailer.', [
+        ->with('Configured Laravel mailer for GrihaFlow mail driver is unavailable; falling back to Laravel log mailer.', [
             'driver' => 'test/advertised',
             'mailer' => 'test-advertised',
             'fallback' => 'log',

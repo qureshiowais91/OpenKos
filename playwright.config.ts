@@ -2,11 +2,11 @@ import os from 'node:os';
 import path from 'node:path';
 import { defineConfig } from 'playwright/test';
 
-const scenario = process.env.OPENKOS_E2E_NAME ?? 'ope-220';
+const scenario = process.env.GRIHAFLOW_E2E_NAME ?? 'ope-220';
 const databasePath =
-    process.env.OPENKOS_E2E_DATABASE ??
-    path.join(os.tmpdir(), `openkos-${scenario}-playwright.sqlite`);
-const fixturePath = path.join(os.tmpdir(), `openkos-${scenario}-playwright.json`);
+    process.env.GRIHAFLOW_E2E_DATABASE ??
+    path.join(os.tmpdir(), `grihaflow-${scenario}-playwright.sqlite`);
+const fixturePath = path.join(os.tmpdir(), `grihaflow-${scenario}-playwright.json`);
 
 export default defineConfig({
     testDir: './e2e',
@@ -39,8 +39,8 @@ export default defineConfig({
             DB_DATABASE: databasePath,
             DB_URL: '',
             MAIL_MAILER: 'array',
-            OPENKOS_E2E_FIXTURE_PATH: fixturePath,
-            OPENKOS_E2E_SEED: `e2e/seed-${scenario}.php`,
+            GRIHAFLOW_E2E_FIXTURE_PATH: fixturePath,
+            GRIHAFLOW_E2E_SEED: `e2e/seed-${scenario}.php`,
             QUEUE_CONNECTION: 'sync',
             SESSION_DRIVER: 'file',
         },

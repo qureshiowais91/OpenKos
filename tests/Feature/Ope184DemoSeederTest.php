@@ -44,7 +44,7 @@ it('seeds a complete currency-aware demo graph and can be rerun', function () {
         ->and($demoHistory->count())->toBe(7)
         ->and($demoInvoices->count())->toBeGreaterThan(0)
         ->and(MaintenanceTicket::query()->where('reference', 'like', 'ope-184-demo-ticket-%')->count())->toBe(3)
-        ->and(User::query()->whereIn('email', ['demo.staff@openkos.com', 'demo.tenant@openkos.com'])->count())->toBe(2);
+        ->and(User::query()->whereIn('email', ['demo.staff@grihaflow.com', 'demo.tenant@grihaflow.com'])->count())->toBe(2);
 
     $usdLease = Lease::query()->where('reference', 'ope-184-demo-lease-004')->firstOrFail();
     $usdInvoice = $usdLease->invoices()->where('currency', 'USD')->where('period_start', '<=', today())->latest('period_start')->firstOrFail();
@@ -67,7 +67,7 @@ it('seeds a complete currency-aware demo graph and can be rerun', function () {
         ->and(Payment::query()->where('status', PaymentStatus::Pending)->where('reference_number', 'like', 'ope-184-demo-%')->exists())->toBeTrue()
         ->and(Unit::query()->where('status', UnitStatus::Maintenance)->whereHas('property', fn ($query) => $query->where('slug', 'like', 'ope-184-demo-%'))->exists())->toBeTrue()
         ->and(MaintenanceTicket::query()->where('status', MaintenanceStatus::Reported)->where('reference', 'ope-184-demo-ticket-001')->exists())->toBeTrue()
-        ->and(Tenant::query()->whereHas('user', fn ($query) => $query->where('email', 'demo.tenant@openkos.com'))->exists())->toBeTrue();
+        ->and(Tenant::query()->whereHas('user', fn ($query) => $query->where('email', 'demo.tenant@grihaflow.com'))->exists())->toBeTrue();
 
     foreach ($demoHistory->with('unitRate')->get() as $historyLease) {
         expect($historyLease->currency)->toBe($historyLease->unitRate->currency)

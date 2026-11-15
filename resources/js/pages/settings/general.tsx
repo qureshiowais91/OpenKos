@@ -335,7 +335,7 @@ export default function General({
                                             )
                                         }
                                         maxLength={255}
-                                        placeholder="AavaasDesk"
+                                        placeholder="GrihaFlow"
                                         required
                                     />
                                     {siteForm.errors.site_name && (

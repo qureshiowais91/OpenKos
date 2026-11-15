@@ -22,9 +22,9 @@ class MaintenanceSeeder extends Seeder
         $now = now();
         DB::transaction(function () use ($now): void {
             $property = Property::query()->where('slug', self::PROPERTY_SLUG)->firstOrFail();
-            $staff = User::query()->where('email', 'demo.staff@openkos.com')->firstOrFail();
-            $tenant = User::query()->where('email', 'demo.tenant@openkos.com')->firstOrFail();
-            $owner = User::query()->where('email', 'budi@openkos.com')->firstOrFail();
+            $staff = User::query()->where('email', 'demo.staff@grihaflow.com')->firstOrFail();
+            $tenant = User::query()->where('email', 'demo.tenant@grihaflow.com')->firstOrFail();
+            $owner = User::query()->where('email', 'budi@grihaflow.com')->firstOrFail();
             $maintenanceUnit = $this->unit($property, 'C1');
             $maintenanceUnit->forceFill(['status' => UnitStatus::Maintenance])->saveQuietly();
 

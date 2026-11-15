@@ -13,7 +13,7 @@ mkdir -p \
 
 # ponytail: for free-tier Render where preDeployCommand is unavailable; keep
 # false on paid plans so migrations stay an explicit release operation
-if [ "${OPENKOS_MIGRATE_ON_BOOT:-false}" = true ]; then
+if [ "${GRIHAFLOW_MIGRATE_ON_BOOT:-false}" = true ]; then
     php artisan migrate --force
 fi
 
@@ -39,20 +39,20 @@ if [ "${DEMO_MODE:-false}" = true ]; then
 fi
 
 # ponytail: free Render tier has no shell/one-off jobs, so the first owner is
-# seeded from env on boot; rotate OPENKOS_OWNER_PASSWORD after first login
-if [ -n "${OPENKOS_OWNER_EMAIL:-}" ] && [ -n "${OPENKOS_OWNER_PASSWORD:-}" ]; then
+# seeded from env on boot; rotate GRIHAFLOW_OWNER_PASSWORD after first login
+if [ -n "${GRIHAFLOW_OWNER_EMAIL:-}" ] && [ -n "${GRIHAFLOW_OWNER_PASSWORD:-}" ]; then
     php artisan db:seed --class='Database\Seeders\RoleAndPermissionSeeder' --force
     php artisan tinker --execute '
         if (!App\Models\User::exists()) {
             $u = App\Models\User::create([
                 "name" => "Owner",
-                "email" => getenv("OPENKOS_OWNER_EMAIL"),
-                "password" => Illuminate\Support\Facades\Hash::make(getenv("OPENKOS_OWNER_PASSWORD")),
+                "email" => getenv("GRIHAFLOW_OWNER_EMAIL"),
+                "password" => Illuminate\Support\Facades\Hash::make(getenv("GRIHAFLOW_OWNER_PASSWORD")),
                 "is_active" => true,
             ]);
             $u->markEmailAsVerified();
             $u->assignRole("owner");
-            App\Models\Setting::set("site_name", "OpenKOS");
+            App\Models\Setting::set("site_name", "GrihaFlow");
             App\Models\Setting::set("country_code", "XX");
             App\Models\Setting::set("locale", "en");
             App\Models\Setting::set("currency", "USD");

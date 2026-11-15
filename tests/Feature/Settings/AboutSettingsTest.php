@@ -22,15 +22,15 @@ test('authenticated users can view the about page', function () {
         ->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page
             ->component('settings/about')
-            ->where('product.name', 'OpenKOS')
+            ->where('product.name', 'GrihaFlow')
             ->where('product.licenseName', 'Apache License 2.0')
-            ->where('product.logoUrl', '/assets/brand/openkos-logo.svg')
+            ->where('product.logoUrl', '/assets/brand/grihaflow-logo.svg')
             ->has('build.version')
             ->has('build.channel')
             ->where('platform.settings.0.key', 'about'));
 });
 
-test('the about page keeps OpenKOS branding separate from the site name', function () {
+test('the about page keeps GrihaFlow branding separate from the site name', function () {
     $user = User::factory()->create();
     Setting::set('site_name', 'Casa Budi');
 
@@ -39,7 +39,7 @@ test('the about page keeps OpenKOS branding separate from the site name', functi
         ->assertInertia(fn (Assert $page) => $page
             ->where('name', 'Casa Budi')
             ->where('setting.site_name', 'Casa Budi')
-            ->where('product.name', 'OpenKOS'));
+            ->where('product.name', 'GrihaFlow'));
 });
 
 test('the bundled license is available without an external request', function () {

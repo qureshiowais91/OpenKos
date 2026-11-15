@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'GrihaFlow'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,9 +55,9 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'build' => [
-        'version' => env('OPENKOS_BUILD_VERSION'),
-        'channel' => env('OPENKOS_BUILD_CHANNEL'),
-        'commit_sha' => env('OPENKOS_BUILD_COMMIT_SHA'),
+        'version' => env('GRIHAFLOW_BUILD_VERSION'),
+        'channel' => env('GRIHAFLOW_BUILD_CHANNEL'),
+        'commit_sha' => env('GRIHAFLOW_BUILD_COMMIT_SHA'),
     ],
 
     /*

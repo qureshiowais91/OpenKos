@@ -1,17 +1,17 @@
 # syntax=docker/dockerfile:1.7
 
 ARG FRANKENPHP_IMAGE=dunglas/frankenphp:1-php8.4-bookworm
-ARG OPENKOS_BUILD_VERSION=
-ARG OPENKOS_BUILD_CHANNEL=
-ARG OPENKOS_BUILD_COMMIT_SHA=
+ARG GRIHAFLOW_BUILD_VERSION=
+ARG GRIHAFLOW_BUILD_CHANNEL=
+ARG GRIHAFLOW_BUILD_COMMIT_SHA=
 
 FROM composer:2 AS composer
 
 FROM ${FRANKENPHP_IMAGE} AS dependencies
 
-ARG OPENKOS_BUILD_VERSION
-ARG OPENKOS_BUILD_CHANNEL
-ARG OPENKOS_BUILD_COMMIT_SHA
+ARG GRIHAFLOW_BUILD_VERSION
+ARG GRIHAFLOW_BUILD_CHANNEL
+ARG GRIHAFLOW_BUILD_COMMIT_SHA
 
 WORKDIR /app
 
@@ -59,9 +59,9 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 
 FROM ${FRANKENPHP_IMAGE} AS runtime
 
-ARG OPENKOS_BUILD_VERSION
-ARG OPENKOS_BUILD_CHANNEL
-ARG OPENKOS_BUILD_COMMIT_SHA
+ARG GRIHAFLOW_BUILD_VERSION
+ARG GRIHAFLOW_BUILD_CHANNEL
+ARG GRIHAFLOW_BUILD_COMMIT_SHA
 
 WORKDIR /app
 
@@ -92,8 +92,8 @@ COPY --from=dependencies /app/LICENSE /app/LICENSE
 
 COPY --from=frontend /app/public/build /app/public/build
 
-COPY .docker/entrypoint.sh /usr/local/bin/openkos-entrypoint
-COPY .docker/render-run.sh /usr/local/bin/openkos-render
+COPY .docker/entrypoint.sh /usr/local/bin/grihaflow-entrypoint
+COPY .docker/render-run.sh /usr/local/bin/grihaflow-render
 COPY .docker/php/php.ini /usr/local/etc/php/php.ini
 
 # The base image grants the binary cap_net_bind_service for ports 80/443; we
@@ -118,9 +118,9 @@ ENV APP_ENV=production \
     APP_DEBUG=false \
     SERVER_NAME=:8080 \
     SERVER_ROOT=public \
-    OPENKOS_BUILD_VERSION=${OPENKOS_BUILD_VERSION} \
-    OPENKOS_BUILD_CHANNEL=${OPENKOS_BUILD_CHANNEL} \
-    OPENKOS_BUILD_COMMIT_SHA=${OPENKOS_BUILD_COMMIT_SHA}
+    GRIHAFLOW_BUILD_VERSION=${GRIHAFLOW_BUILD_VERSION} \
+    GRIHAFLOW_BUILD_CHANNEL=${GRIHAFLOW_BUILD_CHANNEL} \
+    GRIHAFLOW_BUILD_COMMIT_SHA=${GRIHAFLOW_BUILD_COMMIT_SHA}
 
 EXPOSE 8080
 
@@ -128,7 +128,7 @@ EXPOSE 8080
 # fix volume ownership and drop back to www-data via runuser
 USER root
 
-ENTRYPOINT ["/usr/local/bin/openkos-entrypoint"]
+ENTRYPOINT ["/usr/local/bin/grihaflow-entrypoint"]
 # Default: single-container mode (web + queue + scheduler). Compose splits the
 # roles by overriding CMD per service.
-CMD ["openkos-render"]
+CMD ["grihaflow-render"]

@@ -5,7 +5,7 @@
 
 ## Context
 
-OpenKOS needs clear internal structure without operational overhead. The alternatives were:
+GrihaFlow needs clear internal structure without operational overhead. The alternatives were:
 
 - **Microservices** — network boundaries between domains; independent deploys at the cost of distributed-systems complexity.
 - **Unstructured monolith** — fat controllers and models; fast at first, unmaintainable at scale.
@@ -15,7 +15,7 @@ The app is self-hosted by individual kos owners ([ADR-001](001-single-tenant.md)
 
 ## Decision
 
-We will build OpenKOS as a **modular monolith**: a single Laravel application with strict internal boundaries.
+We will build GrihaFlow as a **modular monolith**: a single Laravel application with strict internal boundaries.
 
 - Application code in `app/` follows the layer architecture (Controllers → Actions → Business/Repositories → Notifications) defined in [docs/architecture.md](../../architecture.md).
 - Domains are vertical slices across those layers (`{Layer}/{Domain}/`), e.g. Leases, Reminders.

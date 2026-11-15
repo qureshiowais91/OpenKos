@@ -1,12 +1,12 @@
-# OpenKOS single-service deployment on Render.
+# GrihaFlow single-service deployment on Render.
 # One web service runs FrankenPHP, the queue worker, and the scheduler in one
 # container from the production image; Postgres is a managed Render database.
 services:
     - type: web
-      name: openkos
+      name: grihaflow
       runtime: docker
       dockerfilePath: .docker/php/Dockerfile.prod
-      dockerCommand: /usr/local/bin/openkos-render
+      dockerCommand: /usr/local/bin/grihaflow-render
       plan: 1c-2g
       healthCheckPath: /up
       preDeployCommand: php artisan migrate --force
@@ -29,7 +29,7 @@ services:
             value: pgsql
           - key: DB_URL
             fromDatabase:
-                name: openkos-db
+                name: grihaflow-db
                 property: connectionString
           - key: SESSION_DRIVER
             value: database
@@ -43,5 +43,5 @@ services:
             value: 'true'
 
 databases:
-    - name: openkos-db
+    - name: grihaflow-db
       plan: 0.5c-1g

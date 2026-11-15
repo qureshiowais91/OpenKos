@@ -149,7 +149,7 @@ it('reports an expired callback after a settled attempt as an anomaly', function
     Log::shouldHaveReceived('warning')->once();
 });
 
-it('requires provider and OpenKOS references to identify the same attempt', function () {
+it('requires provider and GrihaFlow references to identify the same attempt', function () {
     Log::spy();
     $invoice = Invoice::factory()->create(['total' => 3_000_000]);
     $first = PaymentAttempt::factory()->for($invoice)->create([

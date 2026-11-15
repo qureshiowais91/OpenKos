@@ -9,7 +9,7 @@ class SettingSeeder extends Seeder
 {
     public function run(): void
     {
-        Setting::set('site_name', 'OpenKOS');
+        Setting::set('site_name', 'GrihaFlow');
         Setting::set('country_code', 'ID');
         Setting::set('locale', 'id');
         Setting::set('currency', 'IDR');

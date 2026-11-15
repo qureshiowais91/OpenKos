@@ -1,5 +1,5 @@
 // Shapes of the `platform` shared Inertia prop, serialized from the
-// OpenKOS platform registries (src/Platform/). See docs/platform.md.
+// GrihaFlow platform registries (src/Platform/). See docs/platform.md.
 
 export type PlatformNavigationItem = {
     title: string;

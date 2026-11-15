@@ -14,9 +14,9 @@ use RuntimeException;
 
 class DemoUsersSeeder extends Seeder
 {
-    private const STAFF_EMAIL = 'demo.staff@openkos.com';
+    private const STAFF_EMAIL = 'demo.staff@grihaflow.com';
 
-    private const TENANT_EMAIL = 'demo.tenant@openkos.com';
+    private const TENANT_EMAIL = 'demo.tenant@grihaflow.com';
 
     private const PASSWORD = 'password';
 

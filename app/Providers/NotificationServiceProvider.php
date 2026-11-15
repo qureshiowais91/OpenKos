@@ -58,7 +58,7 @@ class NotificationServiceProvider extends ServiceProvider
 
         if ($registration) {
             if ($registration->laravelMailer === null) {
-                Log::warning('OpenKOS mail driver has no Laravel mailer capability; falling back to Laravel log mailer.', [
+                Log::warning('GrihaFlow mail driver has no Laravel mailer capability; falling back to Laravel log mailer.', [
                     'driver' => $driver,
                     'fallback' => 'log',
                     'reason' => 'missing_capability',
@@ -71,7 +71,7 @@ class NotificationServiceProvider extends ServiceProvider
                 return $registration->laravelMailer;
             }
 
-            Log::warning('Configured Laravel mailer for OpenKOS mail driver is unavailable; falling back to Laravel log mailer.', [
+            Log::warning('Configured Laravel mailer for GrihaFlow mail driver is unavailable; falling back to Laravel log mailer.', [
                 'driver' => $driver,
                 'mailer' => $registration->laravelMailer,
                 'fallback' => 'log',

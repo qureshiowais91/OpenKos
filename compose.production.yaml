@@ -1,16 +1,16 @@
 volumes:
     uploads:
-        name: '${OPENKOS_UPLOAD_VOLUME:-openkos_uploads}'
+        name: '${GRIHAFLOW_UPLOAD_VOLUME:-grihaflow_uploads}'
 
 services:
     web:
-        image: '${OPENKOS_IMAGE:-ghcr.io/senatroxx/openkos:latest}'
+        image: '${GRIHAFLOW_IMAGE:-grihaflow/app:latest}'
         env_file:
-            - '${OPENKOS_ENV_FILE:-.env.production}'
+            - '${GRIHAFLOW_ENV_FILE:-.env.production}'
         environment:
             LARAVEL_OPTIMIZE: '${LARAVEL_OPTIMIZE:-true}'
         ports:
-            - '${OPENKOS_HTTP_BIND:-127.0.0.1}:${OPENKOS_HTTP_PORT:-8080}:8080'
+            - '${GRIHAFLOW_HTTP_BIND:-127.0.0.1}:${GRIHAFLOW_HTTP_PORT:-8080}:8080'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         volumes:
@@ -30,15 +30,15 @@ services:
         logging:
             driver: json-file
             options:
-                max-size: '${OPENKOS_LOG_MAX_SIZE:-10m}'
-                max-file: '${OPENKOS_LOG_MAX_FILES:-3}'
-        cpus: '${OPENKOS_WEB_CPUS:-1.0}'
-        mem_limit: '${OPENKOS_WEB_MEMORY:-512m}'
+                max-size: '${GRIHAFLOW_LOG_MAX_SIZE:-10m}'
+                max-file: '${GRIHAFLOW_LOG_MAX_FILES:-3}'
+        cpus: '${GRIHAFLOW_WEB_CPUS:-1.0}'
+        mem_limit: '${GRIHAFLOW_WEB_MEMORY:-512m}'
 
     queue:
-        image: '${OPENKOS_IMAGE:-ghcr.io/senatroxx/openkos:latest}'
+        image: '${GRIHAFLOW_IMAGE:-grihaflow/app:latest}'
         env_file:
-            - '${OPENKOS_ENV_FILE:-.env.production}'
+            - '${GRIHAFLOW_ENV_FILE:-.env.production}'
         environment:
             LARAVEL_OPTIMIZE: '${LARAVEL_OPTIMIZE:-true}'
         extra_hosts:
@@ -68,15 +68,15 @@ services:
         logging:
             driver: json-file
             options:
-                max-size: '${OPENKOS_LOG_MAX_SIZE:-10m}'
-                max-file: '${OPENKOS_LOG_MAX_FILES:-3}'
-        cpus: '${OPENKOS_QUEUE_CPUS:-0.5}'
-        mem_limit: '${OPENKOS_QUEUE_MEMORY:-512m}'
+                max-size: '${GRIHAFLOW_LOG_MAX_SIZE:-10m}'
+                max-file: '${GRIHAFLOW_LOG_MAX_FILES:-3}'
+        cpus: '${GRIHAFLOW_QUEUE_CPUS:-0.5}'
+        mem_limit: '${GRIHAFLOW_QUEUE_MEMORY:-512m}'
 
     scheduler:
-        image: '${OPENKOS_IMAGE:-ghcr.io/senatroxx/openkos:latest}'
+        image: '${GRIHAFLOW_IMAGE:-grihaflow/app:latest}'
         env_file:
-            - '${OPENKOS_ENV_FILE:-.env.production}'
+            - '${GRIHAFLOW_ENV_FILE:-.env.production}'
         environment:
             LARAVEL_OPTIMIZE: '${LARAVEL_OPTIMIZE:-true}'
         extra_hosts:
@@ -103,7 +103,7 @@ services:
         logging:
             driver: json-file
             options:
-                max-size: '${OPENKOS_LOG_MAX_SIZE:-10m}'
-                max-file: '${OPENKOS_LOG_MAX_FILES:-3}'
-        cpus: '${OPENKOS_SCHEDULER_CPUS:-0.25}'
-        mem_limit: '${OPENKOS_SCHEDULER_MEMORY:-256m}'
+                max-size: '${GRIHAFLOW_LOG_MAX_SIZE:-10m}'
+                max-file: '${GRIHAFLOW_LOG_MAX_FILES:-3}'
+        cpus: '${GRIHAFLOW_SCHEDULER_CPUS:-0.25}'
+        mem_limit: '${GRIHAFLOW_SCHEDULER_MEMORY:-256m}'

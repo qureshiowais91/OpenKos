@@ -1,6 +1,6 @@
 # Payment reconciliation and recovery
 
-OpenKOS treats webhook settlement as authoritative, but can recheck a pending
+GrihaFlow treats webhook settlement as authoritative, but can recheck a pending
 gateway attempt when the installed provider supports status lookup.
 
 ## Reconciliation flow
@@ -22,8 +22,8 @@ both flows.
 ## Uncertain checkout creation
 
 An attempt is marked `provider_creation_state=uncertain` when the provider
-request may have succeeded but OpenKOS cannot prove the response was saved.
-OpenKOS must not create another checkout for that attempt unless the provider
+request may have succeeded but GrihaFlow cannot prove the response was saved.
+GrihaFlow must not create another checkout for that attempt unless the provider
 can identify it through a stored provider reference. If no provider reference
 exists, the attempt remains pending for provider/webhook investigation.
 
@@ -43,12 +43,12 @@ Configure the Xendit Payment Session webhook URL in the Xendit dashboard:
 `https://your-public-domain.example/api/webhooks/payment/xendit`
 
 Enable the Payment Session Completed and Payment Session Expired events. The
-OpenKOS Xendit package uses `GET /sessions/{session_id}` for reconciliation and
-maps Xendit session states to the provider-independent OpenKOS attempt states.
+GrihaFlow Xendit package uses `GET /sessions/{session_id}` for reconciliation and
+maps Xendit session states to the provider-independent GrihaFlow attempt states.
 
 ## Troubleshooting
 
-1. Check the invoice's **Gateway attempts** section for the OpenKOS and provider
+1. Check the invoice's **Gateway attempts** section for the GrihaFlow and provider
    references, lifecycle status, expiry, and safe failure message.
 2. Use **Recheck status** when the provider reference is present.
 3. Inspect application logs using the attempt reference and provider reference.

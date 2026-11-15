@@ -5,7 +5,7 @@ use App\Models\UnitType;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-$owner = User::query()->where('email', 'budi@openkos.com')->firstOrFail();
+$owner = User::query()->where('email', 'budi@grihaflow.com')->firstOrFail();
 $property = Property::factory()->create([
     'name' => 'OPE-223 Pricing Property',
     'slug' => 'ope223-pricing-property',
@@ -48,7 +48,7 @@ $tenant = Tenant::factory()->create([
 ]);
 
 file_put_contents(
-    getenv('OPENKOS_E2E_FIXTURE_PATH'),
+    getenv('GRIHAFLOW_E2E_FIXTURE_PATH'),
     json_encode([
         'property' => $property->slug,
         'unit' => $unit->slug,

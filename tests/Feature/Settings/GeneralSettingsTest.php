@@ -41,7 +41,7 @@ describe('General settings page', function () {
     it('renders the form with all settings', function () {
         $owner = User::factory()->owner()->create();
 
-        Setting::set('site_name', 'OpenKOS');
+        Setting::set('site_name', 'GrihaFlow');
         Setting::set('country_code', 'ID');
         Setting::set('locale', 'id');
         Setting::set('currency', 'IDR');
@@ -247,7 +247,7 @@ describe('General settings page', function () {
 
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'site_name' => 'OpenKOS',
+                'site_name' => 'GrihaFlow',
                 'country_code' => 'USA',
                 'locale' => 'id',
                 'currency' => 'IDR',
@@ -263,7 +263,7 @@ describe('General settings page', function () {
 
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'site_name' => 'OpenKOS',
+                'site_name' => 'GrihaFlow',
                 'country_code' => 'ID',
                 'locale' => 'id',
                 'currency' => 'INR',
@@ -279,7 +279,7 @@ describe('General settings page', function () {
 
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'site_name' => 'OpenKOS',
+                'site_name' => 'GrihaFlow',
                 'country_code' => 'ID',
                 'locale' => 'id',
                 'currency' => 'IDR',
@@ -295,7 +295,7 @@ describe('General settings page', function () {
 
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'site_name' => 'OpenKOS',
+                'site_name' => 'GrihaFlow',
                 'country_code' => 'ID',
                 'locale' => 'id',
                 'currency' => 'IDR',
