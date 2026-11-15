@@ -9,7 +9,6 @@ services:
       dockerCommand: /usr/local/bin/openkos-render
       plan: 1c-2g
       healthCheckPath: /up
-      maxShutdownDelaySeconds: 60
       preDeployCommand: php artisan migrate --force
       disk:
           name: uploads
