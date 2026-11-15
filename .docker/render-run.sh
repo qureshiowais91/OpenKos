@@ -26,6 +26,31 @@ fi
 while :; do php artisan schedule:work --no-interaction || sleep 5; done &
 while :; do php artisan queue:work --sleep=3 --tries=3 --timeout=90 --no-interaction || sleep 5; done &
 
+# ponytail: free Render tier has no shell/one-off jobs, so the first owner is
+# seeded from env on boot; rotate OPENKOS_OWNER_PASSWORD after first login
+if [ -n "${OPENKOS_OWNER_EMAIL:-}" ] && [ -n "${OPENKOS_OWNER_PASSWORD:-}" ]; then
+    php artisan db:seed --class='Database\Seeders\RoleAndPermissionSeeder' --force
+    php artisan tinker --execute '
+        if (!App\Models\User::exists()) {
+            $u = App\Models\User::create([
+                "name" => "Owner",
+                "email" => getenv("OPENKOS_OWNER_EMAIL"),
+                "password" => Illuminate\Support\Facades\Hash::make(getenv("OPENKOS_OWNER_PASSWORD")),
+                "is_active" => true,
+            ]);
+            $u->markEmailAsVerified();
+            $u->assignRole("owner");
+            App\Models\Setting::set("site_name", "OpenKOS");
+            App\Models\Setting::set("country_code", "XX");
+            App\Models\Setting::set("locale", "en");
+            App\Models\Setting::set("currency", "USD");
+            App\Models\Setting::set("supported_currencies", ["USD"]);
+            App\Models\Setting::set("timezone", "UTC");
+            echo "owner account created\n";
+        }
+    '
+fi
+
 # Render assigns PORT (default 10000); honor it, fall back to the image default
 export SERVER_NAME=":${PORT:-8080}"
 
