@@ -92,3 +92,61 @@ Stable version tags publish `1.2.3`, `1.2`, `1`, and `latest`.
 
 Nightly builds publish `nightly` and an immutable tag containing the UTC build
 date and commit SHA. Nightly builds never move `latest`.
+
+## Render (single service)
+
+The repository includes a Render Blueprint (`render.yaml`) that deploys the
+whole application as one service: FrankenPHP serves HTTP on the container's
+default port while `schedule:work` and `queue:work` run as supervised
+background processes in the same instance (`.docker/render-run.sh`, wired in
+as the Docker command). A managed Render Postgres backs the database, and a
+persistent disk is mounted at `storage/app/private` for tenant documents and
+payment proofs.
+
+Blueprint specifics:
+
+- `preDeployCommand` runs `php artisan migrate --force` before every deploy,
+  keeping migrations an explicit release operation even in single-service mode.
+- `TRUSTED_PROXIES=*` is set because all ingress reaches the service through
+  Render's own proxy and the application is unreachable except through it.
+- The attached disk prevents zero-downtime deploys (Render stops the old
+  instance before starting the new one) and prevents scaling to multiple
+  instances. Splitting into separate web/worker services is required before
+  scaling; that matches the Compose topology instead.
+- Attach a custom domain and set `APP_URL` accordingly after the first sync.
+
+First-time setup runs after the initial deploy succeeds. Open Render Shell
+(paid plan) or SSH into the service and run:
+
+```bash
+php artisan app:install
+```
+
+This migrates, seeds roles and permissions, sets site settings, and creates
+the first owner account.
+
+To deploy the published immutable image instead of building on Render, change
+`runtime: docker` / `dockerfilePath` / `dockerCommand` for:
+
+```yaml
+runtime: image
+image:
+    url: ghcr.io/senatroxx/openkos:1.2.3
+```
+
+and move the migrate command to Render Shell or a one-off job per release.
+
+### Free tier
+
+The free web plan cannot use persistent disks or `preDeployCommand`, and free
+Postgres expires after 30 days, so a free deployment is for evaluation only:
+
+- Remove the `disk` block and the `databases` entry; uploads and branding
+  files are lost on every redeploy.
+- Add the env var `OPENKOS_MIGRATE_ON_BOOT=true` so the container migrates on
+  startup instead of `preDeployCommand`. Keep it `false` on paid plans.
+- Either create a paid Postgres and paste its connection string as `DB_URL`,
+  or point `DB_CONNECTION=sqlite` at a path under the (ephemeral) filesystem
+  for throwaway testing.
+- The service sleeps after 15 minutes without traffic; the first request
+  wakes it with a delay.
