@@ -28,3 +28,9 @@ Schedule::command('rent:send-reminders')
 Schedule::command('app:send-lease-expiration-notifications')
     ->dailyAt('08:05')
     ->withoutOverlapping(60);
+
+// Demo mode: password rotates at 00:00 UTC (every run re-applies the same
+// date-derived password), data resets via 48h delete+recreate.
+Schedule::command('app:demo-rotate')
+    ->twiceDailyAt(0, 12, 5)
+    ->withoutOverlapping(60);

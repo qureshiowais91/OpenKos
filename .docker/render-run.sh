@@ -51,6 +51,9 @@ if [ -n "${OPENKOS_OWNER_EMAIL:-}" ] && [ -n "${OPENKOS_OWNER_PASSWORD:-}" ]; th
     '
 fi
 
+# ponytail: demo accounts (idempotent; no-op unless DEMO_MODE=true)
+php artisan app:demo-rotate
+
 # Render assigns PORT (default 10000); honor it, fall back to the image default
 export SERVER_NAME=":${PORT:-8080}"
 
