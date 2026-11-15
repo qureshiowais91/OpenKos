@@ -26,6 +26,18 @@ fi
 while :; do php artisan schedule:work --no-interaction || sleep 5; done &
 while :; do php artisan queue:work --sleep=3 --tries=3 --timeout=90 --no-interaction || sleep 5; done &
 
+# ponytail: demo world is the native seeder chain (roles, regions, owner,
+# tenants, ope-184-demo-* properties, leases, invoices, maintenance) — English
+# UI over the IDR-priced demo data, no custom fixtures to maintain
+if [ "${DEMO_MODE:-false}" = true ]; then
+    php artisan db:seed --force --quiet
+    php artisan tinker --execute '
+        App\Models\Setting::set("locale", "en");
+        App\Models\Setting::set("timezone", "UTC");
+        echo "demo world seeded\n";
+    '
+fi
+
 # ponytail: free Render tier has no shell/one-off jobs, so the first owner is
 # seeded from env on boot; rotate OPENKOS_OWNER_PASSWORD after first login
 if [ -n "${OPENKOS_OWNER_EMAIL:-}" ] && [ -n "${OPENKOS_OWNER_PASSWORD:-}" ]; then
