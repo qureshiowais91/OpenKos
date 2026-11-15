@@ -163,12 +163,17 @@ Postgres expires after 30 days, so a free deployment is for evaluation only:
   vars; the working endpoint is `PUT /v1/services/{id}/env-vars`, which
   replaces the entire list — GET the current list first and PUT the merged
   set.
-- Demo mode (optional): set `DEMO_MODE=true` to create shared demo accounts
-  (`demo.owner@`, `demo.staff@`, `demo.renter@` at `openkos.test`) whose
-  password is `PASSWORD_<UTC date, YYYYMMDD>` — it rotates every 24h at
-  midnight UTC and old copies stop working. Demo users older than 48h are
-  deleted and recreated, wiping whatever demo visitors changed. The command
-  (`app:demo-rotate`) is a no-op unless `DEMO_MODE=true`.
+- Demo mode (optional): set `DEMO_MODE=true` and boot seeds the app's native
+  demo world (`db:seed` — roles, tenants, `ope-184-demo-*` properties, 17
+  leases, invoices, maintenance) and shares three accounts: `budi@openkos.com`
+  (owner), `demo.staff@openkos.com` (staff role: tenants/leases), and
+  `demo.tenant@openkos.com` (tenant portal, linked to a seeded tenant with an
+  active lease). Their password is `PASSWORD_<UTC date, YYYYMMDD>` — it
+  rotates every 24h at midnight UTC and old copies stop working
+  (`app:demo-rotate`; no-op unless `DEMO_MODE=true`). Every boot reseeds the
+  fresh `/tmp` SQLite, so demo changes never persist. With `DEMO_MODE=true`
+  the env-driven owner account is not created — `budi@openkos.com` is the
+  owner login.
 - The FrankenPHP binary must ship without file capabilities for Render's
   restricted capability set (`setcap -r /usr/local/bin/frankenphp` in the
   Dockerfile), and the runner binds to `$PORT` via `SERVER_NAME`.
