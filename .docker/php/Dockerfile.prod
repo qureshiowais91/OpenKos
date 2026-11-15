@@ -124,4 +124,6 @@ EXPOSE 8080
 USER root
 
 ENTRYPOINT ["/usr/local/bin/openkos-entrypoint"]
-CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+# Default: single-container mode (web + queue + scheduler). Compose splits the
+# roles by overriding CMD per service.
+CMD ["openkos-render"]
