@@ -166,3 +166,10 @@ Postgres expires after 30 days, so a free deployment is for evaluation only:
 - The FrankenPHP binary must ship without file capabilities for Render's
   restricted capability set (`setcap -r /usr/local/bin/frankenphp` in the
   Dockerfile), and the runner binds to `$PORT` via `SERVER_NAME`.
+- Email (verification, password reset) is not wired on the free tier: with no
+  `MAIL_*` env vars the mailer falls back to `log`, so emails are written to
+  the Render logs instead of sent — verification links can be recovered by
+  grepping the logs (they expire after ~60 minutes and must be opened while
+  logged in). For real email set `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`,
+  `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME`, and
+  `APP_URL=https://openkos-free.onrender.com`.
