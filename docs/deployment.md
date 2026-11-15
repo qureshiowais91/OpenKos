@@ -150,3 +150,19 @@ Postgres expires after 30 days, so a free deployment is for evaluation only:
   for throwaway testing.
 - The service sleeps after 15 minutes without traffic; the first request
   wakes it with a delay.
+- Because there is no Shell and one-off jobs are paid-only, the first owner
+  account is seeded on boot: set `OPENKOS_OWNER_EMAIL` and
+  `OPENKOS_OWNER_PASSWORD`; the boot script seeds roles and settings
+  (`site_name`, `locale=en`, `currency=USD`, `timezone=UTC`) only while no
+  users exist. Rotate the password after the first login — without these
+  vars the app falls back to its Indonesian default locale
+  (`config/settings.php`).
+- Env-var changes made via the Render API do **not** trigger a deploy (only
+  commits do); trigger one manually with
+  `POST /v1/services/{id}/deploys`. `PATCH /v1/services/{id}` ignores env
+  vars; the working endpoint is `PUT /v1/services/{id}/env-vars`, which
+  replaces the entire list — GET the current list first and PUT the merged
+  set.
+- The FrankenPHP binary must ship without file capabilities for Render's
+  restricted capability set (`setcap -r /usr/local/bin/frankenphp` in the
+  Dockerfile), and the runner binds to `$PORT` via `SERVER_NAME`.
