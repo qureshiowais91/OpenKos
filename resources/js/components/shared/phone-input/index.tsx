@@ -40,14 +40,10 @@ export default function PhoneInput({
 
     const full = number ? selected.dialCode + number : '';
 
-    const filtered = search
-        ? countryCodes.filter(
-              (c) =>
-                  c.name.toLowerCase().includes(search.toLowerCase()) ||
-                  c.iso2.toLowerCase().includes(search.toLowerCase()) ||
-                  c.dialCode.includes(search),
-          )
-        : countryCodes;
+    // India-only app: the picker offers India, but stored legacy numbers with
+    // other dial codes still parse via the full countryCodes table.
+    const selectable = countryCodes.filter((c) => c.iso2 === 'IN');
+    const filtered = selected.iso2 === 'IN' ? selectable : countryCodes;
 
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);
@@ -76,98 +72,119 @@ export default function PhoneInput({
 
     return (
         <div className="flex gap-2">
-            <Popover open={open} onOpenChange={handleOpenChange}>
-                <PopoverTrigger asChild>
-                    <button
-                        type="button"
-                        role="combobox"
-                        aria-expanded={open}
-                        className={cn(
-                            'flex h-10 w-28 shrink-0 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background',
-                            'focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none',
-                            'hover:bg-accent hover:text-accent-foreground',
-                        )}
-                    >
-                        <span className="flex items-center gap-1">
-                            <span className="font-medium">{selected.iso2}</span>
-                            <span className="text-muted-foreground">
-                                {selected.dialCode}
-                            </span>
-                        </span>
-                        <ChevronDown className="ml-1 size-4 shrink-0 text-muted-foreground" />
-                    </button>
-                </PopoverTrigger>
-                <PopoverContent
-                    className="w-[280px] p-0"
-                    align="start"
-                    side="bottom"
+            {selectable.length === 1 ? (
+                <div
+                    className={cn(
+                        'flex h-10 w-28 shrink-0 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background',
+                        'opacity-80',
+                    )}
+                    aria-label={`${selected.iso2} ${selected.dialCode}`}
                 >
-                    <Command
-                        key={openKey}
-                        shouldFilter={false}
-                        defaultValue={selected.iso2 + selected.dialCode}
+                    <span className="flex items-center gap-1">
+                        <span className="font-medium">{selected.iso2}</span>
+                        <span className="text-muted-foreground">
+                            {selected.dialCode}
+                        </span>
+                    </span>
+                </div>
+            ) : (
+                <Popover open={open} onOpenChange={handleOpenChange}>
+                    <PopoverTrigger asChild>
+                        <button
+                            type="button"
+                            role="combobox"
+                            aria-expanded={open}
+                            className={cn(
+                                'flex h-10 w-28 shrink-0 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background',
+                                'focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none',
+                                'hover:bg-accent hover:text-accent-foreground',
+                            )}
+                        >
+                            <span className="flex items-center gap-1">
+                                <span className="font-medium">
+                                    {selected.iso2}
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {selected.dialCode}
+                                </span>
+                            </span>
+                            <ChevronDown className="ml-1 size-4 shrink-0 text-muted-foreground" />
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                        className="w-[280px] p-0"
+                        align="start"
+                        side="bottom"
                     >
-                        <CommandInput
-                            placeholder={t('Search country or code')}
-                            value={search}
-                            onValueChange={setSearch}
-                        />
-                        <CommandList>
-                            <CommandEmpty>{t('No country found')}</CommandEmpty>
-                            <CommandGroup>
-                                {filtered.map((c) => (
-                                    <CommandItem
-                                        key={c.iso2 + c.dialCode}
-                                        value={c.iso2 + c.dialCode}
-                                        onSelect={() => {
-                                            setSelected({
-                                                ...c,
-                                                number: selected.number,
-                                            });
-                                            onChange?.(
-                                                number
-                                                    ? c.dialCode + number
-                                                    : '',
-                                            );
-                                            setOpen(false);
-                                            setSearch('');
-                                        }}
-                                        className="flex cursor-pointer items-center gap-3 px-3 py-2.5"
-                                    >
-                                        <span
-                                            className={cn(
-                                                'flex size-4 shrink-0 items-center justify-center rounded-full border text-xs',
-                                                selected.iso2 === c.iso2 &&
-                                                    selected.dialCode ===
-                                                        c.dialCode
-                                                    ? 'border-primary bg-primary text-primary-foreground'
-                                                    : 'border-muted-foreground/30',
-                                            )}
+                        <Command
+                            key={openKey}
+                            shouldFilter={false}
+                            defaultValue={selected.iso2 + selected.dialCode}
+                        >
+                            <CommandInput
+                                placeholder={t('Search country or code')}
+                                value={search}
+                                onValueChange={setSearch}
+                            />
+                            <CommandList>
+                                <CommandEmpty>
+                                    {t('No country found')}
+                                </CommandEmpty>
+                                <CommandGroup>
+                                    {filtered.map((c) => (
+                                        <CommandItem
+                                            key={c.iso2 + c.dialCode}
+                                            value={c.iso2 + c.dialCode}
+                                            onSelect={() => {
+                                                setSelected({
+                                                    ...c,
+                                                    number: selected.number,
+                                                });
+                                                onChange?.(
+                                                    number
+                                                        ? c.dialCode + number
+                                                        : '',
+                                                );
+                                                setOpen(false);
+                                                setSearch('');
+                                            }}
+                                            className="flex cursor-pointer items-center gap-3 px-3 py-2.5"
                                         >
-                                            {selected.iso2 === c.iso2 &&
-                                                selected.dialCode ===
-                                                    c.dialCode && (
-                                                    <span className="size-1.5 rounded-full bg-current" />
+                                            <span
+                                                className={cn(
+                                                    'flex size-4 shrink-0 items-center justify-center rounded-full border text-xs',
+                                                    selected.iso2 === c.iso2 &&
+                                                        selected.dialCode ===
+                                                            c.dialCode
+                                                        ? 'border-primary bg-primary text-primary-foreground'
+                                                        : 'border-muted-foreground/30',
                                                 )}
-                                        </span>
-                                        <div className="flex flex-col">
-                                            <span className="flex items-center gap-2 text-sm font-medium">
-                                                <span>{c.iso2}</span>
-                                                <span className="font-normal text-muted-foreground">
-                                                    {c.dialCode}
+                                            >
+                                                {selected.iso2 === c.iso2 &&
+                                                    selected.dialCode ===
+                                                        c.dialCode && (
+                                                        <span className="size-1.5 rounded-full bg-current" />
+                                                    )}
+                                            </span>
+                                            <div className="flex flex-col">
+                                                <span className="flex items-center gap-2 text-sm font-medium">
+                                                    <span>{c.iso2}</span>
+                                                    <span className="font-normal text-muted-foreground">
+                                                        {c.dialCode}
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <span className="text-xs text-muted-foreground">
-                                                {c.name}
-                                            </span>
-                                        </div>
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
-                        </CommandList>
-                    </Command>
-                </PopoverContent>
-            </Popover>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {c.name}
+                                                </span>
+                                            </div>
+                                        </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                            </CommandList>
+                        </Command>
+                    </PopoverContent>
+                </Popover>
+            )}
             {name && <input type="hidden" name={name} value={full} />}
             <Input
                 type="tel"

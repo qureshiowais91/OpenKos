@@ -21,6 +21,6 @@ class CurrencyAwareManagerTestPaymentGateway extends ManagerTestPaymentGateway i
      */
     public function supportedCurrencies(): array
     {
-        return ['IDR'];
+        return ['INR'];
     }
 }

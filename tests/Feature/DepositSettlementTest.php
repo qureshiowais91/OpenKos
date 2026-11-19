@@ -44,7 +44,7 @@ function terminatedDepositLease(array $attributes = []): Lease
 {
     return Lease::factory()->terminated()->create([
         'deposit_amount' => '1000',
-        'currency' => 'USD',
+        'currency' => 'INR',
         ...$attributes,
     ]);
 }
@@ -62,7 +62,7 @@ it('creates a draft with a deposit snapshot and deduction lines', function () {
 
     expect($settlement)
         ->original_amount->toBe('1000.000')
-        ->currency->toBe('USD')
+        ->currency->toBe('INR')
         ->status->toBe(DepositSettlementStatus::Draft)
         ->refund_amount->toBe('700.000')
         ->deductions_total->toBe('300.000');
@@ -220,7 +220,7 @@ it('keeps the original snapshot when lease deposit data later changes', function
 
     expect($settlement)
         ->original_amount->toBe('1000.000')
-        ->currency->toBe('USD')
+        ->currency->toBe('INR')
         ->refund_amount->toBe('600.000');
 });
 
@@ -262,12 +262,12 @@ it('translates concurrent settlement creation conflicts into validation errors',
 });
 
 it('does not settle a deposit while transferring a lease to another unit', function () {
-    $sourceUnit = Unit::factory()->withRate('1000', 'USD')->create();
-    $targetUnit = Unit::factory()->withRate('1000', 'USD')->create();
+    $sourceUnit = Unit::factory()->withRate('1000', 'INR')->create();
+    $targetUnit = Unit::factory()->withRate('1000', 'INR')->create();
     $lease = Lease::factory()->create([
         'unit_id' => $sourceUnit->id,
         'deposit_amount' => '1000',
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
 
     expect(fn () => app(MoveOutLease::class)->execute($lease, new MoveOutLeaseData(
@@ -294,7 +294,7 @@ it('settles an active lease atomically with move-out', function () {
     $user = User::factory()->owner()->create();
     $lease = Lease::factory()->create([
         'deposit_amount' => '1000',
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
 
     $this->actingAs($user)
@@ -322,7 +322,7 @@ it('rolls back move-out when its settlement is invalid', function () {
     $user = User::factory()->owner()->create();
     $lease = Lease::factory()->create([
         'deposit_amount' => '1000',
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
 
     $this->actingAs($user)
@@ -347,7 +347,7 @@ it('keeps legacy refund fields separate from a new settlement', function () {
         'deposit_amount' => '1000',
         'deposit_refund_amount' => '600',
         'deposit_refunded_at' => '2026-09-01 10:00:00',
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
 
     $this->actingAs($user)->post(route('leases.move-out', $lease), [

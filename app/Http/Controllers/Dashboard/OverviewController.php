@@ -180,7 +180,9 @@ class OverviewController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        $countryCode = Setting::get('country_code', 'ID');
+        // India-only: region data is seeded per country; keep legacy rows
+        // reachable but default to the regional country code.
+        $countryCode = Setting::get('country_code', config('regional.country.code', 'IN'));
         $regions = Region::where('country_code', $countryCode)
             ->orderBy('name')
             ->get(['id', 'name']);

@@ -148,7 +148,7 @@ test('collection queue shows correct outstanding count', function () {
         ->assertInertia(fn ($page) => $page
             ->where('outstanding.count', 2)
             ->where('outstanding.amounts', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '300000.000',
             ]])
         );
@@ -162,7 +162,7 @@ test('outstanding amounts include currencies represented by collected payments',
     $user = User::factory()->owner()->create();
 
     $idrLease = Lease::factory()->create([
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'status' => 'active',
         'start_date' => now()->subMonths(2),
     ]);
@@ -175,13 +175,13 @@ test('outstanding amounts include currencies represented by collected payments',
     ]);
 
     $usdLease = Lease::factory()->create([
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => 'active',
         'start_date' => now()->subMonths(2),
     ]);
     $usdInvoice = Invoice::factory()->create([
         'lease_id' => $usdLease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'due_date' => '2026-07-05',
         'total' => 1_200_000,
         'amount_paid' => 1_200_000,
@@ -190,7 +190,7 @@ test('outstanding amounts include currencies represented by collected payments',
     Payment::factory()->create([
         'invoice_id' => $usdInvoice->id,
         'amount' => 1_200_000,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'payment_date' => '2026-07-09',
         'status' => PaymentStatus::Confirmed,
     ]);
@@ -199,8 +199,7 @@ test('outstanding amounts include currencies represented by collected payments',
         ->get(route('dashboard.rent'))
         ->assertInertia(fn ($page) => $page
             ->where('outstanding.amounts', [
-                ['currency' => 'IDR', 'amount' => '106951000.000'],
-                ['currency' => 'USD', 'amount' => '0'],
+                ['currency' => 'INR', 'amount' => '106951000.000'],
             ])
         );
 
@@ -212,13 +211,13 @@ test('collection queue preserves financial activity from terminated leases', fun
 
     $user = User::factory()->owner()->create();
     $lease = Lease::factory()->terminated()->create([
-        'currency' => 'USD',
+        'currency' => 'INR',
         'end_date' => '2026-07-10',
     ]);
     Invoice::factory()->create([
         'lease_id' => $lease->id,
         'reference' => 'INV-TERMINATED-PENDING',
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-01',
         'due_date' => '2026-07-05',
         'total' => 400,
@@ -228,7 +227,7 @@ test('collection queue preserves financial activity from terminated leases', fun
     $paidInvoice = Invoice::factory()->create([
         'lease_id' => $lease->id,
         'reference' => 'INV-TERMINATED-PAID',
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-02',
         'due_date' => '2026-07-05',
         'total' => 600,
@@ -237,7 +236,7 @@ test('collection queue preserves financial activity from terminated leases', fun
     ]);
     Invoice::factory()->create([
         'lease_id' => $lease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-03',
         'total' => 700,
         'amount_paid' => 0,
@@ -245,7 +244,7 @@ test('collection queue preserves financial activity from terminated leases', fun
     ]);
     Invoice::factory()->create([
         'lease_id' => $lease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-04',
         'total' => 800,
         'amount_paid' => 0,
@@ -254,7 +253,7 @@ test('collection queue preserves financial activity from terminated leases', fun
     Payment::factory()->create([
         'invoice_id' => $paidInvoice->id,
         'amount' => 600,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'payment_date' => '2026-07-08',
         'status' => PaymentStatus::Confirmed,
     ]);
@@ -267,13 +266,13 @@ test('collection queue preserves financial activity from terminated leases', fun
             ->where('tab_counts.paid', 1)
             ->where('outstanding.count', 1)
             ->where('outstanding.amounts', [[
-                'currency' => 'USD',
+                'currency' => 'INR',
                 'amount' => '400.000',
             ]])
             ->where('progress.processed', 1)
             ->where('progress.total', 2)
             ->where('progress.amount_collected', [[
-                'currency' => 'USD',
+                'currency' => 'INR',
                 'amount' => '600',
             ]])
         );
@@ -388,13 +387,13 @@ test('collection queue tab counts are correct', function () {
             ->where('tab_counts.paid', 1)
             ->where('outstanding.count', 4)
             ->where('outstanding.amounts', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '650000.000',
             ]])
             ->where('progress.processed', 1)
             ->where('progress.total', 5)
             ->where('progress.amount_collected', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '600000',
             ]])
             ->where('progress.last_payment_at', '2026-07-09')

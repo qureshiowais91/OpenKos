@@ -1,7 +1,6 @@
 import { router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { SearchInput } from '@/components/data-table/search-input';
+import { useState } from 'react';
 import { AppearanceTabs } from '@/components/features';
 import { InputError } from '@/components/shared';
 import { Button } from '@/components/ui/button';
@@ -12,16 +11,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { t } from '@/lib/i18n';
 import {
@@ -35,10 +26,33 @@ import {
 
 type BrandingAsset = 'logo' | 'favicon';
 
+type Regional = {
+    country?: {
+        name?: string;
+        code?: string;
+        phone_code?: string;
+        postal_code_label?: string;
+        postal_code_pattern?: string;
+    };
+    currency?: { code?: string; symbol?: string; minor_units?: number };
+    timezone?: string;
+    locale?: {
+        app?: string;
+        intl?: string;
+        fallback?: string;
+        options?: Record<string, string>;
+    };
+    format?: {
+        date_format?: string;
+        time_format?: string;
+        numbering?: string;
+        measurement?: string;
+    };
+};
+
 export default function General({
     settings,
-    locale_options: localeOptions,
-    timezone_list: timezoneList,
+    regional,
 }: {
     settings: {
         site_name: string;
@@ -51,11 +65,9 @@ export default function General({
         invoice_id_prefix: string;
         invoice_pdf_enabled: boolean;
     };
-    locale_options: Record<string, string>;
-    timezone_list: string[];
+    regional: Regional;
 }) {
-    const { app, branding } = usePage<{
-        app: { currency_scales: Record<string, number> };
+    const { branding } = usePage<{
         branding: {
             logoUrl: string;
             faviconUrl: string;
@@ -65,24 +77,6 @@ export default function General({
             hasConfiguredFavicon: boolean;
         };
     }>().props;
-    const allCurrencyOptions = Object.keys(app.currency_scales).sort();
-    const currencyNames = useMemo(
-        () => new Intl.DisplayNames(['en'], { type: 'currency' }),
-        [],
-    );
-
-    const currencyLabel = useCallback(
-        (currency: string): string =>
-            `${currency} — ${currencyNames.of(currency) ?? currency}`,
-        [currencyNames],
-    );
-    const [currencySearch, setCurrencySearch] = useState('');
-    const normalizedCurrencySearch = currencySearch.trim().toLowerCase();
-    const currencyOptions = allCurrencyOptions.filter((currency) =>
-        currencyLabel(currency)
-            .toLowerCase()
-            .includes(normalizedCurrencySearch),
-    );
     const [uploadingBranding, setUploadingBranding] =
         useState<BrandingAsset | null>(null);
     const [brandingErrors, setBrandingErrors] = useState<
@@ -92,46 +86,6 @@ export default function General({
     const siteForm = useForm({
         site_name: settings.site_name,
     });
-
-    const localizationForm = useForm({
-        country_code: settings.country_code,
-        locale: settings.locale,
-        currency: settings.currency,
-        supported_currencies: settings.supported_currencies,
-        timezone: settings.timezone,
-    });
-
-    function setDefaultCurrency(currency: string): void {
-        localizationForm.setData((current) => ({
-            ...current,
-            currency,
-            supported_currencies: current.supported_currencies.includes(
-                currency,
-            )
-                ? current.supported_currencies
-                : [...current.supported_currencies, currency],
-        }));
-    }
-
-    function toggleSupportedCurrency(currency: string, checked: boolean): void {
-        if (!checked && currency === localizationForm.data.currency) {
-            return;
-        }
-
-        localizationForm.setData(
-            'supported_currencies',
-            checked
-                ? Array.from(
-                      new Set([
-                          ...localizationForm.data.supported_currencies,
-                          currency,
-                      ]),
-                  )
-                : localizationForm.data.supported_currencies.filter(
-                      (item) => item !== currency,
-                  ),
-        );
-    }
 
     const referenceForm = useForm({
         lease_id_prefix: settings.lease_id_prefix,
@@ -351,233 +305,77 @@ export default function General({
                         </Card>
                     </form>
 
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            localizationForm.submit(updateGeneral());
-                        }}
-                    >
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('Localization')}</CardTitle>
-                                <CardDescription>
-                                    {t(
-                                        'Regional preferences for the application.',
-                                    )}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="grid max-w-xs gap-2">
-                                    <Label htmlFor="country_code">
-                                        {t('Country')}
-                                    </Label>
-                                    <Input
-                                        id="country_code"
-                                        name="country_code"
-                                        value={
-                                            localizationForm.data.country_code
-                                        }
-                                        onChange={(e) =>
-                                            localizationForm.setData(
-                                                'country_code',
-                                                e.target.value.toUpperCase(),
-                                            )
-                                        }
-                                        maxLength={2}
-                                        className="font-mono uppercase"
-                                        placeholder="ID"
-                                        required
-                                    />
-                                    {localizationForm.errors.country_code && (
-                                        <p className="text-sm text-red-600">
-                                            {
-                                                localizationForm.errors
-                                                    .country_code
-                                            }
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="grid max-w-xs gap-2">
-                                    <Label htmlFor="locale">
-                                        {t('Locale')}
-                                    </Label>
-                                    <Select
-                                        value={localizationForm.data.locale}
-                                        onValueChange={(value) =>
-                                            localizationForm.setData(
-                                                'locale',
-                                                value,
-                                            )
-                                        }
-                                    >
-                                        <SelectTrigger id="locale">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {Object.entries(localeOptions).map(
-                                                ([value, label]) => (
-                                                    <SelectItem
-                                                        key={value}
-                                                        value={value}
-                                                    >
-                                                        {t(label)}
-                                                    </SelectItem>
-                                                ),
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                    {localizationForm.errors.locale && (
-                                        <p className="text-sm text-red-600">
-                                            {localizationForm.errors.locale}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="grid max-w-md gap-2">
-                                    <Label htmlFor="currency">
-                                        {t('Default currency')}
-                                    </Label>
-                                    <Select
-                                        value={localizationForm.data.currency}
-                                        onValueChange={setDefaultCurrency}
-                                    >
-                                        <SelectTrigger id="currency">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {currencyOptions.map((currency) => (
-                                                <SelectItem
-                                                    key={currency}
-                                                    value={currency}
-                                                >
-                                                    {currencyLabel(currency)}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {localizationForm.errors.currency && (
-                                        <p className="text-sm text-red-600">
-                                            {localizationForm.errors.currency}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="grid max-w-md gap-2">
-                                    <div>
-                                        <Label>
-                                            {t('Supported currencies')}
-                                        </Label>
-                                        <p className="text-sm text-muted-foreground">
-                                            {t(
-                                                'Available for new pricing and billing rates.',
-                                            )}{' '}
-                                            {t(
-                                                'Existing records keep their original currency.',
-                                            )}
-                                        </p>
-                                    </div>
-                                    <SearchInput
-                                        value={currencySearch}
-                                        onChange={setCurrencySearch}
-                                        onClear={() => setCurrencySearch('')}
-                                        id="supported-currencies-search"
-                                        aria-label={t('Search')}
-                                        placeholder="Search"
-                                        className="w-full md:max-w-none"
-                                    />
-                                    <div className="grid max-h-72 gap-2 overflow-y-auto rounded-md border p-3 sm:grid-cols-2">
-                                        {currencyOptions.length === 0 && (
-                                            <p className="col-span-full p-2 text-sm text-muted-foreground">
-                                                {t('No options found.')}
-                                            </p>
-                                        )}
-                                        {currencyOptions.map((currency) => {
-                                            const isSupported =
-                                                localizationForm.data.supported_currencies.includes(
-                                                    currency,
-                                                );
-                                            const isDefault =
-                                                localizationForm.data
-                                                    .currency === currency;
-
-                                            return (
-                                                <label
-                                                    key={currency}
-                                                    className="flex items-start gap-2 rounded-md p-2 text-sm hover:bg-muted/50"
-                                                >
-                                                    <Checkbox
-                                                        checked={isSupported}
-                                                        disabled={isDefault}
-                                                        onCheckedChange={(
-                                                            checked,
-                                                        ) =>
-                                                            toggleSupportedCurrency(
-                                                                currency,
-                                                                checked ===
-                                                                    true,
-                                                            )
-                                                        }
-                                                    />
-                                                    <span>
-                                                        <span className="block font-mono font-medium">
-                                                            {currency}
-                                                        </span>
-                                                        <span className="block text-xs text-muted-foreground">
-                                                            {currencyNames.of(
-                                                                currency,
-                                                            ) ?? currency}
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
-                                    <InputError
-                                        message={
-                                            localizationForm.errors
-                                                .supported_currencies
-                                        }
-                                    />
-                                </div>
-
-                                <div className="grid max-w-xs gap-2">
-                                    <Label htmlFor="timezone">
-                                        {t('Timezone')}
-                                    </Label>
-                                    <Select
-                                        value={localizationForm.data.timezone}
-                                        onValueChange={(value) =>
-                                            localizationForm.setData(
-                                                'timezone',
-                                                value,
-                                            )
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {timezoneList.map((tz) => (
-                                                <SelectItem key={tz} value={tz}>
-                                                    {tz}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {localizationForm.errors.timezone && (
-                                        <p className="text-sm text-red-600">
-                                            {localizationForm.errors.timezone}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <Button disabled={localizationForm.processing}>
-                                    {t('Save')}
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </form>
+                    {/* India-only application: regional settings are pinned
+                        in config/regional.php and shown here read-only. */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('Localization')}</CardTitle>
+                            <CardDescription>
+                                {t(
+                                    'GrihaFlow is an India-only application. Regional settings are fixed application-wide.',
+                                )}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-2">
+                                <Label>{t('Country')}</Label>
+                                <Input
+                                    readOnly
+                                    value={regional?.country?.name ?? 'India'}
+                                    className="bg-muted"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('Currency')}</Label>
+                                <Input
+                                    readOnly
+                                    value={
+                                        regional?.currency?.code
+                                            ? `${regional.currency.code} (${regional.currency.symbol ?? ''})`
+                                            : 'INR (₹)'
+                                    }
+                                    className="bg-muted"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('Timezone')}</Label>
+                                <Input
+                                    readOnly
+                                    value={regional?.timezone ?? 'Asia/Kolkata'}
+                                    className="bg-muted"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('Locale')}</Label>
+                                <Input
+                                    readOnly
+                                    value={regional?.locale?.intl ?? 'en-IN'}
+                                    className="bg-muted"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('Date format')}</Label>
+                                <Input
+                                    readOnly
+                                    value={
+                                        regional?.format?.date_format ??
+                                        'DD/MM/YYYY'
+                                    }
+                                    className="bg-muted"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('Phone code')}</Label>
+                                <Input
+                                    readOnly
+                                    value={
+                                        regional?.country?.phone_code ?? '+91'
+                                    }
+                                    className="bg-muted"
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
                 <div className="space-y-6">

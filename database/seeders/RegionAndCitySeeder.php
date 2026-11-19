@@ -33,7 +33,7 @@ class RegionAndCitySeeder extends Seeder
 
         foreach ($provinces as $province) {
             $region = Region::firstOrCreate([
-                'country_code' => 'ID',
+                'country_code' => 'IN',
                 'name' => $province['province'],
             ]);
 

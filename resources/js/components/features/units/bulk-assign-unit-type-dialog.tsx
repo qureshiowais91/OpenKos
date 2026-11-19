@@ -96,7 +96,9 @@ export default function BulkAssignUnitTypeDialog({
                                 </SelectTrigger>
                                 <SelectContent>
                                     {unitTypes
-                                        .filter((unitType) => unitType.is_active)
+                                        .filter(
+                                            (unitType) => unitType.is_active,
+                                        )
                                         .map((unitType) => (
                                             <SelectItem
                                                 key={unitType.id}

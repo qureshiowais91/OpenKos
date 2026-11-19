@@ -77,7 +77,7 @@ function reminderEventFor(Lease $lease, ReminderType $type, ?int $overdueDays = 
         periodEnd: '2026-07-31',
         dueDate: '2026-07-01',
         amount: 1_500_000,
-        currency: 'IDR',
+        currency: 'INR',
         overdueDays: $overdueDays,
     );
 }
@@ -507,7 +507,7 @@ describe('SendRentRemindersAction', function () {
                     ->toContain($invoice->period_start->format('d M Y'))
                     ->toContain($invoice->period_end->format('d M Y'))
                     ->toContain($invoice->due_date->format('d M Y'))
-                    ->toContain('1.500.000')
+                    ->toContain('15,00,000')
                     ->toContain($invoiceUrl);
                 expect($content->htmlBody)->toContain($invoiceUrl);
                 expect($content->attachments)->toHaveCount(1);
@@ -546,7 +546,7 @@ describe('SendRentRemindersAction', function () {
                     ->toContain($invoice->period_start->format('d M Y'))
                     ->toContain($invoice->period_end->format('d M Y'))
                     ->toContain($invoice->due_date->format('d M Y'))
-                    ->toContain('1.500.000')
+                    ->toContain('15,00,000')
                     ->toMatch('#/pay/invoices/[A-Za-z0-9_-]+\?signature=[a-f0-9]+#')
                     ->not->toContain(route('portal.billing.invoices.show', $invoice));
 

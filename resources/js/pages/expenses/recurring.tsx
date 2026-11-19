@@ -19,7 +19,12 @@ import { useTable } from '@/hooks/use-table';
 import { formatBillingPeriod, formatDate, formatPrice } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
 import recurringExpenses from '@/routes/expenses/recurring';
-import type { ExpenseCategory, PaginatedData, RecurringExpense, TableMeta } from '@/types';
+import type {
+    ExpenseCategory,
+    PaginatedData,
+    RecurringExpense,
+    TableMeta,
+} from '@/types';
 
 type PageProps = {
     recurring_expenses: PaginatedData<RecurringExpense>;
@@ -41,7 +46,11 @@ function statusBadge(status: string) {
         ended: 'Ended',
     };
 
-    return <Badge variant={status === 'active' ? 'default' : 'secondary'}>{t(labels[status] ?? status)}</Badge>;
+    return (
+        <Badge variant={status === 'active' ? 'default' : 'secondary'}>
+            {t(labels[status] ?? status)}
+        </Badge>
+    );
 }
 
 export default function Recurring({
@@ -111,7 +120,8 @@ export default function Recurring({
             key: 'billing_unit',
             label: t('Frequency'),
             sortable: true,
-            render: (item) => formatBillingPeriod(item.billing_interval, item.billing_unit),
+            render: (item) =>
+                formatBillingPeriod(item.billing_interval, item.billing_unit),
         },
         {
             key: 'start_date',
@@ -135,12 +145,18 @@ export default function Recurring({
             label: '',
             render: (item) => (
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>
+                    <DropdownMenuTrigger
+                        asChild
+                        onClick={(event) => event.stopPropagation()}
+                    >
                         <Button variant="ghost" size="icon" className="size-8">
                             <EllipsisVertical className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" onClick={(event) => event.stopPropagation()}>
+                    <DropdownMenuContent
+                        align="end"
+                        onClick={(event) => event.stopPropagation()}
+                    >
                         {can.update && (
                             <DropdownMenuItem onClick={() => openEdit(item)}>
                                 <Pencil className="size-4" />
@@ -175,7 +191,9 @@ export default function Recurring({
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <Heading
                         title={t('Recurring Expenses')}
-                        description={t('Automatically generate operating expenses on a schedule.')}
+                        description={t(
+                            'Automatically generate operating expenses on a schedule.',
+                        )}
                     />
                     {can.create && (
                         <Button onClick={openCreate}>
@@ -196,7 +214,9 @@ export default function Recurring({
                             value={table.searchValue}
                             onChange={table.onSearchChange}
                             onClear={table.clearSearch}
-                            placeholder={t('Search by property, category, or vendor...')}
+                            placeholder={t(
+                                'Search by property, category, or vendor...',
+                            )}
                         />
                     }
                 />
@@ -213,7 +233,9 @@ export default function Recurring({
                     noun={t('recurring expenses')}
                     empty={{
                         message: t('No recurring expenses yet.'),
-                        createLabel: can.create ? t('Add a recurring expense') : undefined,
+                        createLabel: can.create
+                            ? t('Add a recurring expense')
+                            : undefined,
                         onCreate: can.create ? openCreate : undefined,
                     }}
                 />
@@ -233,5 +255,7 @@ export default function Recurring({
 }
 
 Recurring.layout = {
-    breadcrumbs: [{ title: 'Recurring Expenses', href: recurringExpenses.index() }],
+    breadcrumbs: [
+        { title: 'Recurring Expenses', href: recurringExpenses.index() },
+    ],
 };

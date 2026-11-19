@@ -14,11 +14,11 @@ it('overrides only the matching billing identity', function (): void {
     );
 
     $resolved = (new EffectiveRateResolver)->resolve(
-        [$rate(10, 1, 'month', 'IDR', 'unit')],
+        [$rate(10, 1, 'month', 'INR', 'unit')],
         [
-            $rate(1, 1, 'month', 'IDR', 'unit_type'),
-            $rate(2, 3, 'month', 'IDR', 'unit_type'),
-            $rate(3, 1, 'month', 'USD', 'unit_type'),
+            $rate(1, 1, 'month', 'INR', 'unit_type'),
+            $rate(2, 3, 'month', 'INR', 'unit_type'),
+            $rate(3, 1, 'week', 'INR', 'unit_type'),
         ],
     );
 
@@ -27,13 +27,13 @@ it('overrides only the matching billing identity', function (): void {
             'id' => 10,
             'billingInterval' => 1,
             'billingUnit' => 'month',
-            'currency' => 'IDR',
+            'currency' => 'INR',
         ])
         ->and(collect($resolved)->where('source', 'unit_type'))->toHaveCount(2);
 });
 
 it('keeps the type rate when no active unit override is supplied', function (): void {
-    $rate = new RateData(1, 1, 'month', '100.00', 'IDR', 'unit_type');
+    $rate = new RateData(1, 1, 'month', '100.00', 'INR', 'unit_type');
 
     $resolved = (new EffectiveRateResolver)->resolve([], [$rate]);
 

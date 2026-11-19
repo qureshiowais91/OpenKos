@@ -38,11 +38,7 @@ import { t } from '@/lib/i18n';
 import { supportsUnitInventory } from '@/lib/property-rental-mode';
 import leases from '@/routes/leases';
 import units from '@/routes/properties/units';
-import type {
-    Lease,
-    LeaseIndexPageProps,
-    MoneyAggregate,
-} from '@/types';
+import type { Lease, LeaseIndexPageProps, MoneyAggregate } from '@/types';
 
 function formatMoneyGroups(groups: MoneyAggregate[]): string {
     return (

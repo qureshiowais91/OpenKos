@@ -24,7 +24,7 @@ class ExpenseFactory extends Factory
             'property_id' => Property::factory(),
             'expense_category_id' => ExpenseCategory::factory(),
             'amount' => '100.00',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'expense_date' => now()->toDateString(),
             'vendor' => fake()->company(),
             'description' => fake()->sentence(),

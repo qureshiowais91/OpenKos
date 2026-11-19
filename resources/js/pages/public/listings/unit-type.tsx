@@ -174,15 +174,15 @@ export default function UnitType({
 
     useEffect(() => {
         if (applicationFormVisible) {
-            document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth' });
+            document
+                .getElementById('application-form')
+                ?.scrollIntoView({ behavior: 'smooth' });
         }
     }, [applicationFormVisible]);
 
     return (
         <>
-            <PublicListingHead
-                metadata={metadata}
-            />
+            <PublicListingHead metadata={metadata} />
 
             <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
                 <nav aria-label="Breadcrumb" className="text-sm">
@@ -269,12 +269,22 @@ export default function UnitType({
                     <RentalSummary
                         unitType={unitType}
                         existingApplication={existingApplication}
-                        applyHref={!auth?.user
-                            ? login.url({ query: { redirect: applicationReturnUrl } })
-                            : auth.user.phone
-                              ? '#application-form'
-                              : profileEdit.url({ query: { return: applicationReturnUrl } })}
-                        applyLabel={auth?.user?.phone ? t('Apply for this unit type') : t('Complete your profile to apply')}
+                        applyHref={
+                            !auth?.user
+                                ? login.url({
+                                      query: { redirect: applicationReturnUrl },
+                                  })
+                                : auth.user.phone
+                                  ? '#application-form'
+                                  : profileEdit.url({
+                                        query: { return: applicationReturnUrl },
+                                    })
+                        }
+                        applyLabel={
+                            auth?.user?.phone
+                                ? t('Apply for this unit type')
+                                : t('Complete your profile to apply')
+                        }
                         onApply={() => setApplicationFormVisible(true)}
                         applicationForm={
                             auth?.user && applicationFormVisible ? (

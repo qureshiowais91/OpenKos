@@ -24,7 +24,7 @@ class UnitTypeRateFactory extends Factory
             'billing_interval' => 1,
             'billing_unit' => BillingUnit::Month,
             'amount' => '1500000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'is_active' => true,
             'effective_from' => null,
             'effective_until' => null,

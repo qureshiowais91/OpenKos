@@ -2,7 +2,6 @@
 
 use App\Actions\Utility\RecordUtilityReading;
 use App\Models\Property;
-use App\Models\Setting;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\UtilityMeter;
@@ -11,7 +10,6 @@ use Database\Seeders\RoleAndPermissionSeeder;
 
 beforeEach(function () {
     $this->seed(RoleAndPermissionSeeder::class);
-    Setting::set('supported_currencies', ['IDR', 'USD']);
 });
 
 it('provides a utilities workspace and manages unit meters', function () {
@@ -33,7 +31,7 @@ it('provides a utilities workspace and manages unit meters', function () {
             'identifier' => 'ELEC-001',
             'measurement_unit' => 'kWh',
             'rate' => '1000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'is_active' => true,
         ])
         ->assertRedirect()
@@ -43,7 +41,7 @@ it('provides a utilities workspace and manages unit meters', function () {
 
     expect($meter->unit_id)->toBe($unit->id)
         ->and($meter->rate)->toBe('1000.000')
-        ->and($meter->currency)->toBe('IDR');
+        ->and($meter->currency)->toBe('INR');
 
     $this->actingAs($user)
         ->put(route('properties.units.utilities.meters.update', [$property, $unit, $meter]), [
@@ -51,7 +49,7 @@ it('provides a utilities workspace and manages unit meters', function () {
             'identifier' => 'ELEC-001',
             'measurement_unit' => 'kWh',
             'rate' => '1250',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'is_active' => true,
         ])
         ->assertRedirect()
@@ -65,7 +63,7 @@ it('snapshots meter rate and currency on each reading', function () {
     $unit = Unit::factory()->for($property)->create();
     $meter = UtilityMeter::factory()->for($unit)->create([
         'rate' => '1000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
 
     $first = app(RecordUtilityReading::class)->execute($meter, [
@@ -81,7 +79,7 @@ it('snapshots meter rate and currency on each reading', function () {
         'identifier' => $meter->identifier,
         'measurement_unit' => $meter->measurement_unit,
         'rate' => '1500',
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'is_active' => true,
     ]);
 
@@ -94,9 +92,9 @@ it('snapshots meter rate and currency on each reading', function () {
     ]);
 
     expect($first->rate)->toBe('1000.000')
-        ->and($first->currency)->toBe('IDR')
+        ->and($first->currency)->toBe('INR')
         ->and($second->rate)->toBe('1500.000')
-        ->and($second->currency)->toBe('IDR')
+        ->and($second->currency)->toBe('INR')
         ->and(UtilityReading::query()->count())->toBe(2);
 });
 
@@ -112,7 +110,7 @@ it('stores custom utility names and clears them for standard meters', function (
             'identifier' => 'GAS-001',
             'measurement_unit' => 'kg',
             'rate' => '20000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'is_active' => true,
         ])
         ->assertRedirect()
@@ -129,7 +127,7 @@ it('stores custom utility names and clears them for standard meters', function (
             'identifier' => 'GAS-001',
             'measurement_unit' => 'm³',
             'rate' => '7500',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'is_active' => true,
         ])
         ->assertRedirect()

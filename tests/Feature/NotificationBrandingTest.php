@@ -3,7 +3,6 @@
 use App\Models\Setting;
 use App\Notifications\TenantInvitation;
 use App\Notifications\UserInvitation;
-use Illuminate\Notifications\Messages\MailMessage;
 
 it('brands invitation emails with the configured site name', function () {
     Setting::set('site_name', 'GrihaFlow');

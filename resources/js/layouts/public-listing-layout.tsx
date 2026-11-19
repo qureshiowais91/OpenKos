@@ -31,14 +31,20 @@ export default function PublicListingLayout({ children }: PropsWithChildren) {
                     >
                         <ThemeToggleButton />
                         <Link
-                            href={auth?.user ? portalDashboard() : login({ query: { redirect: 'portal' } })}
+                            href={
+                                auth?.user
+                                    ? portalDashboard()
+                                    : login({ query: { redirect: 'portal' } })
+                            }
                             className="rounded-md px-3 py-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                         >
                             {auth?.user ? t('My account') : t('Log in')}
                         </Link>
                         {!auth?.user && (
                             <Link
-                                href={register({ query: { redirect: 'portal' } })}
+                                href={register({
+                                    query: { redirect: 'portal' },
+                                })}
                                 className="rounded-md px-3 py-2 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                             >
                                 {t('Register')}

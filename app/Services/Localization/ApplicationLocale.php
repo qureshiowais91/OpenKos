@@ -6,16 +6,16 @@ use App\Models\Setting;
 
 final class ApplicationLocale
 {
+    // Bootstrap-safe fallbacks; the authoritative values live in
+    // config/regional.php and are re-exported through config/app.php.
     private const DEFAULT_LOCALE_ALIASES = [
         'en' => 'en',
         'en-us' => 'en',
-        'id' => 'id',
-        'id-id' => 'id',
+        'en-in' => 'en',
     ];
 
     private const DEFAULT_INTL_LOCALES = [
-        'en' => 'en-US',
-        'id' => 'id-ID',
+        'en' => 'en-IN',
     ];
 
     /**
@@ -23,10 +23,7 @@ final class ApplicationLocale
      */
     public function options(): array
     {
-        $options = $this->config('app.supported_locales', [
-            'en' => 'English',
-            'id' => 'Bahasa Indonesia',
-        ]);
+        $options = $this->config('app.supported_locales', $this->regionalLocaleOptions());
 
         return is_array($options) ? $options : [];
     }
@@ -55,8 +52,8 @@ final class ApplicationLocale
         }
 
         return $this->normalize($locale)
-            ?? $this->normalize((string) $this->config('app.fallback_locale', 'en'))
-            ?? 'en';
+            ?? $this->normalize((string) $this->config('app.fallback_locale', $this->regionalFallbackLocale()))
+            ?? $this->regionalFallbackLocale();
     }
 
     public function apply(mixed $locale = null): string
@@ -100,7 +97,23 @@ final class ApplicationLocale
 
     public function fallback(): string
     {
-        return $this->normalize((string) $this->config('app.fallback_locale', 'en')) ?? 'en';
+        return $this->normalize((string) $this->config('app.fallback_locale', $this->regionalFallbackLocale()))
+            ?? $this->regionalFallbackLocale();
+    }
+
+    private function regionalFallbackLocale(): string
+    {
+        return is_string(config('regional.locale.fallback')) ? config('regional.locale.fallback') : 'en';
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function regionalLocaleOptions(): array
+    {
+        $options = config('regional.locale.options');
+
+        return is_array($options) ? $options : ['en' => 'English'];
     }
 
     private function config(string $key, mixed $default): mixed

@@ -373,9 +373,9 @@ describe('unit assignment pricing', function () {
         $unit = Unit::factory()->withRate(1_750_000)->create();
         $usdRate = $unit->rates()->create([
             'billing_interval' => 1,
-            'billing_unit' => 'month',
+            'billing_unit' => 'week',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
 
@@ -387,21 +387,21 @@ describe('unit assignment pricing', function () {
             ])
             ->assertRedirect();
 
-        expect(Lease::firstOrFail()->currency)->toBe('USD')
+        expect(Lease::firstOrFail()->currency)->toBe('INR')
             ->and(Lease::firstOrFail()->rent_amount)->toBe('95.000');
     });
 
     it('uses the existing lease currency when adding a tenant', function () {
-        Setting::set('currency', 'IDR');
+        Setting::set('currency', 'INR');
         $user = User::factory()->owner()->create();
         $tenantA = Tenant::factory()->create();
         $tenantB = Tenant::factory()->create();
         $unit = Unit::factory()->withRate(1_750_000)->create();
         $usdRate = $unit->rates()->create([
             'billing_interval' => 1,
-            'billing_unit' => 'month',
+            'billing_unit' => 'week',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
         $lease = Lease::factory()->create([
@@ -409,7 +409,7 @@ describe('unit assignment pricing', function () {
             'unit_id' => $unit->id,
             'unit_rate_id' => $usdRate->id,
             'rent_amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'billing_interval' => 1,
             'billing_unit' => 'month',
             'billing_strategy' => 'advance',
@@ -434,7 +434,7 @@ describe('unit assignment pricing', function () {
     });
 
     it('does not replace null legacy lease terms when adding a tenant', function () {
-        Setting::set('currency', 'IDR');
+        Setting::set('currency', 'INR');
         $user = User::factory()->owner()->create();
         $tenantA = Tenant::factory()->create();
         $tenantB = Tenant::factory()->create();
@@ -443,7 +443,7 @@ describe('unit assignment pricing', function () {
             'primary_tenant_id' => $tenantA->id,
             'unit_id' => $unit->id,
             'rent_amount' => null,
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'start_date' => '2026-06-01',
         ]);
         $unit->update(['capacity' => 2]);

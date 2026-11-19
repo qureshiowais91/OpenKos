@@ -26,7 +26,7 @@ class UtilityMeterFactory extends Factory
             'identifier' => fake()->unique()->bothify('MTR-####'),
             'measurement_unit' => 'kWh',
             'rate' => '1000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'is_active' => true,
         ];
     }

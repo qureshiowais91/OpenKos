@@ -119,7 +119,7 @@ it('starts checkout from a signed link without authentication', function () {
 });
 
 it('hides signed checkout when the gateway rejects the invoice currency', function () {
-    $invoice = Invoice::factory()->create(['currency' => 'USD']);
+    $invoice = Invoice::factory()->create(['currency' => 'INR']);
     bindSignedPaymentGateway(Mockery::mock(PaymentGateway::class), currencySupport: false);
 
     $this->get(signedInvoiceUrl($invoice))
@@ -128,7 +128,7 @@ it('hides signed checkout when the gateway rejects the invoice currency', functi
 });
 
 it('rejects unsupported signed checkout without creating an attempt', function () {
-    $invoice = Invoice::factory()->create(['currency' => 'USD']);
+    $invoice = Invoice::factory()->create(['currency' => 'INR']);
     bindSignedPaymentGateway(Mockery::mock(PaymentGateway::class), currencySupport: false);
 
     $this->post(signedInvoiceUrl($invoice))

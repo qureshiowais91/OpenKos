@@ -65,12 +65,12 @@ it('settles an attempt and creates exactly one canonical payment', function () {
         'provider_reference' => null,
         'reference' => 'attempt-1',
         'amount' => 1_500_000,
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $result = gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     );
     bindWebhookGateway($result);
 
@@ -106,7 +106,7 @@ it('acknowledges duplicate settlement without creating another payment', functio
     $result = gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     );
 
     bindWebhookGateway($result);
@@ -137,7 +137,7 @@ it('reports an expired callback after a settled attempt as an anomaly', function
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Expired,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -168,7 +168,7 @@ it('requires provider and GrihaFlow references to identify the same attempt', fu
         PaymentStatus::Settled,
         providerReference: 'provider-1',
         reference: 'attempt-2',
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -214,7 +214,7 @@ it('applies a late settlement after a failed local attempt', function () {
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -237,7 +237,7 @@ it('applies a late settlement after local expiry', function () {
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -261,7 +261,7 @@ it('fails closed for a settled attempt without a linked payment', function () {
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -285,7 +285,7 @@ it('reports a non-settled attempt with a linked payment as an anomaly', function
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Failed,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -311,7 +311,7 @@ it('reports a settled attempt linked to another invoice as an anomaly', function
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -331,12 +331,12 @@ it('rejects callback amount or currency mismatches without settling', function (
         'provider_reference' => 'provider-1',
         'reference' => 'attempt-1',
         'amount' => 1_500_000,
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(150_000, 'IDR'),
+        amount: new Money(15_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -363,7 +363,7 @@ it('does not settle an attempt when the invoice no longer has enough balance', f
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -379,7 +379,7 @@ it('acknowledges unknown callbacks without creating records', function () {
     bindWebhookGateway(gatewayWebhookResult(
         PaymentStatus::Settled,
         reference: 'missing-attempt',
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $this->postJson('/api/webhooks/payment/test/gateway', [])
@@ -425,7 +425,7 @@ it('rolls back the payment and attempt when invoice allocation fails', function 
         gatewayWebhookResult(
             PaymentStatus::Settled,
             reference: $attempt->reference,
-            amount: new Money(1_500_000, 'IDR'),
+            amount: new Money(150_000_000, 'INR'),
         ),
     ))->toThrow(RuntimeException::class, 'allocation failed');
 

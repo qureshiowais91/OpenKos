@@ -16,48 +16,49 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 it('snapshots currency through the billing chain at creation', function () {
-    Setting::set('currency', 'USD');
+    Setting::set('currency', 'INR');
     $lease = Lease::factory()->create();
     $invoice = Invoice::factory()->create(['lease_id' => $lease->id]);
     $payment = Payment::factory()->for($invoice)->create(['amount' => '12.50']);
 
-    expect($lease->currency)->toBe('USD')
-        ->and($invoice->currency)->toBe('USD')
-        ->and($payment->currency)->toBe('USD');
+    expect($lease->currency)->toBe('INR')
+        ->and($invoice->currency)->toBe('INR')
+        ->and($payment->currency)->toBe('INR');
 });
 
 it('keeps non-null snapshots immutable', function () {
-    $invoice = Invoice::factory()->create(['currency' => 'USD']);
+    $invoice = Invoice::factory()->create(['currency' => 'INR']);
 
-    expect(fn () => $invoice->update(['currency' => 'IDR']))
-        ->toThrow(LogicException::class);
+    expect(fn () => $invoice->update(['currency' => 'EUR']))
+        ->toThrow(LogicException::class)
+        ->and(fn () => $invoice->update(['currency' => 'INR']))->not->toThrow(LogicException::class);
 });
 
 it('resolves legacy null currency through current settings without persisting it', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $invoice = Invoice::factory()->create();
     DB::table('invoices')->whereKey($invoice->id)->update(['currency' => null]);
 
-    expect($invoice->fresh()->currency)->toBe('IDR');
+    expect($invoice->fresh()->currency)->toBe('INR');
 
     expect(DB::table('invoices')->whereKey($invoice->id)->value('currency'))->toBeNull();
 });
 
 it('resolves legacy null currency using a later configured currency', function () {
-    Setting::set('currency', 'USD');
+    Setting::set('currency', 'INR');
     $invoice = Invoice::factory()->create();
     DB::table('invoices')->whereKey($invoice->id)->update(['currency' => null]);
 
-    expect($invoice->fresh()->currency)->toBe('USD')
+    expect($invoice->fresh()->currency)->toBe('INR')
         ->and(DB::table('invoices')->whereKey($invoice->id)->value('currency'))->toBeNull();
 });
 
 it('inherits the default rate currency when no rate is selected', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $unit = Unit::factory()->create();
     $unit->rates()->update([
         'amount' => '12.50',
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
     $tenant = Tenant::factory()->create();
 
@@ -78,14 +79,14 @@ it('inherits the default rate currency when no rate is selected', function () {
         notes: null,
     ));
 
-    expect($lease->currency)->toBe('USD')
+    expect($lease->currency)->toBe('INR')
         ->and($lease->rent_amount)->toBe('12.500');
 });
 
 it('rejects generating invoices from legacy amounts invalid for the resolved currency', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $lease = Lease::factory()->create([
-        'rent_amount' => '1.50',
+        'rent_amount' => '1.505',
         'start_date' => '2026-08-01',
     ]);
     DB::table('leases')->whereKey($lease->id)->update(['currency' => null]);
@@ -97,16 +98,22 @@ it('rejects generating invoices from legacy amounts invalid for the resolved cur
 });
 
 it('rejects moving a lease onto a rate with a different currency', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $sourceUnit = Unit::factory()->create();
     $targetUnit = Unit::factory()->create();
     $tenant = Tenant::factory()->create();
     $lease = Lease::factory()->create([
         'unit_id' => $sourceUnit->id,
         'primary_tenant_id' => $tenant->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => LeaseStatus::Active,
     ]);
+    // Simulate a legacy historical rate stored in a non-INR currency.
+    DB::table('unit_rates')
+        ->where('unit_id', $targetUnit->id)
+        ->where('billing_interval', 1)
+        ->where('billing_unit', 'month')
+        ->update(['currency' => 'USD']);
 
     expect(fn () => app(MoveOutLease::class)->execute($lease, new MoveOutLeaseData(
         terminationDate: '2026-08-21',
@@ -121,7 +128,7 @@ it('rejects moving a lease onto a rate with a different currency', function () {
 });
 
 it('rejects merging a lease into an occupied unit with a different currency', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $sourceUnit = Unit::factory()->create();
     $targetUnit = Unit::factory()->create(['capacity' => 2]);
     $sourceTenant = Tenant::factory()->create();
@@ -129,15 +136,17 @@ it('rejects merging a lease into an occupied unit with a different currency', fu
     $sourceLease = Lease::factory()->create([
         'unit_id' => $sourceUnit->id,
         'primary_tenant_id' => $sourceTenant->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => LeaseStatus::Active,
     ]);
     Lease::factory()->create([
         'unit_id' => $targetUnit->id,
         'primary_tenant_id' => $targetTenant->id,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'status' => LeaseStatus::Active,
     ]);
+    // Simulate a legacy historical lease stored in a non-INR currency.
+    DB::table('leases')->where('unit_id', $targetUnit->id)->update(['currency' => 'USD']);
 
     expect(fn () => app(MoveOutLease::class)->execute($sourceLease, new MoveOutLeaseData(
         terminationDate: '2026-08-21',
@@ -152,9 +161,10 @@ it('rejects merging a lease into an occupied unit with a different currency', fu
 });
 
 it('does not use inactive rates when moving a lease', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $sourceUnit = Unit::factory()->create();
     $targetUnit = Unit::factory()->create();
+    // Simulate a legacy inactive rate stored in a non-INR currency.
     $targetUnit->rates()->create([
         'billing_interval' => 1,
         'billing_unit' => 'month',
@@ -166,9 +176,13 @@ it('does not use inactive rates when moving a lease', function () {
     $sourceLease = Lease::factory()->create([
         'unit_id' => $sourceUnit->id,
         'primary_tenant_id' => $tenant->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => LeaseStatus::Active,
     ]);
+    // Simulate a legacy lease in a non-INR currency; the active rate on the
+    // target unit is INR, so only the legacy inactive rate could match.
+    Lease::query()->whereKey($sourceLease->id)->update(['currency' => 'USD']);
+    $sourceLease->refresh();
 
     expect(fn () => app(MoveOutLease::class)->execute($sourceLease, new MoveOutLeaseData(
         terminationDate: '2026-08-21',
@@ -183,7 +197,7 @@ it('does not use inactive rates when moving a lease', function () {
 });
 
 it('rejects invalid legacy amounts when moving a lease', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $sourceUnit = Unit::factory()->create();
     $targetUnit = Unit::factory()->create();
     $tenant = Tenant::factory()->create();
@@ -191,7 +205,7 @@ it('rejects invalid legacy amounts when moving a lease', function () {
         'unit_id' => $sourceUnit->id,
         'primary_tenant_id' => $tenant->id,
         'rent_amount' => '1000000',
-        'deposit_amount' => '1.50',
+        'deposit_amount' => '1.505',
         'start_date' => '2026-08-01',
         'status' => LeaseStatus::Active,
     ]);

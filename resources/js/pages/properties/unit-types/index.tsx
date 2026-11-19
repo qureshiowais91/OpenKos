@@ -194,9 +194,7 @@ export default function Index({
 
                 return (
                     <Badge
-                        variant={
-                            option?.is_included ? 'secondary' : 'outline'
-                        }
+                        variant={option?.is_included ? 'secondary' : 'outline'}
                     >
                         {t(option?.is_included ? 'Listed' : 'Not listed')}
                     </Badge>
@@ -326,7 +324,14 @@ export default function Index({
                             onClick={(event) => event.stopPropagation()}
                         >
                             <DropdownMenuItem
-                                onSelect={() => router.visit(properties.unitTypes.show.url({ property, unitType }))}
+                                onSelect={() =>
+                                    router.visit(
+                                        properties.unitTypes.show.url({
+                                            property,
+                                            unitType,
+                                        }),
+                                    )
+                                }
                             >
                                 <ExternalLink className="size-4" />
                                 {t('Open workspace')}
@@ -334,7 +339,13 @@ export default function Index({
                             {canManage && (
                                 <>
                                     <DropdownMenuItem
-                                        onSelect={() => router.visit(properties.unitTypes.rates.index.url({ property, unitType }))}
+                                        onSelect={() =>
+                                            router.visit(
+                                                properties.unitTypes.rates.index.url(
+                                                    { property, unitType },
+                                                ),
+                                            )
+                                        }
                                     >
                                         {t('Manage pricing')}
                                     </DropdownMenuItem>
@@ -418,7 +429,14 @@ export default function Index({
                     columns={columns}
                     rows={data.data}
                     rowKey={(unitType) => unitType.id}
-            onRowClick={(unitType) => router.visit(properties.unitTypes.show.url({ property, unitType }))}
+                    onRowClick={(unitType) =>
+                        router.visit(
+                            properties.unitTypes.show.url({
+                                property,
+                                unitType,
+                            }),
+                        )
+                    }
                     isRowInteractive={(unitType) => !unitType.deleted_at}
                     currentSort={currentSort}
                     onSort={table.toggleSort}

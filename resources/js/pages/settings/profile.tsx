@@ -47,10 +47,12 @@ export default function Profile({
         e.preventDefault();
         submit(
             portalProfile
-                ? portalProfileUpdate({ query: profileReturn ? { return: profileReturn } : {} })
+                ? portalProfileUpdate({
+                      query: profileReturn ? { return: profileReturn } : {},
+                  })
                 : profileUpdate(),
             {
-            preserveScroll: true,
+                preserveScroll: true,
             },
         );
     }
@@ -66,7 +68,9 @@ export default function Profile({
                     <CardHeader>
                         <CardTitle>{t('Profile')}</CardTitle>
                         <CardDescription>
-                            {t('Update your name, email address, and phone number.')}
+                            {t(
+                                'Update your name, email address, and phone number.',
+                            )}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -96,10 +100,15 @@ export default function Profile({
                                 <Label htmlFor="phone">{t('Phone')}</Label>
                                 <PhoneInput
                                     value={data.phone}
-                                    onChange={(value) => setData('phone', value)}
+                                    onChange={(value) =>
+                                        setData('phone', value)
+                                    }
                                     placeholder={t('Phone number')}
                                 />
-                                <InputError className="mt-2" message={errors.phone} />
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.phone}
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -110,7 +119,10 @@ export default function Profile({
                                     id="id_card_number"
                                     value={data.id_card_number}
                                     onChange={(e) =>
-                                        setData('id_card_number', e.target.value)
+                                        setData(
+                                            'id_card_number',
+                                            e.target.value,
+                                        )
                                     }
                                     placeholder={t('ID card number')}
                                 />
@@ -148,7 +160,10 @@ export default function Profile({
                                 <PhoneInput
                                     value={data.emergency_contact_phone}
                                     onChange={(value) =>
-                                        setData('emergency_contact_phone', value)
+                                        setData(
+                                            'emergency_contact_phone',
+                                            value,
+                                        )
                                     }
                                     placeholder={t('Phone number')}
                                 />

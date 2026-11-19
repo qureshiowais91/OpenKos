@@ -39,18 +39,7 @@ class InstallCommand extends Command
 
         $siteName = $this->ask('What is the name of this installation?', 'GrihaFlow');
 
-        $country = $this->choice(
-            'What country is this installation for?',
-            ['ID' => 'Indonesia', 'XX' => 'Other'],
-            'ID',
-        );
-
         $appUrl = $this->ask('What is the application URL?', 'http://localhost');
-
-        $timezone = $this->ask(
-            'What timezone should be used?',
-            $country === 'ID' ? 'Asia/Jakarta' : 'UTC',
-        );
 
         $name = $this->ask('What is the owner\'s name?');
 
@@ -70,15 +59,24 @@ class InstallCommand extends Command
             '--force' => true,
         ]);
 
+        // Regional values come from config/regional.php — the single
+        // source of truth for all India-specific settings.
+        $regional = config('regional');
         Setting::set('site_name', $siteName);
-        Setting::set('country_code', $country);
-        Setting::set('locale', 'en');
-        $currency = $country === 'ID' ? 'IDR' : 'USD';
-        Setting::set('currency', $currency);
-        Setting::set('supported_currencies', [$currency]);
-        Setting::set('timezone', $timezone);
+        Setting::set('country_code', $regional['country']['code']);
+        Setting::set('locale', $regional['locale']['app']);
+        Setting::set('currency', $regional['currency']['code']);
+        Setting::set('supported_currencies', $regional['currency']['supported']);
+        Setting::set('timezone', $regional['timezone']);
 
-        $this->info('Locale set to en.');
+        $this->info(sprintf(
+            'Regional defaults: %s (%s), %s, %s, %s.',
+            $regional['country']['name'],
+            $regional['country']['code'],
+            $regional['currency']['code'],
+            $regional['timezone'],
+            $regional['locale']['intl'],
+        ));
 
         $this->updateEnv([
             'APP_NAME' => $siteName,

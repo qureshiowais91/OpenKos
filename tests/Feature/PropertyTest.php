@@ -120,8 +120,8 @@ describe('CRUD', function () {
 
     it('creates a property', function () {
         $user = User::factory()->owner()->create();
-        $region = Region::where('name', 'DKI Jakarta')->first();
-        $city = City::where('name', 'Kota Jakarta Selatan')->first();
+        $region = Region::where('name', 'Delhi')->first();
+        $city = City::where('name', 'New Delhi')->first();
 
         $this->actingAs($user)->post(route('properties.store'), [
             'name' => 'Kos Melati',
@@ -133,8 +133,8 @@ describe('CRUD', function () {
 
         expect($property)->not->toBeNull();
         expect($property->name)->toBe('Kos Melati');
-        expect($property->region->name)->toBe('DKI Jakarta');
-        expect($property->city->name)->toBe('Kota Jakarta Selatan');
+        expect($property->region->name)->toBe('Delhi');
+        expect($property->city->name)->toBe('New Delhi');
     });
 
     it('assigns a created property to a non-owner creator', function () {

@@ -23,13 +23,13 @@ it('does not leak mail or whatsapp secrets in shared props', function () {
 });
 
 it('shares the configured display timezone', function () {
-    config(['app.display_timezone' => 'Asia/Jakarta']);
+    config(['app.display_timezone' => 'Asia/Kolkata']);
 
     $props = $this->actingAs(User::factory()->owner()->create())
         ->get(route('dashboard'))
         ->viewData('page')['props'];
 
-    expect($props['app']['timezone'])->toBe('Asia/Jakarta');
+    expect($props['app']['timezone'])->toBe('Asia/Kolkata');
 });
 
 it('exposes notification channel readiness as booleans only', function () {

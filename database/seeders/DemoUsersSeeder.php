@@ -37,7 +37,7 @@ class DemoUsersSeeder extends Seeder
             $tenantUser->syncRoles([]);
 
             $tenant = Tenant::query()
-                ->where('id_card_number', '3273010203040004')
+                ->where('id_card_number', '234567890104')
                 ->firstOrFail();
             $linkedTenant = Tenant::query()
                 ->where('user_id', $tenantUser->id)

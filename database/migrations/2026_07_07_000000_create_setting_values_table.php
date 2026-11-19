@@ -26,10 +26,10 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('site_name', 255)->default('GrihaFlow');
-            $table->string('country_code', 2)->default('ID');
-            $table->string('locale', 10)->default('id');
-            $table->string('currency', 3)->default('IDR');
-            $table->string('timezone', 50)->default('Asia/Jakarta');
+            $table->string('country_code', 2)->default('IN');
+            $table->string('locale', 10)->default('en');
+            $table->string('currency', 3)->default('INR');
+            $table->string('timezone', 50)->default('Asia/Kolkata');
             $table->timestamps();
             $table->string('lease_id_prefix', 10)->default('LSX');
             $table->boolean('reminder_enabled')->default(true);

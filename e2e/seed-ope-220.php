@@ -39,7 +39,7 @@ $makeProperty = static function (string $name, string $slug, PropertyRentalMode 
 
     PropertyRate::factory()->for($property)->create([
         'amount' => '2500000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'is_active' => true,
         'billing_interval' => 1,
         'billing_unit' => 'month',
@@ -56,7 +56,7 @@ $makeUnit = static function (Property $property, string $name): Unit {
         'is_published' => true,
     ]);
 
-    return Unit::factory()->for($property)->withRate('1500000', 'IDR')->create([
+    return Unit::factory()->for($property)->withRate('1500000', 'INR')->create([
         'name' => $name,
         'unit_type_id' => $unitType->id,
         'status' => UnitStatus::Available,

@@ -24,7 +24,7 @@ class RecurringExpenseFactory extends Factory
             'property_id' => Property::factory(),
             'expense_category_id' => ExpenseCategory::factory(),
             'amount' => '500000.00',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'vendor' => fake()->company(),
             'description' => fake()->sentence(),
             'billing_interval' => 1,

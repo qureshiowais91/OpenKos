@@ -314,7 +314,7 @@ describe('invoice settlement', function () {
         $user = User::factory()->owner()->create();
         $lease = createLeaseForProperty();
         $invoice = createInvoiceFor($lease, [
-            'currency' => 'USD',
+            'currency' => 'INR',
             'total' => '12.50',
         ]);
 
@@ -325,7 +325,7 @@ describe('invoice settlement', function () {
 
         $payment = $invoice->payments()->first()->fresh();
 
-        expect($payment->currency)->toBe('USD')
+        expect($payment->currency)->toBe('INR')
             ->and($payment->amount)->toBe('0.250')
             ->and($invoice->fresh()->amount_paid)->toBe('0.250');
     });

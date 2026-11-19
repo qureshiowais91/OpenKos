@@ -36,12 +36,14 @@ final class DateTimeFormatter
 
     private static function displayTimezone(): DateTimeZone
     {
-        $timezone = config('app.display_timezone', 'UTC');
+        // India-only: Asia/Kolkata comes from config/regional.php.
+        $regional = config('regional.timezone', 'Asia/Kolkata');
+        $timezone = config('app.display_timezone', $regional);
 
         try {
-            return new DateTimeZone(is_string($timezone) ? $timezone : 'UTC');
+            return new DateTimeZone(is_string($timezone) ? $timezone : $regional);
         } catch (Exception) {
-            return new DateTimeZone('UTC');
+            return new DateTimeZone($regional);
         }
     }
 }

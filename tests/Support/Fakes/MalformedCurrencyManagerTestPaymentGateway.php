@@ -14,6 +14,6 @@ class MalformedCurrencyManagerTestPaymentGateway extends CurrencyAwareManagerTes
      */
     public function supportedCurrencies(): array
     {
-        return ['IDR', 'not-a-currency'];
+        return ['INR', 'not-a-currency'];
     }
 }

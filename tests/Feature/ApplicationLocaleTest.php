@@ -13,26 +13,21 @@ test('installation locales are normalized to supported application locales', fun
     $locale = app(ApplicationLocale::class);
 
     expect($locale->normalize('en-US'))->toBe('en')
-        ->and($locale->normalize('id_ID'))->toBe('id')
+        ->and($locale->normalize('en-IN'))->toBe('en')
         ->and($locale->normalize('fr'))->toBeNull()
-        ->and($locale->normalize(['id']))->toBeNull()
-        ->and($locale->resolve(['id']))->toBe('en');
+        ->and($locale->normalize(['en-IN']))->toBeNull()
+        ->and($locale->resolve(['en-IN']))->toBe('en');
 });
 
 test('http requests apply the configured locale and share its catalogs', function () {
-    Setting::set('locale', 'id');
+    Setting::set('locale', 'en-IN');
 
     $this->get(route('login'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->where('app.locale', 'id')
-            ->where('app.intl_locale', 'id-ID')
-            ->where('i18n.locale', 'id')
-            ->where('i18n.messages.General settings', 'Pengaturan umum')
-            ->where('i18n.messages.Install :name?', 'Pasang :name?')
-            ->where('i18n.messages.Update :name?', 'Perbarui :name?')
-            ->where('i18n.messages.Install plugin', 'Pasang plugin')
-            ->where('i18n.messages.Update plugin', 'Perbarui plugin')
+            ->where('app.locale', 'en')
+            ->where('app.intl_locale', 'en-IN')
+            ->where('i18n.locale', 'en')
             ->where('i18n.fallback', [])
         );
 });
@@ -44,33 +39,33 @@ test('unsupported installation locales fall back to english', function () {
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('app.locale', 'en')
-            ->where('app.intl_locale', 'en-US')
+            ->where('app.intl_locale', 'en-IN')
             ->where('i18n.locale', 'en')
         );
 });
 
 test('manual reminder actions apply the configured locale', function () {
-    Setting::set('locale', 'id');
-    app()->setLocale('en');
+    Setting::set('locale', 'en-IN');
+    app()->setLocale('id');
 
     $result = app(ForceSendReminder::class)->execute(Lease::factory()->create());
 
     expect($result)->toBe('all_paid')
-        ->and(app()->getLocale())->toBe('id');
+        ->and(app()->getLocale())->toBe('en');
 });
 
 test('direct money formatting uses the configured locale', function () {
-    Setting::set('locale', 'id');
-    app()->setLocale('en');
+    Setting::set('locale', 'en-IN');
+    app()->setLocale('id');
 
-    expect((new MoneyConverter)->format('1500000', 'USD'))
-        ->toBe(app(MoneyConverter::class)->format('1500000', 'USD'));
+    expect((new MoneyConverter)->format('1500000', 'INR'))
+        ->toBe(app(MoneyConverter::class)->format('1500000', 'INR'));
 });
 
-test('invoice PDF jobs restore the worker locale', function () {
+test('invoice PDF jobs apply the configured locale and restore the worker locale', function () {
     Setting::set('invoice_pdf_enabled', false, 'boolean');
-    Setting::set('locale', 'id');
-    app()->setLocale('en');
+    Setting::set('locale', 'en-IN');
+    app()->setLocale('fr');
 
     (new GenerateInvoicePdfArtifact(0, ''))->handle(
         app(InvoicePdfArtifact::class),
@@ -78,5 +73,5 @@ test('invoice PDF jobs restore the worker locale', function () {
         app(ApplicationLocale::class),
     );
 
-    expect(app()->getLocale())->toBe('en');
+    expect(app()->getLocale())->toBe('fr');
 });

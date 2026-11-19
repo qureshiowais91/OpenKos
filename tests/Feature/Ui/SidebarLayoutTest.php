@@ -25,9 +25,11 @@ it('keeps shared sidebar scroll surfaces intentional', function () {
         ->not->toContain(')-(--spacing(4))]')
         ->toContain('flex min-h-0 flex-1 flex-col gap-2 overflow-auto');
 
+    // The general settings page shows the India-only regional card as
+    // read-only fields in a two-column grid.
     expect($general)->toContain(
-        'grid max-h-72 gap-2 overflow-y-auto rounded-md border p-3 sm:grid-cols-2',
-    );
+        'grid gap-4 sm:grid-cols-2',
+    )->toContain('GrihaFlow is an India-only application');
 
     expect($appSidebar)
         ->toContain("import publicPortal from '@/routes/public-portal';")

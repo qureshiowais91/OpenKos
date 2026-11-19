@@ -93,9 +93,7 @@ export default function UnitWorkspace({
                             {t('Move Unit')}
                         </DropdownMenuItem>
                     )}
-                    {canDelete && !activeLease && (
-                        <DropdownMenuSeparator />
-                    )}
+                    {canDelete && !activeLease && <DropdownMenuSeparator />}
                     {canDelete && !activeLease && (
                         <DropdownMenuItem
                             variant="destructive"

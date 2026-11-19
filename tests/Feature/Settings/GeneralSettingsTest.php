@@ -28,10 +28,10 @@ describe('General settings page', function () {
         $this->actingAs($tenantUser)
             ->patch(route('settings.general.update'), [
                 'site_name' => 'Tenant Attempt',
-                'country_code' => 'ID',
-                'locale' => 'id',
-                'currency' => 'IDR',
-                'timezone' => 'Asia/Jakarta',
+                'country_code' => 'IN',
+                'locale' => 'en',
+                'currency' => 'INR',
+                'timezone' => 'Asia/Kolkata',
                 'lease_id_prefix' => 'TEN',
                 'invoice_id_prefix' => 'INV',
             ])
@@ -42,10 +42,10 @@ describe('General settings page', function () {
         $owner = User::factory()->owner()->create();
 
         Setting::set('site_name', 'GrihaFlow');
-        Setting::set('country_code', 'ID');
-        Setting::set('locale', 'id');
-        Setting::set('currency', 'IDR');
-        Setting::set('timezone', 'Asia/Jakarta');
+        Setting::set('country_code', 'IN');
+        Setting::set('locale', 'en');
+        Setting::set('currency', 'INR');
+        Setting::set('timezone', 'Asia/Kolkata');
         Setting::set('lease_id_prefix', 'LSX');
         Setting::set('invoice_id_prefix', 'INV');
 
@@ -58,24 +58,24 @@ describe('General settings page', function () {
                 ->has('settings.country_code')
                 ->has('settings.locale')
                 ->has('settings.currency')
-                ->where('settings.supported_currencies', ['IDR'])
+                ->where('settings.supported_currencies', ['INR'])
                 ->has('settings.timezone')
                 ->has('settings.lease_id_prefix')
                 ->has('settings.invoice_id_prefix')
                 ->has('settings.invoice_pdf_enabled')
-                ->has('timezone_list')
+                ->has('regional')
             );
     });
 
-    it('exposes all supported currencies for client-side filtering', function () {
+    it('exposes the supported currencies to the client', function () {
         $owner = User::factory()->owner()->create();
-        Setting::set('currency', 'IDR');
-        Setting::set('supported_currencies', ['IDR', 'USD']);
+        Setting::set('currency', 'INR');
+        Setting::set('supported_currencies', ['INR']);
 
         $this->actingAs($owner)
             ->get(route('settings.general.edit'))
             ->assertInertia(fn ($page) => $page
-                ->where('settings.supported_currencies', ['IDR', 'USD'])
+                ->where('settings.supported_currencies', ['INR'])
             );
     });
 
@@ -86,34 +86,34 @@ describe('General settings page', function () {
         $this->actingAs($owner)
             ->get(route('settings.general.edit'))
             ->assertInertia(fn ($page) => $page
-                ->where('settings.currency', 'USD')
-                ->where('settings.supported_currencies', ['USD'])
-                ->where('setting.currency', 'USD')
-                ->where('setting.supported_currencies', ['USD'])
+                ->where('settings.currency', 'INR')
+                ->where('settings.supported_currencies', ['INR'])
+                ->where('setting.currency', 'INR')
+                ->where('setting.supported_currencies', ['INR'])
             );
     });
 
     it('reads currency settings fresh after acquiring the transaction lock', function () {
         $owner = User::factory()->owner()->create();
-        Setting::set('currency', 'IDR');
-        Setting::set('supported_currencies', ['IDR', 'USD']);
+        Setting::set('currency', 'INR');
+        Setting::set('supported_currencies', ['INR', 'INR']);
         $unit = Unit::factory()->create();
         Setting::get('site_name');
 
-        DB::table('settings')->where('key', 'currency')->update(['value' => 'USD']);
+        DB::table('settings')->where('key', 'currency')->update(['value' => 'INR']);
         DB::table('settings')
             ->where('key', 'supported_currencies')
-            ->update(['value' => json_encode(['USD'], JSON_THROW_ON_ERROR)]);
+            ->update(['value' => json_encode(['INR'], JSON_THROW_ON_ERROR)]);
 
         $this->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'currency' => 'USD',
-                'supported_currencies' => ['USD'],
+                'currency' => 'INR',
+                'supported_currencies' => ['INR'],
             ])
             ->assertRedirect()
             ->assertSessionHas('inertia.flash_data.toast.type', 'success');
 
-        expect($unit->rates()->where('currency', 'IDR')->where('is_active', true)->exists())->toBeTrue();
+        expect($unit->rates()->where('currency', 'INR')->where('is_active', true)->exists())->toBeTrue();
     });
 
     it('updates all general settings', function () {
@@ -122,10 +122,10 @@ describe('General settings page', function () {
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
                 'site_name' => 'My Property Mgmt',
-                'country_code' => 'US',
+                'country_code' => 'IN',
                 'locale' => 'en',
-                'currency' => 'USD',
-                'timezone' => 'America/New_York',
+                'currency' => 'INR',
+                'timezone' => 'Asia/Kolkata',
                 'lease_id_prefix' => 'LSE',
                 'invoice_id_prefix' => 'INV',
                 'invoice_pdf_enabled' => true,
@@ -133,10 +133,10 @@ describe('General settings page', function () {
             ->assertRedirect(route('settings.general.edit'));
 
         expect(Setting::get('site_name'))->toBe('My Property Mgmt');
-        expect(Setting::get('country_code'))->toBe('US');
+        expect(Setting::get('country_code'))->toBe('IN');
         expect(Setting::get('locale'))->toBe('en');
-        expect(Setting::get('currency'))->toBe('USD');
-        expect(Setting::get('timezone'))->toBe('America/New_York');
+        expect(Setting::get('currency'))->toBe('INR');
+        expect(Setting::get('timezone'))->toBe('Asia/Kolkata');
         expect(Setting::get('lease_id_prefix'))->toBe('LSE');
         expect(Setting::get('invoice_id_prefix'))->toBe('INV');
         expect(Setting::get('invoice_pdf_enabled'))->toBeTrue();
@@ -147,16 +147,16 @@ describe('General settings page', function () {
 
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'country_code' => 'ID',
-                'locale' => 'id-ID',
-                'currency' => 'IDR',
-                'timezone' => 'Asia/Jakarta',
+                'country_code' => 'IN',
+                'locale' => 'en-IN',
+                'currency' => 'INR',
+                'timezone' => 'Asia/Kolkata',
             ])
             ->assertRedirect(route('settings.general.edit'))
-            ->assertSessionHas('inertia.flash_data.toast.message', 'Pengaturan umum diperbarui.');
+            ->assertSessionHas('inertia.flash_data.toast.message', 'General settings updated.');
 
-        expect(Setting::get('locale'))->toBe('id')
-            ->and(app()->getLocale())->toBe('id');
+        expect(Setting::get('locale'))->toBe('en')
+            ->and(app()->getLocale())->toBe('en');
     });
 
     it('rejects unsupported locales', function () {
@@ -164,10 +164,10 @@ describe('General settings page', function () {
 
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'country_code' => 'ID',
+                'country_code' => 'IN',
                 'locale' => 'fr',
-                'currency' => 'IDR',
-                'timezone' => 'Asia/Jakarta',
+                'currency' => 'INR',
+                'timezone' => 'Asia/Kolkata',
             ])
             ->assertSessionHasErrors(['locale']);
     });
@@ -177,13 +177,13 @@ describe('General settings page', function () {
 
         $this->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'currency' => ' usd ',
-                'supported_currencies' => [' idr ', 'usd'],
+                'currency' => ' inr ',
+                'supported_currencies' => [' inr '],
             ])
             ->assertRedirect();
 
-        expect(Setting::get('currency'))->toBe('USD')
-            ->and(Setting::get('supported_currencies'))->toBe(['IDR', 'USD']);
+        expect(Setting::get('currency'))->toBe('INR')
+            ->and(Setting::get('supported_currencies'))->toBe(['INR']);
     });
 
     it('rejects case-insensitive duplicate supported currencies', function () {
@@ -191,55 +191,38 @@ describe('General settings page', function () {
 
         $this->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'currency' => 'IDR',
-                'supported_currencies' => ['idr', 'IDR'],
+                'currency' => 'INR',
+                'supported_currencies' => ['inr', 'INR'],
             ])
             ->assertSessionHasErrors('supported_currencies.1');
     });
 
-    it('rejects empty, unknown, and default-excluding supported currencies', function (array $supported, string $error): void {
+    it('rejects non-INR supported currencies', function (array $supported, string $error): void {
         $owner = User::factory()->owner()->create();
 
         $this->actingAs($owner)
             ->patch(route('settings.general.update'), [
-                'currency' => 'USD',
+                'currency' => 'INR',
                 'supported_currencies' => $supported,
             ])
             ->assertSessionHasErrors($error);
     })->with([
         'empty' => [[], 'supported_currencies'],
-        'unknown' => [['USD', 'ZZZ'], 'supported_currencies.1'],
-        'default excluded' => [['IDR'], 'supported_currencies'],
-        'associative' => [['default' => 'USD'], 'supported_currencies'],
+        'usd' => [['USD'], 'supported_currencies.0'],
+        'unknown' => [['INR', 'ZZZ'], 'supported_currencies.1'],
+        'associative' => [['default' => 'INR'], 'supported_currencies'],
     ]);
 
-    it('changes the legacy fallback with the new default currency', function () {
+    it('updates the default currency in isolation', function () {
         $owner = User::factory()->owner()->create();
-        Setting::set('currency', 'IDR');
+        Setting::set('currency', 'INR');
 
         $this->actingAs($owner)
-            ->patch(route('settings.general.update'), ['currency' => 'USD'])
+            ->patch(route('settings.general.update'), ['currency' => 'inr'])
             ->assertRedirect();
 
-        expect(Setting::get('currency'))->toBe('USD')
+        expect(Setting::get('currency'))->toBe('INR')
             ->and(Setting::get('supported_currencies'))->toBeNull();
-    });
-
-    it('warns when removing a currency used by active rates', function () {
-        $owner = User::factory()->owner()->create();
-        $unit = Unit::factory()->create();
-        Setting::set('currency', 'IDR');
-        Setting::set('supported_currencies', ['IDR', 'USD']);
-
-        $this->actingAs($owner)
-            ->patch(route('settings.general.update'), [
-                'currency' => 'USD',
-                'supported_currencies' => ['USD'],
-            ])
-            ->assertRedirect()
-            ->assertSessionHas('inertia.flash_data.toast.type', 'warning');
-
-        expect($unit->rates()->where('currency', 'IDR')->where('is_active', true)->exists())->toBeTrue();
     });
 
     it('validates country_code is 2 uppercase letters', function () {
@@ -249,9 +232,9 @@ describe('General settings page', function () {
             ->patch(route('settings.general.update'), [
                 'site_name' => 'GrihaFlow',
                 'country_code' => 'USA',
-                'locale' => 'id',
-                'currency' => 'IDR',
-                'timezone' => 'Asia/Jakarta',
+                'locale' => 'en',
+                'currency' => 'INR',
+                'timezone' => 'Asia/Kolkata',
                 'lease_id_prefix' => 'LSX',
                 'invoice_id_prefix' => 'INV',
             ])
@@ -264,10 +247,10 @@ describe('General settings page', function () {
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
                 'site_name' => 'GrihaFlow',
-                'country_code' => 'ID',
-                'locale' => 'id',
+                'country_code' => 'IN',
+                'locale' => 'en',
                 'currency' => 'INR',
-                'timezone' => 'Asia/Jakarta',
+                'timezone' => 'Asia/Kolkata',
                 'lease_id_prefix' => 'LSX',
                 'invoice_id_prefix' => 'INV',
             ])
@@ -280,9 +263,9 @@ describe('General settings page', function () {
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
                 'site_name' => 'GrihaFlow',
-                'country_code' => 'ID',
-                'locale' => 'id',
-                'currency' => 'IDR',
+                'country_code' => 'IN',
+                'locale' => 'en',
+                'currency' => 'INR',
                 'timezone' => 'Invalid/Timezone',
                 'lease_id_prefix' => 'LSX',
                 'invoice_id_prefix' => 'INV',
@@ -296,10 +279,10 @@ describe('General settings page', function () {
         $this->from(route('settings.general.edit'))->actingAs($owner)
             ->patch(route('settings.general.update'), [
                 'site_name' => 'GrihaFlow',
-                'country_code' => 'ID',
-                'locale' => 'id',
-                'currency' => 'IDR',
-                'timezone' => 'Asia/Jakarta',
+                'country_code' => 'IN',
+                'locale' => 'en',
+                'currency' => 'INR',
+                'timezone' => 'Asia/Kolkata',
                 'lease_id_prefix' => 'LSX',
                 'invoice_id_prefix' => 'inv',
             ])

@@ -7,15 +7,11 @@ use App\Actions\Settings\UpdateSettings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\UpdateBrandingRequest;
 use App\Models\Setting;
-use App\Models\UnitRate;
 use App\Services\Localization\ApplicationLocale;
-use App\Services\Payments\MoneyConverter;
 use App\Services\Settings\InstallationCurrencySettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,8 +42,7 @@ class GeneralController extends Controller
 
         return Inertia::render('settings/general', [
             'settings' => $settings,
-            'locale_options' => $this->locale->options(),
-            'timezone_list' => timezone_identifiers_list(),
+            'regional' => config('regional'),
         ]);
     }
 
@@ -63,29 +58,17 @@ class GeneralController extends Controller
 
         $this->normalizeCurrencyInput($request);
 
-        if ($request->exists('currency') || $request->exists('supported_currencies')) {
-            return DB::transaction(function () use ($request): RedirectResponse {
-                $this->currencies->lockForUpdate();
-
-                return $this->persistUpdate($request, useFreshCurrencySettings: true);
-            });
-        }
-
+        // Regional settings are pinned to config/regional.php; the validation
+        // rules below only accept the India values, so nothing here can
+        // override the application-wide configuration.
         return $this->persistUpdate($request);
     }
 
-    private function persistUpdate(Request $request, bool $useFreshCurrencySettings = false): RedirectResponse
+    private function persistUpdate(Request $request): RedirectResponse
     {
-        $previousSupported = $useFreshCurrencySettings
-            ? $this->currencies->freshSupported()
-            : $this->currencies->supported();
-        $hasStoredSupportedCurrencies = $this->currencies->hasStoredSupportedCurrencies(
-            fresh: $useFreshCurrencySettings,
-        );
-
         $validated = $request->validate([
             'site_name' => ['sometimes', 'required', 'string', 'max:255'],
-            'country_code' => ['sometimes', 'required', 'string', 'size:2', 'regex:/^[A-Z]+$/'],
+            'country_code' => ['sometimes', 'required', 'string', 'size:2', 'in:IN'],
             'locale' => [
                 'sometimes',
                 'required',
@@ -93,10 +76,10 @@ class GeneralController extends Controller
                 'max:10',
                 Rule::in(array_keys($this->locale->options())),
             ],
-            'currency' => ['sometimes', 'required', 'string', 'size:3', 'regex:/^[A-Z]{3}$/', Rule::in(array_keys(app(MoneyConverter::class)->scales()))],
+            'currency' => ['sometimes', 'required', 'string', 'size:3', 'in:INR'],
             'supported_currencies' => ['sometimes', 'required', 'array', 'list', 'min:1'],
-            'supported_currencies.*' => ['required', 'string', 'size:3', 'regex:/^[A-Z]{3}$/', 'distinct:strict', Rule::in(array_keys(app(MoneyConverter::class)->scales()))],
-            'timezone' => ['sometimes', 'required', 'string', Rule::in(timezone_identifiers_list())],
+            'supported_currencies.*' => ['required', 'string', 'size:3', 'in:INR', 'distinct:strict'],
+            'timezone' => ['sometimes', 'required', 'string', 'in:Asia/Kolkata'],
             'lease_id_prefix' => ['sometimes', 'required', 'string', 'max:10', 'regex:/^[A-Z]+$/'],
             'invoice_id_prefix' => ['sometimes', 'required', 'string', 'max:10', 'regex:/^[A-Z]+$/'],
             'invoice_pdf_enabled' => ['sometimes', 'boolean'],
@@ -106,56 +89,11 @@ class GeneralController extends Controller
             $validated['locale'] = $this->locale->normalize($validated['locale']);
         }
 
-        $nextDefault = $validated['currency'] ?? (
-            $useFreshCurrencySettings
-                ? $this->currencies->default(fresh: true)
-                : $this->currencies->default()
-        );
-        if (array_key_exists('supported_currencies', $validated)) {
-            try {
-                $validated['supported_currencies'] = $this->currencies->normalize(
-                    $validated['supported_currencies'],
-                );
-                $this->currencies->normalize($validated['supported_currencies'], $nextDefault);
-            } catch (\Throwable $exception) {
-                throw ValidationException::withMessages([
-                    'supported_currencies' => __($exception->getMessage()),
-                ]);
-            }
-        } elseif ($hasStoredSupportedCurrencies && ! in_array($nextDefault, $previousSupported, true)) {
-            throw ValidationException::withMessages([
-                'currency' => __('The default currency must be included in supported currencies.'),
-            ]);
-        }
-
-        $nextSupported = $validated['supported_currencies']
-            ?? ($hasStoredSupportedCurrencies ? $previousSupported : [$nextDefault]);
-        $removedCurrencies = array_values(array_diff($previousSupported, $nextSupported));
-
         $this->updateSettings->execute($validated, $request->user());
 
         $this->locale->apply($validated['locale'] ?? null);
 
-        $activeRemovedCurrencies = empty($removedCurrencies)
-            ? []
-            : UnitRate::query()
-                ->whereIn('currency', $removedCurrencies)
-                ->where('is_active', true)
-                ->distinct()
-                ->orderBy('currency')
-                ->pluck('currency')
-                ->all();
-
-        if ($activeRemovedCurrencies !== []) {
-            Inertia::flash('toast', [
-                'type' => 'warning',
-                'message' => __('General settings updated. Active rates still use: :currencies.', [
-                    'currencies' => implode(', ', $activeRemovedCurrencies),
-                ]),
-            ]);
-        } else {
-            Inertia::flash('toast', ['type' => 'success', 'message' => __('General settings updated.')]);
-        }
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('General settings updated.')]);
 
         return back();
     }

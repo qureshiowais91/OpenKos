@@ -125,7 +125,7 @@ test('rent reminder channels contain database only once', function () {
         periodEnd: today()->addMonth()->toDateString(),
         dueDate: today()->addDays(3)->toDateString(),
         amount: 100000,
-        currency: 'IDR',
+        currency: 'INR',
     ));
 
     expect($reminder->via($lease->primaryTenant))->toHaveCount(2)
@@ -178,7 +178,7 @@ test('maintenance ticket updates create a tenant notification', function () {
 test('invoice reminder events notify tenants with a configured route', function () {
     Notification::fake();
     Setting::set('reminder_channels', ['log'], 'array');
-    Setting::set('locale', 'id');
+    Setting::set('locale', 'en-IN');
 
     $lease = Lease::factory()->create();
     $tenant = $lease->primaryTenant;
@@ -189,7 +189,7 @@ test('invoice reminder events notify tenants with a configured route', function 
         periodEnd: today()->addMonth()->toDateString(),
         dueDate: today()->addDays(3)->toDateString(),
         amount: 100000,
-        currency: 'IDR',
+        currency: 'INR',
     );
 
     InvoiceReminderDispatched::dispatch($event);
@@ -197,7 +197,7 @@ test('invoice reminder events notify tenants with a configured route', function 
     Notification::assertSentTo(
         $tenant,
         RentReminder::class,
-        fn (RentReminder $notification): bool => $notification->locale === 'id',
+        fn (RentReminder $notification): bool => $notification->locale === 'en',
     );
 });
 
@@ -216,7 +216,7 @@ test('lease expiration command creates only one notification at thirty days', fu
 });
 
 test('lease expiration notifications use the configured locale', function () {
-    Setting::set('locale', 'id');
+    Setting::set('locale', 'en-IN');
     $tenant = Tenant::factory()->withUser()->create();
     Lease::factory()->create([
         'primary_tenant_id' => $tenant->id,
@@ -225,5 +225,5 @@ test('lease expiration notifications use the configured locale', function () {
 
     $this->artisan('app:send-lease-expiration-notifications')->assertSuccessful();
 
-    expect($tenant->notifications()->first()->data['title'])->toBe('Pengingat berakhirnya sewa');
+    expect($tenant->notifications()->first()->data['title'])->toBe('Lease expiration reminder');
 });

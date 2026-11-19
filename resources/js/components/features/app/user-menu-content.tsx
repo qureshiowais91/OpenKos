@@ -32,7 +32,10 @@ export function UserMenuContent({ user, profileHref }: Props) {
             </DropdownMenuLabel>
             {profileHref && (
                 <DropdownMenuItem asChild>
-                    <Link className="block w-full cursor-pointer" href={profileHref}>
+                    <Link
+                        className="block w-full cursor-pointer"
+                        href={profileHref}
+                    >
                         <UserRound className="mr-2" />
                         Profile
                     </Link>

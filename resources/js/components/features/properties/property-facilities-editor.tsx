@@ -42,8 +42,7 @@ export default function PropertyFacilitiesEditor({
         .sort((left, right) => left.name.localeCompare(right.name));
     const summarySource = compact
         ? assignedAmenities.filter(
-              (amenity) =>
-                  amenity.is_active && amenity.scope !== 'unit_type',
+              (amenity) => amenity.is_active && amenity.scope !== 'unit_type',
           )
         : assignedAmenities;
     const summaryAmenities = compact
@@ -147,8 +146,8 @@ export default function PropertyFacilitiesEditor({
                     {compact &&
                         summarySource.length > summaryAmenities.length && (
                             <Badge variant="outline">
-                                +{summarySource.length -
-                                    summaryAmenities.length}{' '}
+                                +
+                                {summarySource.length - summaryAmenities.length}{' '}
                                 {t('more')}
                             </Badge>
                         )}

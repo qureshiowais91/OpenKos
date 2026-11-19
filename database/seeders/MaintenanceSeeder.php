@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class MaintenanceSeeder extends Seeder
 {
-    private const PROPERTY_SLUG = 'ope-184-demo-kos-anggrek-residence';
+    private const PROPERTY_SLUG = 'ope-184-demo-palmgrove-suites';
 
     public function run(): void
     {

@@ -1,49 +1,36 @@
 <?php
 
-use App\Models\Setting;
 use App\Services\Settings\InstallationCurrencySettings;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(TestCase::class);
 
-it('falls back to the default currency when supported currencies are missing', function () {
-    Setting::set('currency', 'USD');
-
-    expect(app(InstallationCurrencySettings::class)->supported())->toBe(['USD']);
+it('pins the supported currency set to the regional configuration', function () {
+    expect(app(InstallationCurrencySettings::class)->supported())->toBe(['INR'])
+        ->and(app(InstallationCurrencySettings::class)->default())->toBe('INR');
 });
 
-it('preserves normalized supported-currency order', function () {
+it('rejects currencies outside the regional configuration', function () {
     $settings = app(InstallationCurrencySettings::class);
 
-    expect($settings->normalize([' usd ', 'IDR'], default: 'USD'))
-        ->toBe(['USD', 'IDR']);
+    expect($settings->supports('INR'))->toBeTrue()
+        ->and($settings->supports('USX'))->toBeFalse()
+        ->and($settings->supports(null))->toBeTrue()
+        ->and($settings->supports('ZZZ'))->toBeFalse();
 });
 
-it('falls back safely when persisted supported currencies are malformed', function () {
-    Setting::set('currency', 'IDR');
-    Setting::set('supported_currencies', ['unknown']);
+it('normalizes currency lists but keeps regional values intact', function () {
+    $settings = app(InstallationCurrencySettings::class);
 
-    expect(app(InstallationCurrencySettings::class)->supported())->toBe(['IDR']);
+    expect($settings->normalize([' inr ', 'INR'], default: 'INR'))->toBe(['INR']);
 });
 
-it('emits row-level locking SQL on supported production database drivers', function () {
-    if (! in_array(DB::getDriverName(), ['pgsql', 'mysql', 'mariadb'], true)) {
-        $this->markTestSkipped('SQLite does not provide row-level SELECT ... FOR UPDATE locking.');
-    }
+it('rejects a default currency outside the normalized list', function () {
+    expect(fn () => app(InstallationCurrencySettings::class)->normalize(['INR'], default: 'EUR'))
+        ->toThrow(InvalidArgumentException::class);
+});
 
-    Setting::set('currency', 'IDR');
-    Setting::set('supported_currencies', ['IDR']);
-    DB::connection()->flushQueryLog();
-    DB::connection()->enableQueryLog();
-
-    DB::transaction(function (): void {
-        app(InstallationCurrencySettings::class)->lockForUpdate();
-    });
-
-    expect(collect(DB::connection()->getQueryLog())
-        ->pluck('query')
-        ->contains(fn (string $query): bool => str_contains(strtolower($query), 'for update')))
-        ->toBeTrue();
+it('normalizes empty lists to nothing', function () {
+    expect(fn () => app(InstallationCurrencySettings::class)->normalize([]))
+        ->toThrow(InvalidArgumentException::class);
 });

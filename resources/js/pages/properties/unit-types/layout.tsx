@@ -21,20 +21,31 @@ export function UnitTypeLayout({
             backRoute={properties.unitTypes.index.url(property)}
             backLabel={`${property.name} Unit Types`}
             breadcrumbs={
-                <nav aria-label="Breadcrumb" className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
+                <nav
+                    aria-label="Breadcrumb"
+                    className="mb-2 flex items-center gap-2 text-xs text-muted-foreground"
+                >
                     <Link href={properties.show.url(property)}>Property</Link>
                     <span aria-hidden="true">/</span>
-                    <Link href={properties.unitTypes.index.url(property)}>Unit Types</Link>
+                    <Link href={properties.unitTypes.index.url(property)}>
+                        Unit Types
+                    </Link>
                     <span aria-hidden="true">/</span>
                     <span className="text-foreground">{unitType.name}</span>
                 </nav>
             }
             badges={
                 <div className="flex flex-wrap gap-2">
-                    <Badge variant={unitType.is_active ? 'secondary' : 'outline'}>
+                    <Badge
+                        variant={unitType.is_active ? 'secondary' : 'outline'}
+                    >
                         {unitType.is_active ? 'Active' : 'Inactive'}
                     </Badge>
-                    <Badge variant={unitType.is_published ? 'secondary' : 'outline'}>
+                    <Badge
+                        variant={
+                            unitType.is_published ? 'secondary' : 'outline'
+                        }
+                    >
                         {unitType.is_published ? 'Listed' : 'Not listed'}
                     </Badge>
                 </div>
@@ -50,17 +61,26 @@ export function UnitTypeLayout({
                     {
                         key: 'units',
                         label: 'Units',
-                        href: properties.unitTypes.units.url({ property, unitType }),
+                        href: properties.unitTypes.units.url({
+                            property,
+                            unitType,
+                        }),
                     },
                     {
                         key: 'pricing',
                         label: 'Pricing',
-                        href: properties.unitTypes.rates.index.url({ property, unitType }),
+                        href: properties.unitTypes.rates.index.url({
+                            property,
+                            unitType,
+                        }),
                     },
                     {
                         key: 'listing',
                         label: 'Listing',
-                        href: properties.unitTypes.listing.url({ property, unitType }),
+                        href: properties.unitTypes.listing.url({
+                            property,
+                            unitType,
+                        }),
                     },
                 ]}
             />

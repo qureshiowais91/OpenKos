@@ -21,32 +21,32 @@ use OpenKOS\Core\Data\Mail\MailMessage;
 use OpenKOS\Platform\Notification\NotificationDriverRegistration;
 use OpenKOS\Platform\Notification\NotificationRegistry;
 
-it('configures a valid display timezone without changing the application timezone', function () {
-    Setting::set('timezone', 'America/New_York');
+it('pins the display timezone to the India-only regional configuration', function () {
+    Setting::set('timezone', 'Asia/Kolkata');
     app()->forgetScopedInstances();
 
     (new AppServiceProvider(app()))->boot();
 
-    expect(config('app.display_timezone'))->toBe('America/New_York')
+    expect(config('app.display_timezone'))->toBe('Asia/Kolkata')
         ->and(config('app.timezone'))->toBe('UTC');
 });
 
-it('falls back to UTC for an invalid persisted display timezone', function () {
+it('pins the display timezone even when the persisted value is invalid', function () {
     Setting::set('timezone', 'invalid/timezone');
     app()->forgetScopedInstances();
 
     (new AppServiceProvider(app()))->boot();
 
-    expect(config('app.display_timezone'))->toBe('UTC');
+    expect(config('app.display_timezone'))->toBe('Asia/Kolkata');
 });
 
-it('boots with UTC when the settings table is unavailable', function () {
+it('pins the display timezone when the settings table is unavailable', function () {
     Schema::dropIfExists('settings');
     app()->forgetScopedInstances();
 
     (new AppServiceProvider(app()))->boot();
 
-    expect(config('app.display_timezone'))->toBe('UTC');
+    expect(config('app.display_timezone'))->toBe('Asia/Kolkata');
 });
 
 it('registers application services through dedicated providers', function () {

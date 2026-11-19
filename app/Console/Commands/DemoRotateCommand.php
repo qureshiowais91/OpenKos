@@ -28,7 +28,7 @@ class DemoRotateCommand extends Command
             return self::SUCCESS;
         }
 
-        $password = 'PASSWORD_' . now()->format('Ymd');
+        $password = 'PASSWORD_'.now()->format('Ymd');
         $found = 0;
 
         foreach (self::DEMO_EMAILS as $email) {

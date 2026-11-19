@@ -88,24 +88,21 @@ return [
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    'supported_locales' => [
-        'en' => 'English',
-        'id' => 'Bahasa Indonesia',
-    ],
+    // Locale options, aliases and intl mappings are re-exported from the
+    // India-only regional configuration (config/regional.php).
+    'supported_locales' => config('regional.locale.options', ['en' => 'English']),
 
-    'locale_aliases' => [
+    'locale_aliases' => config('regional.locale.aliases', [
         'en' => 'en',
         'en-us' => 'en',
-        'id' => 'id',
-        'id-id' => 'id',
-    ],
+        'en-in' => 'en',
+    ]),
 
     'intl_locales' => [
-        'en' => 'en-US',
-        'id' => 'id-ID',
+        config('regional.locale.app', 'en') => config('regional.locale.intl', 'en-IN'),
     ],
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_IN'),
 
     /*
     |--------------------------------------------------------------------------

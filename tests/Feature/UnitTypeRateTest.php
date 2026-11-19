@@ -10,9 +10,9 @@ it('overrides only the matching unit type rate identity', function (): void {
     $unit->rates()->update(['is_active' => false]);
 
     $type->rates()->createMany([
-        ['billing_interval' => 1, 'billing_unit' => 'month', 'amount' => 100, 'currency' => 'IDR', 'is_active' => true],
-        ['billing_interval' => 3, 'billing_unit' => 'month', 'amount' => 250, 'currency' => 'IDR', 'is_active' => true],
-        ['billing_interval' => 1, 'billing_unit' => 'month', 'amount' => 10, 'currency' => 'USD', 'is_active' => true],
+        ['billing_interval' => 1, 'billing_unit' => 'month', 'amount' => 100, 'currency' => 'INR', 'is_active' => true],
+        ['billing_interval' => 3, 'billing_unit' => 'month', 'amount' => 250, 'currency' => 'INR', 'is_active' => true],
+        ['billing_interval' => 1, 'billing_unit' => 'week', 'amount' => 10, 'currency' => 'INR', 'is_active' => true],
     ]);
     $override = $unit->rates()->firstOrFail();
     $override->update(['amount' => 125, 'is_active' => true]);
@@ -32,7 +32,7 @@ it('reveals the unit type rate when the matching override is inactive', function
         'billing_interval' => 1,
         'billing_unit' => 'month',
         'amount' => 100,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'is_active' => true,
     ]);
     $unit->rates()->firstOrFail()->update(['amount' => 125, 'is_active' => false]);

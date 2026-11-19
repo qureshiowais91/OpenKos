@@ -56,8 +56,8 @@ it('exposes and enforces declared gateway currencies', function () {
     $gateway = $manager->find('currency-aware');
 
     expect($gateway)->not->toBeNull()
-        ->and($manager->supportedCurrencies($gateway))->toBe(['IDR'])
-        ->and($manager->supportsCurrency($gateway, 'idr'))->toBeTrue()
+        ->and($manager->supportedCurrencies($gateway))->toBe(['INR'])
+        ->and($manager->supportsCurrency($gateway, 'inr'))->toBeTrue()
         ->and($manager->supportsCurrency($gateway, 'USD'))->toBeFalse();
 });
 
@@ -68,7 +68,7 @@ it('fails closed for malformed gateway currency declarations', function () {
     $gateway = $manager->find('malformed-currency');
 
     expect($gateway)->not->toBeNull()
-        ->and($manager->supportsCurrency($gateway, 'IDR'))->toBeFalse()
+        ->and($manager->supportsCurrency($gateway, 'INR'))->toBeFalse()
         ->and($manager->all()[0]['status'])->toBe('unavailable');
 });
 
@@ -93,7 +93,7 @@ it('preserves an explicitly empty currency declaration', function () {
     $manager = new PaymentGatewayManager($registry, app(SettingsManager::class), app());
 
     expect($manager->supportedCurrencies($gateway))->toBe([])
-        ->and($manager->supportsCurrency($gateway, 'IDR'))->toBeFalse();
+        ->and($manager->supportsCurrency($gateway, 'USD'))->toBeFalse();
 });
 
 it('resolves only a configured active gateway', function () {

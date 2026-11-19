@@ -355,7 +355,7 @@ describe('renewal', function () {
 
     it('rejects invalid legacy deposits before creating a renewed lease', function () {
         [, , $lease] = createRenewableLease([
-            'deposit_amount' => '1.50',
+            'deposit_amount' => '1.505',
         ]);
         DB::table('leases')->whereKey($lease->id)->update(['currency' => null]);
 

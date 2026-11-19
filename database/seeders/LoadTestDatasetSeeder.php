@@ -124,10 +124,10 @@ class LoadTestDatasetSeeder extends Seeder
      */
     private function resolveGeography(): array
     {
-        $region = Region::query()->where('country_code', 'ID')->first();
+        $region = Region::query()->where('country_code', 'IN')->first();
 
         if (! $region) {
-            throw new RuntimeException('Load-test dataset requires at least one seeded Indonesian region.');
+            throw new RuntimeException('Load-test dataset requires at least one seeded Indian region.');
         }
 
         $city = City::query()->where('region_id', $region->id)->first();
@@ -195,8 +195,8 @@ class LoadTestDatasetSeeder extends Seeder
             'address' => sprintf('Load-test address %02d', $index),
             'region_id' => $region->id,
             'city_id' => $city->id,
-            'postal_code' => sprintf('40%03d', $index),
-            'phone' => sprintf('+622100177%02d', $index),
+            'postal_code' => sprintf('1100%02d', $index),
+            'phone' => sprintf('+9198100%05d', $index),
             'description' => 'Reserved OPE-177 load-test property.',
             'is_active' => true,
         ])->saveQuietly();
@@ -236,8 +236,8 @@ class LoadTestDatasetSeeder extends Seeder
             'unit_id' => $unit->id,
             'billing_interval' => 1,
             'billing_unit' => 'month',
-            'amount' => 1_500_000 + ($index * 50_000),
-            'currency' => 'IDR',
+            'amount' => 15_000 + ($index * 500),
+            'currency' => 'INR',
             'is_active' => true,
             'effective_from' => now()->startOfMonth()->toDateString(),
             'effective_until' => null,
@@ -259,7 +259,7 @@ class LoadTestDatasetSeeder extends Seeder
         $tenant->forceFill([
             'user_id' => $index === 1 ? $tenantUser->id : null,
             'name' => $index === 1 ? $tenantUser->name : sprintf('OPE-177 Load Test Tenant %03d', $index),
-            'phone' => sprintf('+628120177%04d', $index),
+            'phone' => sprintf('+9198110%05d', $index),
             'id_card_number' => $this->tenantIdCard($index),
             'is_active' => true,
         ])->saveQuietly();
@@ -295,13 +295,13 @@ class LoadTestDatasetSeeder extends Seeder
             'start_date' => now()->subMonths(3)->startOfMonth()->addDays(($index - 1) % 10)->toDateString(),
             'end_date' => null,
             'rent_amount' => $rate->amount,
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'billing_interval' => 1,
             'billing_unit' => 'month',
             'billing_strategy' => 'advance',
             'is_custom_price' => false,
             'unit_rate_id' => $rate->id,
-            'deposit_amount' => 1_500_000,
+            'deposit_amount' => 15_000,
             'deposit_paid_at' => now()->subMonths(3),
             'deposit_refund_amount' => null,
             'deposit_refunded_at' => null,
@@ -349,15 +349,15 @@ class LoadTestDatasetSeeder extends Seeder
                 'start_date' => $startDate->toDateString(),
                 'end_date' => $endDate->toDateString(),
                 'rent_amount' => $rate->amount,
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'billing_interval' => 1,
                 'billing_unit' => 'month',
                 'billing_strategy' => 'advance',
                 'is_custom_price' => false,
                 'unit_rate_id' => $rate->id,
-                'deposit_amount' => 1_500_000,
+                'deposit_amount' => 15_000,
                 'deposit_paid_at' => $startDate,
-                'deposit_refund_amount' => 1_500_000,
+                'deposit_refund_amount' => 15_000,
                 'deposit_refunded_at' => $endDate,
                 'rent_due_day' => (($index - 1) % 10) + 1,
                 'status' => LeaseStatus::Terminated,
@@ -413,7 +413,7 @@ class LoadTestDatasetSeeder extends Seeder
             'status' => InvoiceStatus::Pending,
             'total' => $lease->rent_amount,
             'amount_paid' => 0,
-            'currency' => 'IDR',
+            'currency' => 'INR',
         ])->saveQuietly();
 
         return $invoice->refresh();
@@ -473,7 +473,7 @@ class LoadTestDatasetSeeder extends Seeder
         $payment->forceFill([
             'invoice_id' => $invoice->id,
             'amount' => $amount,
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'payment_date' => $invoice->due_date->toDateString(),
             'payment_method' => $confirmed ? 'cash' : 'bank_transfer',
             'reference_number' => $reference,
@@ -540,7 +540,7 @@ class LoadTestDatasetSeeder extends Seeder
                 },
                 'assigned_to' => $status === MaintenanceStatus::Reported ? null : $users['staff']->id,
                 'created_by' => $index === 1 ? $users['tenant']->id : $users['owner']->id,
-                'cost' => $status === MaintenanceStatus::Resolved ? 250_000 : null,
+                'cost' => $status === MaintenanceStatus::Resolved ? 2_500 : null,
                 'resolved_at' => $status === MaintenanceStatus::Resolved ? now()->subDay() : null,
                 'resolution_notes' => $status === MaintenanceStatus::Resolved ? 'Resolved for load-test coverage.' : null,
             ])->saveQuietly();

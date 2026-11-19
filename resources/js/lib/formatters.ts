@@ -1,12 +1,12 @@
 import { t } from '@/lib/i18n';
 
-let displayTimezone = 'UTC';
+let displayTimezone = 'Asia/Kolkata';
 let displayCurrency: string | null = null;
-let displayLocale = 'en-US';
+let displayLocale = 'en-IN';
 let currencyScales: Record<string, number> = {};
 
 export function setDisplayTimezone(timezone: string | null | undefined): void {
-    displayTimezone = timezone || 'UTC';
+    displayTimezone = timezone || 'Asia/Kolkata';
 }
 
 export function setDisplayCurrency(currency: string | null | undefined): void {
@@ -14,7 +14,7 @@ export function setDisplayCurrency(currency: string | null | undefined): void {
 }
 
 export function setDisplayLocale(locale: string | null | undefined): void {
-    displayLocale = locale || 'en-US';
+    displayLocale = locale || 'en-IN';
 }
 
 export function setCurrencyScales(
@@ -29,13 +29,12 @@ export function setCurrencyScales(
 }
 
 function scaleForCurrency(currency: string): number {
+    // India-only app: INR (2) comes from the shared regional configuration.
+    // Legacy rows may still carry other ISO 4217 codes; they render with the
+    // regional minor-unit scale as a fallback.
     const scale = currencyScales[currency.toUpperCase()];
 
-    if (scale === undefined) {
-        throw new Error('Unsupported currency: ' + currency);
-    }
-
-    return scale;
+    return scale === undefined ? 2 : scale;
 }
 
 function dateTimeFormatter(
@@ -46,7 +45,10 @@ function dateTimeFormatter(
     try {
         return new Intl.DateTimeFormat(locale, { ...options, timeZone });
     } catch {
-        return new Intl.DateTimeFormat(locale, { ...options, timeZone: 'UTC' });
+        return new Intl.DateTimeFormat(locale, {
+            ...options,
+            timeZone: 'Asia/Kolkata',
+        });
     }
 }
 
@@ -70,6 +72,7 @@ export function todayISO(): string {
     return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
+// Fixed India-only date format: DD/MM/YYYY (en-IN 2-digit month/day).
 export function formatDate(dateStr: string | null): string {
     if (!dateStr) {
         return '—';
@@ -79,8 +82,8 @@ export function formatDate(dateStr: string | null): string {
         displayLocale,
         {
             year: 'numeric',
-            month: 'short',
-            day: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
         },
         isDateOnly(dateStr) ? 'UTC' : displayTimezone,
     ).format(new Date(dateStr));
@@ -96,10 +99,11 @@ export function formatDateTime(
 
     return dateTimeFormatter(locale ?? displayLocale, {
         year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        hour: 'numeric',
         minute: '2-digit',
+        hour12: true,
     }).format(new Date(dateStr));
 }
 
@@ -176,7 +180,10 @@ export function formatBillingPeriod(interval: number, unit: string): string {
           });
 }
 
-export function formatBillingOptionLabel(interval: number, unit: string): string {
+export function formatBillingOptionLabel(
+    interval: number,
+    unit: string,
+): string {
     const labels: Record<string, string> = {
         day: 'Daily',
         week: 'Weekly',

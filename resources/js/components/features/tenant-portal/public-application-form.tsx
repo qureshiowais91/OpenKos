@@ -19,7 +19,8 @@ export default function PublicApplicationForm({
         unit_type_slug: target.unit_type_slug ?? '',
         intended_move_in_date: '',
         rental_billing_unit: target.rental_options[0]?.billing_unit ?? '',
-        rental_billing_interval: target.rental_options[0]?.billing_interval ?? 0,
+        rental_billing_interval:
+            target.rental_options[0]?.billing_interval ?? 0,
         rental_currency: target.rental_options[0]?.currency ?? '',
         applicant_message: '',
     });
@@ -28,8 +29,12 @@ export default function PublicApplicationForm({
     if (existingApplication) {
         return (
             <div className="border-t pt-5" aria-live="polite">
-                <p className="text-sm text-muted-foreground">{t('Application submitted')}</p>
-                <h2 className="mt-1 text-xl font-semibold">{t('Under review')}</h2>
+                <p className="text-sm text-muted-foreground">
+                    {t('Application submitted')}
+                </p>
+                <h2 className="mt-1 text-xl font-semibold">
+                    {t('Under review')}
+                </h2>
                 <Button asChild className="mt-4">
                     <Link href={applicationShow(existingApplication.id)}>
                         {t('View application')}
@@ -42,11 +47,15 @@ export default function PublicApplicationForm({
     return (
         <div id="application-form" className="scroll-mt-6 border-t pt-5">
             <div className="mb-5">
-                <p className="text-sm text-muted-foreground">{t('Apply for')}</p>
+                <p className="text-sm text-muted-foreground">
+                    {t('Apply for')}
+                </p>
                 <h2 className="text-xl font-semibold">
                     {target.unit_type_name ?? t('Whole property')}
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">{target.property_name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {target.property_name}
+                </p>
             </div>
             <form
                 className="grid gap-5"
@@ -55,53 +64,73 @@ export default function PublicApplicationForm({
                     submit(store(), { preserveScroll: true });
                 }}
             >
-                        <div className="grid gap-2">
-                            <Label htmlFor="rental_option">{t('Rental option')}</Label>
-                            <select
-                                id="rental_option"
-                                name="rental_option"
-                                value={selectedOptionKey}
-                                className="border-input bg-background h-10 w-full rounded-md border px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                onChange={(event) => {
-                                    const [interval, unit, currency] = event.target.value.split('|');
-                                    setData('rental_billing_interval', Number(interval));
-                                    setData('rental_billing_unit', unit);
-                                    setData('rental_currency', currency);
-                                }}
+                <div className="grid gap-2">
+                    <Label htmlFor="rental_option">{t('Rental option')}</Label>
+                    <select
+                        id="rental_option"
+                        name="rental_option"
+                        value={selectedOptionKey}
+                        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        onChange={(event) => {
+                            const [interval, unit, currency] =
+                                event.target.value.split('|');
+                            setData(
+                                'rental_billing_interval',
+                                Number(interval),
+                            );
+                            setData('rental_billing_unit', unit);
+                            setData('rental_currency', currency);
+                        }}
+                    >
+                        {target.rental_options.map((option) => (
+                            <option
+                                key={`${option.billing_interval}|${option.billing_unit}|${option.currency}`}
+                                value={`${option.billing_interval}|${option.billing_unit}|${option.currency}`}
                             >
-                                {target.rental_options.map((option) => (
-                                    <option key={`${option.billing_interval}|${option.billing_unit}|${option.currency}`} value={`${option.billing_interval}|${option.billing_unit}|${option.currency}`}>
-                                        {formatBillingOptionLabel(option.billing_interval, option.billing_unit)} · {formatPrice(option.amount, option.currency)}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="intended_move_in_date">{t('Preferred move-in date')}</Label>
-                            <Input
-                                id="intended_move_in_date"
-                                type="date"
-                                value={data.intended_move_in_date}
-                                onChange={(event) => setData('intended_move_in_date', event.target.value)}
-                            />
-                            <InputError message={errors.intended_move_in_date} />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="applicant_message">{t('Message')}</Label>
-                            <Textarea
-                                id="applicant_message"
-                                rows={5}
-                                value={data.applicant_message}
-                                onChange={(event) => setData('applicant_message', event.target.value)}
-                            />
-                            <InputError message={errors.applicant_message} />
-                        </div>
-                        <InputError
-                            message={(errors as Record<string, string | undefined>).application}
-                        />
-                        <Button type="submit" disabled={processing}>
-                            {t('Submit application')}
-                        </Button>
+                                {formatBillingOptionLabel(
+                                    option.billing_interval,
+                                    option.billing_unit,
+                                )}{' '}
+                                · {formatPrice(option.amount, option.currency)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="intended_move_in_date">
+                        {t('Preferred move-in date')}
+                    </Label>
+                    <Input
+                        id="intended_move_in_date"
+                        type="date"
+                        value={data.intended_move_in_date}
+                        onChange={(event) =>
+                            setData('intended_move_in_date', event.target.value)
+                        }
+                    />
+                    <InputError message={errors.intended_move_in_date} />
+                </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="applicant_message">{t('Message')}</Label>
+                    <Textarea
+                        id="applicant_message"
+                        rows={5}
+                        value={data.applicant_message}
+                        onChange={(event) =>
+                            setData('applicant_message', event.target.value)
+                        }
+                    />
+                    <InputError message={errors.applicant_message} />
+                </div>
+                <InputError
+                    message={
+                        (errors as Record<string, string | undefined>)
+                            .application
+                    }
+                />
+                <Button type="submit" disabled={processing}>
+                    {t('Submit application')}
+                </Button>
             </form>
         </div>
     );

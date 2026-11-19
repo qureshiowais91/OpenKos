@@ -160,7 +160,10 @@ export default function TenantPortalLayout({ children }: AppLayoutProps) {
                                         <ChevronsUpDown className="size-4 text-muted-foreground" />
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56" align="end">
+                                <DropdownMenuContent
+                                    className="w-56"
+                                    align="end"
+                                >
                                     <UserMenuContent
                                         user={auth.user}
                                         profileHref={profile.url()}

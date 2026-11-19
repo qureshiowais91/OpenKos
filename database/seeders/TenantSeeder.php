@@ -11,26 +11,26 @@ class TenantSeeder extends Seeder
     public function run(): void
     {
         $tenants = [
-            ['name' => 'Budi Santoso', 'phone' => '+6281234567890', 'id_card_number' => '3273010203040001'],
-            ['name' => 'Siti Nurhaliza', 'phone' => '+6281234567891', 'id_card_number' => '3273010203040002'],
-            ['name' => 'Ahmad Rizki', 'phone' => '+6281234567892', 'id_card_number' => '3273010203040003'],
-            ['name' => 'Dewi Lestari', 'phone' => '+6281234567893', 'id_card_number' => '3273010203040004'],
-            ['name' => 'Rudi Hartono', 'phone' => '+6281234567894', 'id_card_number' => '3273010203040005'],
-            ['name' => 'Rina Wijaya', 'phone' => '+6281234567895', 'id_card_number' => '3273010203040006'],
-            ['name' => 'Agus Prasetyo', 'phone' => '+6281234567896', 'id_card_number' => '3273010203040007'],
-            ['name' => 'Maya Anggraini', 'phone' => '+6281234567897', 'id_card_number' => '3273010203040008'],
-            ['name' => 'Doni Firmansyah', 'phone' => '+6281234567898', 'id_card_number' => '3273010203040009'],
-            ['name' => 'Fitri Handayani', 'phone' => '+6281234567899', 'id_card_number' => '3273010203040010'],
-            ['name' => 'Hendra Gunawan', 'phone' => '+6281234567800', 'id_card_number' => '3273010203040011'],
-            ['name' => 'Indah Permata', 'phone' => '+6281234567801', 'id_card_number' => '3273010203040012'],
-            ['name' => 'Joko Susilo', 'phone' => '+6281234567802', 'id_card_number' => '3273010203040013'],
-            ['name' => 'Kartika Sari', 'phone' => '+6281234567803', 'id_card_number' => '3273010203040014'],
-            ['name' => 'Lukman Hakim', 'phone' => '+6281234567804', 'id_card_number' => '3273010203040015'],
-            ['name' => 'Eko Wahyudi', 'phone' => '+6281234567805', 'id_card_number' => '3273010203040016'],
-            ['name' => 'Dian Permata', 'phone' => '+6281234567806', 'id_card_number' => '3273010203040017'],
-            ['name' => 'Fajar Nugroho', 'phone' => '+6281234567807', 'id_card_number' => '3273010203040018'],
-            ['name' => 'Ratna Sari', 'phone' => '+6281234567808', 'id_card_number' => '3273010203040019'],
-            ['name' => 'Bayu Aji', 'phone' => '+6281234567809', 'id_card_number' => '3273010203040020'],
+            ['name' => 'Arjun Sharma', 'phone' => '+919810012345', 'id_card_number' => '234567890101'],
+            ['name' => 'Priya Patel', 'phone' => '+919810012346', 'id_card_number' => '234567890102'],
+            ['name' => 'Rohan Mehta', 'phone' => '+919810012347', 'id_card_number' => '234567890103'],
+            ['name' => 'Ananya Iyer', 'phone' => '+919810012348', 'id_card_number' => '234567890104'],
+            ['name' => 'Vikram Singh', 'phone' => '+919810012349', 'id_card_number' => '234567890105'],
+            ['name' => 'Neha Kapoor', 'phone' => '+919810012350', 'id_card_number' => '234567890106'],
+            ['name' => 'Karthik Reddy', 'phone' => '+919810012351', 'id_card_number' => '234567890107'],
+            ['name' => 'Sneha Joshi', 'phone' => '+919810012352', 'id_card_number' => '234567890108'],
+            ['name' => 'Rahul Verma', 'phone' => '+919810012353', 'id_card_number' => '234567890109'],
+            ['name' => 'Pooja Nair', 'phone' => '+919810012354', 'id_card_number' => '234567890110'],
+            ['name' => 'Amit Kumar', 'phone' => '+919810012355', 'id_card_number' => '234567890111'],
+            ['name' => 'Divya Menon', 'phone' => '+919810012356', 'id_card_number' => '234567890112'],
+            ['name' => 'Sameer Khan', 'phone' => '+919810012357', 'id_card_number' => '234567890113'],
+            ['name' => 'Ritika Das', 'phone' => '+919810012358', 'id_card_number' => '234567890114'],
+            ['name' => 'Nikhil Rao', 'phone' => '+919810012359', 'id_card_number' => '234567890115'],
+            ['name' => 'Aditya Gupta', 'phone' => '+919810012360', 'id_card_number' => '234567890116'],
+            ['name' => 'Shreya Bose', 'phone' => '+919810012361', 'id_card_number' => '234567890117'],
+            ['name' => 'Manish Tiwari', 'phone' => '+919810012362', 'id_card_number' => '234567890118'],
+            ['name' => 'Kavya Pillai', 'phone' => '+919810012363', 'id_card_number' => '234567890119'],
+            ['name' => 'Gaurav Chauhan', 'phone' => '+919810012364', 'id_card_number' => '234567890120'],
         ];
 
         foreach ($tenants as $data) {
@@ -40,7 +40,7 @@ class TenantSeeder extends Seeder
             );
         }
 
-        DB::statement("UPDATE tenants SET is_active = false WHERE id_card_number = '3273010203040012'");
-        DB::statement("UPDATE tenants SET is_active = false WHERE id_card_number = '3273010203040015'");
+        DB::statement("UPDATE tenants SET is_active = false WHERE id_card_number = '234567890112'");
+        DB::statement("UPDATE tenants SET is_active = false WHERE id_card_number = '234567890115'");
     }
 }

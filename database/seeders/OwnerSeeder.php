@@ -14,7 +14,7 @@ class OwnerSeeder extends Seeder
         $user = User::firstOrCreate(
             ['email' => 'budi@grihaflow.com'],
             [
-                'name' => 'Budi',
+                'name' => 'Bhavesh Mehta',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
             ],

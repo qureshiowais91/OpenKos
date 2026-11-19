@@ -16,7 +16,11 @@ export default function Register({ redirect }: RegisterPageProps) {
                 {({ processing, errors }) => (
                     <div className="grid gap-5">
                         {redirect && (
-                            <input type="hidden" name="redirect" value={redirect} />
+                            <input
+                                type="hidden"
+                                name="redirect"
+                                value={redirect}
+                            />
                         )}
                         <div className="grid gap-2">
                             <Label htmlFor="name">{t('Name')}</Label>

@@ -16,7 +16,7 @@ function reminderInvoiceData(string $dueDate, string $amount = '1500.000'): Remi
         periodStart: '2026-07-01',
         periodEnd: '2026-07-31',
         amount: $amount,
-        currency: 'IDR',
+        currency: 'INR',
     );
 }
 

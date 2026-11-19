@@ -76,306 +76,309 @@ export function AppSidebar() {
         ),
     ];
 
-    const navSections: NavSection[] = auth.tenant && !isStaff
-        ? [
-              {
-                  title: 'OVERVIEW',
-                  items: [
-                      {
-                          title: 'Dashboard',
-                          icon: LayoutGrid,
-                          href: portalDashboard(),
-                      },
-                  ],
-              },
-              {
-                  title: 'DAILY OPERATIONS',
-                  items: [
-                      {
-                          title: 'Billing',
-                          icon: Receipt,
-                          href: portalBilling(),
-                      },
-                  ],
-              },
-              {
-                  title: 'PORTFOLIO',
-                  items: [
-                      {
-                          title: 'Lease',
-                          icon: FileText,
-                          href: portalLease(),
-                      },
-                  ],
-              },
-          ]
-        : [
-              ...(isOwner ||
-              permissions.includes('dashboard.view') ||
-              permissions.includes('financials.view')
-                  ? [
-                        {
-                            title: 'OVERVIEW',
-                            items: [
-                                ...(isOwner ||
-                                permissions.includes('dashboard.view')
-                                    ? [
-                                          {
-                                              title: 'Dashboard',
-                                              icon: LayoutGrid,
-                                              href: dashboard(),
-                                              ...(platformPageNavItems(
-                                                  platform.dashboard,
-                                                  auth,
-                                              ).length > 0
-                                                  ? {
-                                                        children: [
-                                                            {
-                                                                title: 'Overview',
-                                                                icon: LayoutGrid,
-                                                                href: dashboard(),
-                                                            },
-                                                            ...platformPageNavItems(
-                                                                platform.dashboard,
-                                                                auth,
-                                                            ),
-                                                        ],
-                                                    }
-                                                  : {}),
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner ||
-                                permissions.includes('financials.view')
-                                    ? [
-                                          {
-                                              title: 'Financial Dashboard',
-                                              icon: Landmark,
-                                              href: dashboardFinancial(),
-                                          },
-                                      ]
-                                    : []),
-                            ],
-                        },
-                    ]
-                  : []),
-              ...(isOwner ||
-              permissions.includes('dashboard.view') ||
-              permissions.includes('maintenance-tickets.view') ||
-              permissions.includes('expenses.view') ||
-              permissions.includes('inspections.view') ||
-              permissions.includes('inspection-templates.manage')
-                  ? [
-                        {
-                            title: 'DAILY OPERATIONS',
-                            items: [
-                                ...(isOwner ||
-                                permissions.includes('dashboard.view')
-                                    ? [
-                                          {
-                                              title: 'Billing',
-                                              icon: DollarSign,
-                                              href: dashboardRent(),
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner ||
-                                permissions.includes('maintenance-tickets.view')
-                                    ? [
-                                          {
-                                              title: 'Maintenance',
-                                              href: maintenanceTickets.index(),
-                                              icon: Wrench,
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner ||
-                                permissions.includes('expenses.view')
-                                    ? [
-                                          {
-                                              title: 'Expenses',
-                                              icon: WalletCards,
-                                              children: [
-                                                  {
-                                                      title: 'All Expenses',
-                                                      href: expenses.index(),
-                                                      icon: ReceiptText,
-                                                  },
-                                                  {
-                                                      title: 'Recurring Expenses',
-                                                      href: recurringExpenses.index(),
-                                                      icon: ReceiptText,
-                                                  },
-                                                  ...(isOwner
-                                                      ? [
-                                                            {
-                                                                title: 'Expense Categories',
-                                                                href: expenseCategories.index(),
-                                                                icon: Tags,
-                                                            },
-                                                        ]
-                                                      : []),
-                                              ],
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner ||
-                                permissions.includes('inspections.view') ||
-                                permissions.includes(
-                                    'inspection-templates.manage',
-                                )
-                                    ? [
-                                          {
-                                              title: 'Inspections',
-                                              icon: ClipboardCheck,
-                                              children: [
-                                                  ...(isOwner ||
-                                                  permissions.includes(
-                                                      'inspections.view',
-                                                  )
-                                                      ? [
-                                                            {
-                                                                title: 'All Inspections',
-                                                                href: inspections.index(),
-                                                                icon: ListChecks,
-                                                            },
-                                                        ]
-                                                      : []),
-                                                  ...(isOwner ||
-                                                  permissions.includes(
-                                                      'inspection-templates.manage',
-                                                  )
-                                                      ? [
-                                                            {
-                                                                title: 'Templates',
-                                                                href: inspections.templates.index(),
-                                                                icon: ClipboardCheck,
-                                                            },
-                                                        ]
-                                                      : []),
-                                              ],
-                                          },
-                                      ]
-                                    : []),
-                            ],
-                        },
-                    ]
-                  : []),
-              ...(isOwner ||
-              permissions.includes('properties.view') ||
-              permissions.includes('units.view') ||
-              permissions.includes('leases.view') ||
-              permissions.includes('tenants.view')
-                  ? [
-                        {
-                            title: 'PORTFOLIO',
-                            items: [
-                                ...(isOwner ||
-                                permissions.includes('properties.view')
-                                    ? [
-                                          {
-                                              title: 'Properties',
-                                              icon: Landmark,
-                                              children: [
-                                                  {
-                                                      title: 'All Properties',
-                                                      href: properties.index(),
-                                                      icon: Building2,
-                                                  },
-                                                  ...(isOwner
-                                                      ? [
-                                                            {
-                                                                title: 'Property Types',
-                                                                href: propertyTypes.index(),
-                                                                icon: Tags,
-                                                            },
-                                                            {
-                                                                title: 'Amenities',
-                                                                href: amenities.index(),
-                                                                icon: Sparkles,
-                                                            },
-                                                        ]
-                                                      : []),
-                                              ],
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner ||
-                                permissions.includes('leases.view')
-                                    ? [
-                                          {
-                                              title: 'Leases',
-                                              href: leases.index(),
-                                              icon: FileText,
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner ||
-                                permissions.includes('tenants.view')
-                                    ? [
-                                          {
-                                              title: 'Tenants',
-                                              href: tenants.index(),
-                                              icon: Users,
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner
-                                    ? [
-                                          {
-                                              title: 'Public Portal',
-                                              icon: Building2,
-                                              children: [
-                                                  {
-                                                      title: 'SEO & Sharing',
-                                                      href: publicPortal.seo(),
-                                                      icon: Settings,
-                                                  },
-                                              ],
-                                          },
-                                      ]
-                                    : []),
-                            ],
-                        },
-                    ]
-                  : []),
-              ...(isOwner || permissions.includes('users.view')
-                  ? [
-                        {
-                            title: 'ADMINISTRATION',
-                            items: [
-                                ...(isOwner ||
-                                permissions.includes('users.view')
-                                    ? [
-                                          {
-                                              title: 'Users',
-                                              href: userRoutes.index(),
-                                              icon: UserCog,
-                                          },
-                                      ]
-                                    : []),
-                                ...(isOwner
-                                    ? [
-                                          {
-                                              title: 'Roles & Permissions',
-                                              href: roles.index(),
-                                              icon: Shield,
-                                          },
-                                      ]
-                                    : []),
-                            ],
-                        },
-                    ]
-                  : []),
-              ...(settingsNavItems.length > 0
-                  ? [
-                        {
-                            title: 'SETTINGS',
-                            items: settingsNavItems,
-                        },
-                    ]
-                  : []),
-          ];
+    const navSections: NavSection[] =
+        auth.tenant && !isStaff
+            ? [
+                  {
+                      title: 'OVERVIEW',
+                      items: [
+                          {
+                              title: 'Dashboard',
+                              icon: LayoutGrid,
+                              href: portalDashboard(),
+                          },
+                      ],
+                  },
+                  {
+                      title: 'DAILY OPERATIONS',
+                      items: [
+                          {
+                              title: 'Billing',
+                              icon: Receipt,
+                              href: portalBilling(),
+                          },
+                      ],
+                  },
+                  {
+                      title: 'PORTFOLIO',
+                      items: [
+                          {
+                              title: 'Lease',
+                              icon: FileText,
+                              href: portalLease(),
+                          },
+                      ],
+                  },
+              ]
+            : [
+                  ...(isOwner ||
+                  permissions.includes('dashboard.view') ||
+                  permissions.includes('financials.view')
+                      ? [
+                            {
+                                title: 'OVERVIEW',
+                                items: [
+                                    ...(isOwner ||
+                                    permissions.includes('dashboard.view')
+                                        ? [
+                                              {
+                                                  title: 'Dashboard',
+                                                  icon: LayoutGrid,
+                                                  href: dashboard(),
+                                                  ...(platformPageNavItems(
+                                                      platform.dashboard,
+                                                      auth,
+                                                  ).length > 0
+                                                      ? {
+                                                            children: [
+                                                                {
+                                                                    title: 'Overview',
+                                                                    icon: LayoutGrid,
+                                                                    href: dashboard(),
+                                                                },
+                                                                ...platformPageNavItems(
+                                                                    platform.dashboard,
+                                                                    auth,
+                                                                ),
+                                                            ],
+                                                        }
+                                                      : {}),
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner ||
+                                    permissions.includes('financials.view')
+                                        ? [
+                                              {
+                                                  title: 'Financial Dashboard',
+                                                  icon: Landmark,
+                                                  href: dashboardFinancial(),
+                                              },
+                                          ]
+                                        : []),
+                                ],
+                            },
+                        ]
+                      : []),
+                  ...(isOwner ||
+                  permissions.includes('dashboard.view') ||
+                  permissions.includes('maintenance-tickets.view') ||
+                  permissions.includes('expenses.view') ||
+                  permissions.includes('inspections.view') ||
+                  permissions.includes('inspection-templates.manage')
+                      ? [
+                            {
+                                title: 'DAILY OPERATIONS',
+                                items: [
+                                    ...(isOwner ||
+                                    permissions.includes('dashboard.view')
+                                        ? [
+                                              {
+                                                  title: 'Billing',
+                                                  icon: DollarSign,
+                                                  href: dashboardRent(),
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner ||
+                                    permissions.includes(
+                                        'maintenance-tickets.view',
+                                    )
+                                        ? [
+                                              {
+                                                  title: 'Maintenance',
+                                                  href: maintenanceTickets.index(),
+                                                  icon: Wrench,
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner ||
+                                    permissions.includes('expenses.view')
+                                        ? [
+                                              {
+                                                  title: 'Expenses',
+                                                  icon: WalletCards,
+                                                  children: [
+                                                      {
+                                                          title: 'All Expenses',
+                                                          href: expenses.index(),
+                                                          icon: ReceiptText,
+                                                      },
+                                                      {
+                                                          title: 'Recurring Expenses',
+                                                          href: recurringExpenses.index(),
+                                                          icon: ReceiptText,
+                                                      },
+                                                      ...(isOwner
+                                                          ? [
+                                                                {
+                                                                    title: 'Expense Categories',
+                                                                    href: expenseCategories.index(),
+                                                                    icon: Tags,
+                                                                },
+                                                            ]
+                                                          : []),
+                                                  ],
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner ||
+                                    permissions.includes('inspections.view') ||
+                                    permissions.includes(
+                                        'inspection-templates.manage',
+                                    )
+                                        ? [
+                                              {
+                                                  title: 'Inspections',
+                                                  icon: ClipboardCheck,
+                                                  children: [
+                                                      ...(isOwner ||
+                                                      permissions.includes(
+                                                          'inspections.view',
+                                                      )
+                                                          ? [
+                                                                {
+                                                                    title: 'All Inspections',
+                                                                    href: inspections.index(),
+                                                                    icon: ListChecks,
+                                                                },
+                                                            ]
+                                                          : []),
+                                                      ...(isOwner ||
+                                                      permissions.includes(
+                                                          'inspection-templates.manage',
+                                                      )
+                                                          ? [
+                                                                {
+                                                                    title: 'Templates',
+                                                                    href: inspections.templates.index(),
+                                                                    icon: ClipboardCheck,
+                                                                },
+                                                            ]
+                                                          : []),
+                                                  ],
+                                              },
+                                          ]
+                                        : []),
+                                ],
+                            },
+                        ]
+                      : []),
+                  ...(isOwner ||
+                  permissions.includes('properties.view') ||
+                  permissions.includes('units.view') ||
+                  permissions.includes('leases.view') ||
+                  permissions.includes('tenants.view')
+                      ? [
+                            {
+                                title: 'PORTFOLIO',
+                                items: [
+                                    ...(isOwner ||
+                                    permissions.includes('properties.view')
+                                        ? [
+                                              {
+                                                  title: 'Properties',
+                                                  icon: Landmark,
+                                                  children: [
+                                                      {
+                                                          title: 'All Properties',
+                                                          href: properties.index(),
+                                                          icon: Building2,
+                                                      },
+                                                      ...(isOwner
+                                                          ? [
+                                                                {
+                                                                    title: 'Property Types',
+                                                                    href: propertyTypes.index(),
+                                                                    icon: Tags,
+                                                                },
+                                                                {
+                                                                    title: 'Amenities',
+                                                                    href: amenities.index(),
+                                                                    icon: Sparkles,
+                                                                },
+                                                            ]
+                                                          : []),
+                                                  ],
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner ||
+                                    permissions.includes('leases.view')
+                                        ? [
+                                              {
+                                                  title: 'Leases',
+                                                  href: leases.index(),
+                                                  icon: FileText,
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner ||
+                                    permissions.includes('tenants.view')
+                                        ? [
+                                              {
+                                                  title: 'Tenants',
+                                                  href: tenants.index(),
+                                                  icon: Users,
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner
+                                        ? [
+                                              {
+                                                  title: 'Public Portal',
+                                                  icon: Building2,
+                                                  children: [
+                                                      {
+                                                          title: 'SEO & Sharing',
+                                                          href: publicPortal.seo(),
+                                                          icon: Settings,
+                                                      },
+                                                  ],
+                                              },
+                                          ]
+                                        : []),
+                                ],
+                            },
+                        ]
+                      : []),
+                  ...(isOwner || permissions.includes('users.view')
+                      ? [
+                            {
+                                title: 'ADMINISTRATION',
+                                items: [
+                                    ...(isOwner ||
+                                    permissions.includes('users.view')
+                                        ? [
+                                              {
+                                                  title: 'Users',
+                                                  href: userRoutes.index(),
+                                                  icon: UserCog,
+                                              },
+                                          ]
+                                        : []),
+                                    ...(isOwner
+                                        ? [
+                                              {
+                                                  title: 'Roles & Permissions',
+                                                  href: roles.index(),
+                                                  icon: Shield,
+                                              },
+                                          ]
+                                        : []),
+                                ],
+                            },
+                        ]
+                      : []),
+                  ...(settingsNavItems.length > 0
+                      ? [
+                            {
+                                title: 'SETTINGS',
+                                items: settingsNavItems,
+                            },
+                        ]
+                      : []),
+              ];
 
     const activeSections = navSections.filter(
         (section) => section.items.length > 0,

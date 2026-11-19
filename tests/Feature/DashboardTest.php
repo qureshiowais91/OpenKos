@@ -217,7 +217,7 @@ test('dashboard shows overdue invoice count and amount in attention', function (
         ->assertInertia(fn ($page) => $page
             ->where('attention.overdue_invoices.count', 2)
             ->where('attention.overdue_invoices.amounts', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '600000.000',
             ]])
         );
@@ -231,13 +231,13 @@ test('dashboard keeps every finance metric aligned to the same currencies', func
     $user = User::factory()->owner()->create();
 
     $idrLease = Lease::factory()->create([
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'rent_amount' => 1_000_000,
         'start_date' => now()->subMonths(2),
         'status' => LeaseStatus::Active->value,
     ]);
     $usdLease = Lease::factory()->create([
-        'currency' => 'USD',
+        'currency' => 'INR',
         'rent_amount' => 2_000_000,
         'start_date' => now()->subMonths(2),
         'status' => LeaseStatus::Active->value,
@@ -245,7 +245,7 @@ test('dashboard keeps every finance metric aligned to the same currencies', func
 
     $idrInvoice = Invoice::factory()->create([
         'lease_id' => $idrLease->id,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'period_start' => '2026-07-02',
         'period_end' => '2026-07-31',
         'due_date' => '2026-07-05',
@@ -256,14 +256,14 @@ test('dashboard keeps every finance metric aligned to the same currencies', func
     Payment::factory()->create([
         'invoice_id' => $idrInvoice->id,
         'amount' => 1_000_000,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'payment_date' => '2026-07-05',
         'status' => PaymentStatus::Confirmed,
     ]);
 
     Invoice::factory()->create([
         'lease_id' => $usdLease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-02',
         'period_end' => '2026-07-31',
         'due_date' => '2026-07-05',
@@ -277,20 +277,16 @@ test('dashboard keeps every finance metric aligned to the same currencies', func
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('finance.revenue_this_month', [
-                ['currency' => 'IDR', 'amount' => '1000000.000'],
-                ['currency' => 'USD', 'amount' => '0'],
+                ['currency' => 'INR', 'amount' => '1000000.000'],
             ])
             ->where('finance.monthly_potential', [
-                ['currency' => 'IDR', 'amount' => '1000000.000'],
-                ['currency' => 'USD', 'amount' => '2000000.000'],
+                ['currency' => 'INR', 'amount' => '3000000.000'],
             ])
             ->where('finance.outstanding', [
-                ['currency' => 'IDR', 'amount' => '0'],
-                ['currency' => 'USD', 'amount' => '2000000.000'],
+                ['currency' => 'INR', 'amount' => '2000000.000'],
             ])
             ->where('finance.collection_rate', [
-                ['currency' => 'IDR', 'rate' => 100],
-                ['currency' => 'USD', 'rate' => 0],
+                ['currency' => 'INR', 'rate' => 33],
             ])
         );
 
@@ -304,17 +300,17 @@ test('dashboard includes active expense summaries by currency', function () {
         $user = User::factory()->owner()->create();
         Expense::factory()->create([
             'amount' => '100000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'expense_date' => '2026-07-05',
         ]);
         Expense::factory()->create([
             'amount' => '70000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'expense_date' => '2026-06-05',
         ]);
         Expense::factory()->create([
             'amount' => '500',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-06-05',
         ]);
         Expense::factory()->create([
@@ -324,7 +320,7 @@ test('dashboard includes active expense summaries by currency', function () {
         ]);
         Expense::factory()->voided()->create([
             'amount' => '900',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-07-06',
         ]);
 
@@ -334,18 +330,15 @@ test('dashboard includes active expense summaries by currency', function () {
             ->assertInertia(fn ($page) => $page
                 ->where('finance.expenses.this_month', [
                     ['currency' => 'EUR', 'amount' => '2.000'],
-                    ['currency' => 'IDR', 'amount' => '100000.000'],
-                    ['currency' => 'USD', 'amount' => '0'],
+                    ['currency' => 'INR', 'amount' => '100000.000'],
                 ])
                 ->where('finance.expenses.last_month', [
                     ['currency' => 'EUR', 'amount' => '0'],
-                    ['currency' => 'IDR', 'amount' => '70000.000'],
-                    ['currency' => 'USD', 'amount' => '500.000'],
+                    ['currency' => 'INR', 'amount' => '70500.000'],
                 ])
                 ->where('finance.expenses.change_vs_last_month', [
                     ['currency' => 'EUR', 'amount' => '2.000'],
-                    ['currency' => 'IDR', 'amount' => '30000.000'],
-                    ['currency' => 'USD', 'amount' => '-500.000'],
+                    ['currency' => 'INR', 'amount' => '29500.000'],
                 ]));
     } finally {
         Carbon::setTestNow();
@@ -357,20 +350,20 @@ test('dashboard preserves historical financial activity after lease termination'
 
     $user = User::factory()->owner()->create();
     $activeLease = Lease::factory()->create([
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'rent_amount' => '1000000',
         'start_date' => now()->subMonths(2),
         'status' => LeaseStatus::Active,
     ]);
     $terminatedLease = Lease::factory()->create([
-        'currency' => 'USD',
+        'currency' => 'INR',
         'rent_amount' => '500',
         'start_date' => now()->subMonths(2),
         'status' => LeaseStatus::Active,
     ]);
     $invoice = Invoice::factory()->create([
         'lease_id' => $terminatedLease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-01',
         'period_end' => '2026-07-31',
         'due_date' => '2026-07-05',
@@ -381,7 +374,7 @@ test('dashboard preserves historical financial activity after lease termination'
     Payment::factory()->create([
         'invoice_id' => $invoice->id,
         'amount' => 500,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'payment_date' => '2026-07-05',
         'status' => PaymentStatus::Confirmed,
     ]);
@@ -400,20 +393,16 @@ test('dashboard preserves historical financial activity after lease termination'
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('finance.revenue_this_month', [
-                ['currency' => 'IDR', 'amount' => '0'],
-                ['currency' => 'USD', 'amount' => '500.000'],
+                ['currency' => 'INR', 'amount' => '500.000'],
             ])
             ->where('finance.monthly_potential', [
-                ['currency' => 'IDR', 'amount' => '1000000.000'],
-                ['currency' => 'USD', 'amount' => '0'],
+                ['currency' => 'INR', 'amount' => '1000000.000'],
             ])
             ->where('finance.outstanding', [
-                ['currency' => 'IDR', 'amount' => '0'],
-                ['currency' => 'USD', 'amount' => '0'],
+                ['currency' => 'INR', 'amount' => '0'],
             ])
             ->where('finance.collection_rate', [
-                ['currency' => 'IDR', 'rate' => 0],
-                ['currency' => 'USD', 'rate' => 0],
+                ['currency' => 'INR', 'rate' => 0],
             ])
         );
 
@@ -425,14 +414,14 @@ test('dashboard includes collectible invoices from terminated leases only', func
 
     $user = User::factory()->owner()->create();
     $lease = Lease::factory()->create([
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'status' => LeaseStatus::Active,
         'start_date' => now()->subMonths(2),
     ]);
 
     Invoice::factory()->create([
         'lease_id' => $lease->id,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'period_start' => '2026-07-02',
         'period_end' => '2026-07-31',
         'due_date' => '2026-07-05',
@@ -442,7 +431,7 @@ test('dashboard includes collectible invoices from terminated leases only', func
     ]);
     Invoice::factory()->create([
         'lease_id' => $lease->id,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'period_start' => '2026-07-03',
         'period_end' => '2026-07-31',
         'due_date' => '2026-07-10',
@@ -452,7 +441,7 @@ test('dashboard includes collectible invoices from terminated leases only', func
     ]);
     Invoice::factory()->create([
         'lease_id' => $lease->id,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'period_start' => '2026-07-04',
         'period_end' => '2026-07-31',
         'due_date' => '2026-07-05',
@@ -462,7 +451,7 @@ test('dashboard includes collectible invoices from terminated leases only', func
     ]);
     Invoice::factory()->create([
         'lease_id' => $lease->id,
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'period_start' => '2026-07-01',
         'period_end' => '2026-07-31',
         'due_date' => '2026-07-05',
@@ -482,12 +471,12 @@ test('dashboard includes collectible invoices from terminated leases only', func
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('finance.outstanding', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '1200.000',
             ]])
             ->where('attention.overdue_invoices.count', 1)
             ->where('attention.overdue_invoices.amounts', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '800.000',
             ]])
             ->where('attention.due_today', 1)
@@ -505,12 +494,12 @@ test('dashboard financial metrics remain scoped to accessible properties', funct
 
     $accessibleLease = Lease::factory()->create([
         'unit_id' => Unit::factory()->for($accessibleProperty)->create()->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => LeaseStatus::Terminated,
     ]);
     $accessibleInvoice = Invoice::factory()->create([
         'lease_id' => $accessibleLease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-02',
         'period_end' => '2026-07-31',
         'status' => InvoiceStatus::Paid,
@@ -520,17 +509,17 @@ test('dashboard financial metrics remain scoped to accessible properties', funct
     Payment::factory()->create([
         'invoice_id' => $accessibleInvoice->id,
         'amount' => 100,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => PaymentStatus::Confirmed,
     ]);
 
     $hiddenLease = Lease::factory()->create([
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => LeaseStatus::Terminated,
     ]);
     $hiddenInvoice = Invoice::factory()->create([
         'lease_id' => $hiddenLease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'period_start' => '2026-07-02',
         'period_end' => '2026-07-31',
         'status' => InvoiceStatus::Paid,
@@ -540,7 +529,7 @@ test('dashboard financial metrics remain scoped to accessible properties', funct
     Payment::factory()->create([
         'invoice_id' => $hiddenInvoice->id,
         'amount' => 900,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => PaymentStatus::Confirmed,
     ]);
 
@@ -549,7 +538,7 @@ test('dashboard financial metrics remain scoped to accessible properties', funct
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('finance.revenue_this_month', [[
-                'currency' => 'USD',
+                'currency' => 'INR',
                 'amount' => '100.000',
             ]])
         );

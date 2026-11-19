@@ -40,14 +40,18 @@ class AppServiceProvider extends ServiceProvider
             $timezone = null;
         }
 
-        if (! is_string($timezone) || $timezone === '') {
-            $timezone = 'UTC';
+        // India-only: the timezone is pinned in config/regional.php; stored
+        // settings rows are only honored when they match it.
+        $regional = config('regional.timezone', 'Asia/Kolkata');
+
+        if ($timezone !== $regional) {
+            $timezone = $regional;
         }
 
         try {
             new DateTimeZone($timezone);
         } catch (\Exception) {
-            $timezone = 'UTC';
+            $timezone = $regional;
         }
 
         config(['app.display_timezone' => $timezone]);

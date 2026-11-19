@@ -22,7 +22,7 @@ class DepositSettlementFactory extends Factory
         return [
             'lease_id' => Lease::factory(),
             'original_amount' => '1000000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'status' => DepositSettlementStatus::Draft,
             'settlement_date' => now()->toDateString(),
             'refund_amount' => '1000000',

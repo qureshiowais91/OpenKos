@@ -102,7 +102,7 @@ final class InvoicePdfArtifact
 
         $settings = Setting::some(['site_name', 'locale', 'currency']);
         $settings['locale'] = $this->locale->resolve($settings['locale'] ?? null);
-        $settings['display_timezone'] = config('app.display_timezone', 'UTC');
+        $settings['display_timezone'] = config('app.display_timezone', config('regional.timezone', 'Asia/Kolkata'));
 
         $payload = [
             'settings' => $settings,

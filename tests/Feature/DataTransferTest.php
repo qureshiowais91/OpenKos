@@ -9,7 +9,6 @@ use App\Models\Lease;
 use App\Models\Property;
 use App\Models\PropertyType;
 use App\Models\Region;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Models\Unit;
 use App\Models\UnitRate;
@@ -22,7 +21,6 @@ use Illuminate\Http\UploadedFile;
 
 uses()->beforeEach(function () {
     $this->seed([RoleAndPermissionSeeder::class, RegionAndCitySeeder::class]);
-    Setting::set('supported_currencies', ['IDR', 'USD']);
     PropertyType::firstOrCreate([
         'slug' => 'boarding_house',
     ], [
@@ -38,11 +36,11 @@ function csvFile(string $name, string $contents): UploadedFile
 
 it('previews the complete properties file without persisting anything', function () {
     $user = User::factory()->owner()->create();
-    $region = Region::query()->where('country_code', 'ID')->firstOrFail();
+    $region = Region::query()->where('country_code', 'IN')->firstOrFail();
     $city = $region->cities()->firstOrFail();
     $csv = implode("\n", [
         'slug,name,type,region_country_code,region_name,city_name,address,postal_code,phone,description,is_active',
-        "sunrise-house,Sunrise House,boarding_house,ID,{$region->name},{$city->name},Main Road,12345,+628123456789,Imported,1",
+        "sunrise-house,Sunrise House,boarding_house,IN,{$region->name},{$city->name},Main Road,110001,+919812345678,Imported,1",
     ]);
 
     $response = $this->actingAs($user)->post(route('data-transfer.preview'), [
@@ -82,7 +80,7 @@ it('imports expenses without requiring status and keeps optional business fields
     $category = ExpenseCategory::factory()->create(['slug' => 'expense-supplies']);
     $csv = implode("\n", [
         'property_slug,category_slug,reference,amount,currency,expense_date,vendor,description,notes',
-        "{$property->slug},{$category->slug},EXP-001,125000,IDR,2026-09-01,Vendor One,Replacement supplies,Imported from ledger",
+        "{$property->slug},{$category->slug},EXP-001,125000,INR,2026-09-01,Vendor One,Replacement supplies,Imported from ledger",
     ]);
 
     $preview = $this->actingAs($user)->post(route('data-transfer.preview'), [
@@ -108,7 +106,7 @@ it('imports expenses without requiring status and keeps optional business fields
         ->and($expense->expense_category_id)->toBe($category->id)
         ->and($expense->reference)->toBe('EXP-001')
         ->and($expense->amount)->toBe('125000.000')
-        ->and($expense->currency)->toBe('IDR')
+        ->and($expense->currency)->toBe('INR')
         ->and($expense->expense_date->format('Y-m-d'))->toBe('2026-09-01')
         ->and($expense->vendor)->toBe('Vendor One')
         ->and($expense->description)->toBe('Replacement supplies')
@@ -128,7 +126,7 @@ it('rejects blank and duplicate expense references including voided records', fu
         'dataset' => 'expenses',
         'file' => csvFile('expenses.csv', implode("\n", [
             'property_slug,category_slug,reference,amount,currency,expense_date',
-            "{$property->slug},{$category->slug},EXP-VOIDED,100,IDR,2026-09-01",
+            "{$property->slug},{$category->slug},EXP-VOIDED,100,INR,2026-09-01",
         ])),
     ]);
 
@@ -141,8 +139,8 @@ it('rejects blank and duplicate expense references including voided records', fu
         'dataset' => 'expenses',
         'file' => csvFile('expenses.csv', implode("\n", [
             'property_slug,category_slug,reference,amount,currency,expense_date',
-            "{$property->slug},{$category->slug},EXP-IN-FILE,100,IDR,2026-09-01",
-            "{$property->slug},{$category->slug},exp-in-file,200,IDR,2026-09-02",
+            "{$property->slug},{$category->slug},EXP-IN-FILE,100,INR,2026-09-01",
+            "{$property->slug},{$category->slug},exp-in-file,200,INR,2026-09-02",
         ])),
     ]);
 
@@ -155,7 +153,7 @@ it('rejects blank and duplicate expense references including voided records', fu
         'dataset' => 'expenses',
         'file' => csvFile('expenses.csv', implode("\n", [
             'property_slug,category_slug,reference,amount,currency,expense_date',
-            "{$property->slug},{$category->slug},,100,IDR,2026-09-01",
+            "{$property->slug},{$category->slug},,100,INR,2026-09-01",
         ])),
     ]);
 
@@ -168,7 +166,7 @@ it('rejects blank and duplicate expense references including voided records', fu
         'dataset' => 'expenses',
         'file' => csvFile('expenses.csv', implode("\n", [
             'property_slug,category_slug,reference,amount,currency,expense_date,status,voided_at,voided_by,void_reason',
-            "{$property->slug},{$category->slug},EXP-VOIDED-IMPORT,100,IDR,2026-09-01,voided,2026-09-02T10:00:00+00:00,{$user->id},Already voided",
+            "{$property->slug},{$category->slug},EXP-VOIDED-IMPORT,100,INR,2026-09-01,voided,2026-09-02T10:00:00+00:00,{$user->id},Already voided",
         ])),
     ]);
 
@@ -184,8 +182,8 @@ it('rechecks expense references at commit and rolls back the whole import on con
     $category = ExpenseCategory::factory()->create(['slug' => 'atomic-supplies']);
     $file = csvFile('expenses.csv', implode("\n", [
         'property_slug,category_slug,reference,amount,currency,expense_date',
-        "{$property->slug},{$category->slug},EXP-FIRST,100,IDR,2026-09-01",
-        "{$property->slug},{$category->slug},EXP-SECOND,200,IDR,2026-09-02",
+        "{$property->slug},{$category->slug},EXP-FIRST,100,INR,2026-09-01",
+        "{$property->slug},{$category->slug},EXP-SECOND,200,INR,2026-09-02",
     ]));
     $transfer = app(MasterDataTransferService::class);
     $result = $transfer->validate(DataTransferDataset::Expenses, $file, $user);
@@ -211,7 +209,7 @@ it('preserves strict expense money and date validation', function () {
         'dataset' => 'expenses',
         'file' => csvFile('expenses.csv', implode("\n", [
             'property_slug,category_slug,reference,amount,currency,expense_date',
-            "{$property->slug},{$category->slug},EXP-STRICT,100.50,IDR,09/01/2026",
+            "{$property->slug},{$category->slug},EXP-STRICT,100.505,INR,09/01/2026",
         ])),
     ]);
 
@@ -425,7 +423,7 @@ it('returns a clear commit error when rate currency settings change', function (
     $unit = Unit::factory()->for($property)->create(['name' => 'Rate Unit']);
     $file = csvFile(
         'unit-rates.csv',
-        "property_slug,unit_name,billing_interval,billing_unit,amount,currency\n{$property->slug},{$unit->name},1,month,100,USD",
+        "property_slug,unit_name,billing_interval,billing_unit,amount,currency\n{$property->slug},{$unit->name},1,week,100,INR",
     );
     $existingRateCount = UnitRate::query()->where('unit_id', $unit->id)->count();
     $transfer = app(MasterDataTransferService::class);
@@ -433,7 +431,9 @@ it('returns a clear commit error when rate currency settings change', function (
 
     expect($result->isValid())->toBeTrue();
 
-    Setting::set('supported_currencies', ['IDR']);
+    // ponytail: supported currencies are pinned to config/regional.php, so the
+    // only way to drift them after validation is to mutate the config itself.
+    config(['regional.currency.supported' => ['USD']]);
 
     expect(fn () => $transfer->commit(DataTransferDataset::UnitRates, $result, $user))
         ->toThrow(ImportCommitException::class, 'configuration changed after validation');
@@ -578,14 +578,14 @@ it('imports units and unit rates through their domain references', function () {
         'dataset' => 'unit-rates',
         'file' => csvFile('unit-rates.csv', implode("\n", [
             'property_slug,unit_name,billing_interval,billing_unit,amount,currency',
-            'sunrise-house,Unit 101,1,month,1250.00,USD',
+            'sunrise-house,Unit 101,1,month,1250.00,INR',
         ])),
     ])->assertSuccessful()->assertJsonPath('count', 1);
 
     $unit = Unit::where('name', 'Unit 101')->firstOrFail();
     expect(UnitRate::where('unit_id', $unit->id)
         ->where('billing_unit', 'month')
-        ->where('currency', 'USD')
+        ->where('currency', 'INR')
         ->exists())->toBeTrue();
 });
 
@@ -721,7 +721,7 @@ it('excludes inactive unit rates unless explicitly requested', function () {
         'billing_interval' => 1,
         'billing_unit' => 'year',
         'amount' => 24000,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'is_active' => false,
     ]);
 
@@ -814,7 +814,7 @@ it('applies two-value unit rate currency export filters', function () {
         'billing_interval' => 1,
         'billing_unit' => 'year',
         'amount' => 1200,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'is_active' => true,
     ]);
     $unit->rates()->create([
@@ -827,12 +827,12 @@ it('applies two-value unit rate currency export filters', function () {
 
     $response = $this->actingAs($user)->get(route('data-transfer.export', [
         'dataset' => 'unit-rates',
-        'currency' => 'IDR,USD',
+        'currency' => 'INR,INR',
     ]));
 
     $response->assertDownload('unit-rates-v1.csv');
     expect($response->streamedContent())
-        ->toContain('USD')
+        ->toContain('INR')
         ->not->toContain('EUR');
 });
 

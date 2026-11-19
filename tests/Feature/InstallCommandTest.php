@@ -3,14 +3,12 @@
 use App\Models\Setting;
 use App\Models\User;
 
-test('install command creates owner account and settings', function () {
+test('install command creates owner account and india settings', function () {
     $this->artisan('app:install')
-        ->expectsQuestion('What is the name of this installation?', 'Kos Pak Budi')
-        ->expectsQuestion('What country is this installation for?', 'ID')
+        ->expectsQuestion('What is the name of this installation?', 'My Property Mgmt')
         ->expectsQuestion('What is the application URL?', 'http://localhost')
-        ->expectsQuestion('What timezone should be used?', 'Asia/Jakarta')
-        ->expectsQuestion('What is the owner\'s name?', 'Pak Budi')
-        ->expectsQuestion('What is the owner\'s email address?', 'pakbudi@grihaflow.com')
+        ->expectsQuestion('What is the owner\'s name?', 'Rahul Sharma')
+        ->expectsQuestion('What is the owner\'s email address?', 'rahul@grihaflow.com')
         ->expectsQuestion('Choose a password for the owner account', 'password123')
         ->expectsQuestion('Confirm the password', 'password123')
         ->assertSuccessful();
@@ -18,35 +16,16 @@ test('install command creates owner account and settings', function () {
     $user = User::first();
 
     expect($user)->not->toBeNull();
-    expect($user->name)->toBe('Pak Budi');
-    expect($user->email)->toBe('pakbudi@grihaflow.com');
+    expect($user->name)->toBe('Rahul Sharma');
+    expect($user->email)->toBe('rahul@grihaflow.com');
     expect($user->hasRole('owner'))->toBeTrue();
 
-    expect(Setting::get('site_name'))->toBe('Kos Pak Budi');
-    expect(Setting::get('country_code'))->toBe('ID');
+    expect(Setting::get('site_name'))->toBe('My Property Mgmt');
+    expect(Setting::get('country_code'))->toBe('IN');
     expect(Setting::get('locale'))->toBe('en');
-    expect(Setting::get('currency'))->toBe('IDR');
-    expect(Setting::get('supported_currencies'))->toBe(['IDR']);
-    expect(Setting::get('timezone'))->toBe('Asia/Jakarta');
-});
-
-test('install command stores other country defaults', function () {
-    $this->artisan('app:install')
-        ->expectsQuestion('What is the name of this installation?', 'My Boarding')
-        ->expectsQuestion('What country is this installation for?', 'XX')
-        ->expectsQuestion('What is the application URL?', 'http://localhost')
-        ->expectsQuestion('What timezone should be used?', 'UTC')
-        ->expectsQuestion('What is the owner\'s name?', 'John')
-        ->expectsQuestion('What is the owner\'s email address?', 'john@example.com')
-        ->expectsQuestion('Choose a password for the owner account', 'password123')
-        ->expectsQuestion('Confirm the password', 'password123')
-        ->assertSuccessful();
-
-    expect(Setting::get('site_name'))->toBe('My Boarding');
-    expect(Setting::get('country_code'))->toBe('XX');
-    expect(Setting::get('currency'))->toBe('USD');
-    expect(Setting::get('supported_currencies'))->toBe(['USD']);
-    expect(Setting::get('timezone'))->toBe('UTC');
+    expect(Setting::get('currency'))->toBe('INR');
+    expect(Setting::get('supported_currencies'))->toBe(['INR']);
+    expect(Setting::get('timezone'))->toBe('Asia/Kolkata');
 });
 
 test('install command fails when users already exist', function () {

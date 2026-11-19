@@ -58,9 +58,9 @@ describe('Reminder settings page', function () {
 
     it('uses the configured currency for the preview amount', function () {
         $owner = User::factory()->owner()->create();
-        Setting::set('currency', 'USD');
+        Setting::set('currency', 'INR');
         Setting::set('locale', 'en');
-        $expectedAmount = app(MoneyConverter::class)->format('1500000', 'USD', 'en');
+        $expectedAmount = app(MoneyConverter::class)->format('1500000', 'INR', 'en');
 
         $this->actingAs($owner)
             ->get(route('settings.reminders.edit'))

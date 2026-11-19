@@ -9,7 +9,6 @@ use App\Models\InvoiceLineItem;
 use App\Models\Lease;
 use App\Models\Property;
 use App\Models\PropertyRate;
-use App\Models\Setting;
 use App\Models\Tenant;
 use App\Models\Unit;
 use App\Models\User;
@@ -20,7 +19,6 @@ use Illuminate\Validation\ValidationException;
 
 beforeEach(function () {
     $this->seed(RoleAndPermissionSeeder::class);
-    Setting::set('supported_currencies', ['IDR', 'USD']);
 });
 
 function makeUtilityLease(array $overrides = []): Lease
@@ -46,7 +44,7 @@ it('keeps recurring rent on whole-property invoices without unit utility charges
     $property = Property::factory()->create(['rental_mode' => 'whole_property']);
     $rate = PropertyRate::factory()->for($property)->create([
         'amount' => '2500000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $tenant = Tenant::factory()->create();
     $lease = Lease::factory()->wholeProperty($property)->create([
@@ -74,23 +72,23 @@ it('bills only eligible unit readings within partial lease boundaries', function
     $lease = makeUtilityLease(['end_date' => $leaseEnd]);
     $meter = UtilityMeter::factory()->for($lease->unit)->create([
         'rate' => '1000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $boundaryMeter = UtilityMeter::factory()->for($lease->unit)->create([
         'identifier' => 'BOUNDARY-001',
         'rate' => '1000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $crossingMeter = UtilityMeter::factory()->for($lease->unit)->create([
         'identifier' => 'CROSSING-001',
         'rate' => '1000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $otherUnit = Unit::factory()->create();
     $otherMeter = UtilityMeter::factory()->for($otherUnit)->create([
         'identifier' => 'OTHER-001',
         'rate' => '1000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $record = app(RecordUtilityReading::class);
 
@@ -149,7 +147,7 @@ it('uses the reading rate snapshot, copies metadata, and is idempotent', functio
         'utility_name' => 'Gas',
         'measurement_unit' => 'kg',
         'rate' => '1000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $reading = app(RecordUtilityReading::class)->execute($meter, [
         'reading_date' => $lease->start_date->endOfMonth()->toDateString(),
@@ -166,7 +164,7 @@ it('uses the reading rate snapshot, copies metadata, and is idempotent', functio
         'identifier' => $meter->identifier,
         'measurement_unit' => $meter->measurement_unit,
         'rate' => '2000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
         'is_active' => true,
     ]);
 
@@ -178,7 +176,7 @@ it('uses the reading rate snapshot, copies metadata, and is idempotent', functio
     expect($lineItem)->not->toBeNull()
         ->and($lineItem->amount)->toBe('100000.000')
         ->and($lineItem->metadata['rate'])->toBe('1000.000')
-        ->and($lineItem->metadata['currency'])->toBe('IDR')
+        ->and($lineItem->metadata['currency'])->toBe('INR')
         ->and($lineItem->metadata['utility_name'])->toBe('Gas')
         ->and($lineItem->metadata['reading_reference'])->toBe('manual-reading-001');
 
@@ -190,7 +188,7 @@ it('bills corrections as signed deltas linked to the original bill', function ()
     $lease = makeUtilityLease();
     $meter = UtilityMeter::factory()->for($lease->unit)->create([
         'rate' => '1000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     $reading = app(RecordUtilityReading::class)->execute($meter, [
         'reading_date' => $lease->start_date->endOfMonth()->toDateString(),

@@ -23,9 +23,9 @@ $type = UnitType::factory()->for($property)->create([
     'is_published' => true,
 ]);
 $type->rates()->createMany([
-    ['billing_interval' => 1, 'billing_unit' => 'month', 'amount' => 1000000, 'currency' => 'IDR', 'is_active' => true],
-    ['billing_interval' => 3, 'billing_unit' => 'month', 'amount' => 2700000, 'currency' => 'IDR', 'is_active' => true],
-    ['billing_interval' => 1, 'billing_unit' => 'month', 'amount' => 100, 'currency' => 'USD', 'is_active' => true],
+    ['billing_interval' => 1, 'billing_unit' => 'month', 'amount' => 1000000, 'currency' => 'INR', 'is_active' => true],
+    ['billing_interval' => 3, 'billing_unit' => 'month', 'amount' => 2700000, 'currency' => 'INR', 'is_active' => true],
+    ['billing_interval' => 1, 'billing_unit' => 'week', 'amount' => 250, 'currency' => 'INR', 'is_active' => true],
 ]);
 
 $unit = Unit::factory()->for($property)->for($type)->create([
@@ -35,7 +35,7 @@ $targetUnit = Unit::factory()->for($property)->for($type)->create([
     'name' => 'OPE-223 Unit 2',
 ]);
 $unitRate = $unit->rates()->firstOrFail();
-$unitRate->update(['amount' => 1250000, 'currency' => 'IDR', 'is_active' => true]);
+$unitRate->update(['amount' => 1250000, 'currency' => 'INR', 'is_active' => true]);
 
 $tenantUser = User::factory()->create([
     'name' => 'OPE-223 Tenant',

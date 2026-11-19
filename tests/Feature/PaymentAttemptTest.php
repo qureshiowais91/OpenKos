@@ -10,13 +10,13 @@ use OpenKOS\Core\Enums\PaymentStatus;
 it('persists gateway attempts against invoices without creating canonical payments', function () {
     $invoice = Invoice::factory()->create(['total' => 1_000_000, 'amount_paid' => 0]);
     $attempt = PaymentAttempt::factory()->for($invoice)->create([
-        'currency' => 'idr',
+        'currency' => 'inr',
         'metadata' => ['channel' => 'qris', 'is_test' => true],
     ]);
 
     expect($attempt->invoice->is($invoice))->toBeTrue()
         ->and($invoice->paymentAttempts)->toHaveCount(1)
-        ->and($attempt->currency)->toBe('IDR')
+        ->and($attempt->currency)->toBe('INR')
         ->and($attempt->status)->toBe(PaymentStatus::Pending)
         ->and($attempt->metadata)->toBe(['channel' => 'qris', 'is_test' => true])
         ->and($invoice->payments)->toHaveCount(0);
@@ -103,14 +103,14 @@ it('keeps the financial snapshot immutable after creation', function () {
     expect(fn () => $attempt->update(['amount' => 250_000]))
         ->toThrow(LogicException::class);
 
-    expect(fn () => $attempt->update(['currency' => 'USD']))
+    expect(fn () => $attempt->update(['currency' => 'INR']))
         ->toThrow(LogicException::class);
 
     expect($attempt->fresh()->amount)->toBe('125000.000');
 });
 
 it('normalizes and validates currencies', function () {
-    expect(PaymentAttempt::factory()->create(['currency' => 'idr'])->currency)->toBe('IDR');
+    expect(PaymentAttempt::factory()->create(['currency' => 'inr'])->currency)->toBe('INR');
 
     expect(fn () => PaymentAttempt::factory()->create(['currency' => 'ID']))
         ->toThrow(InvalidArgumentException::class);

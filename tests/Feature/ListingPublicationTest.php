@@ -227,15 +227,15 @@ it('projects availability and independent rate variants without operational deta
     $available->rates()->where('billing_unit', 'month')->update(['amount' => '10000.00']);
     $available->rates()->create([
         'billing_interval' => 1,
-        'billing_unit' => 'month',
+        'billing_unit' => 'week',
         'amount' => '900.00',
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
     $available->rates()->create([
         'billing_interval' => 1,
         'billing_unit' => 'year',
         'amount' => '10000.00',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
 
     $this->actingAs($user)
@@ -273,25 +273,25 @@ it('projects availability and independent rate variants without operational deta
 
     expect($response->inertiaProps('listing.unit_types.0.starting_prices'))->toEqual([
         [
+            'amount' => '900.000',
+            'currency' => 'INR',
+            'billing_interval' => 1,
+            'billing_unit' => 'week',
+            'billing_label' => '/week',
+        ],
+        [
             'amount' => '10000.000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'billing_interval' => 1,
             'billing_unit' => 'month',
             'billing_label' => '/month',
         ],
         [
             'amount' => '10000.000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'billing_interval' => 1,
             'billing_unit' => 'year',
             'billing_label' => '/year',
-        ],
-        [
-            'amount' => '900.000',
-            'currency' => 'USD',
-            'billing_interval' => 1,
-            'billing_unit' => 'month',
-            'billing_label' => '/month',
         ],
     ])->and(count(DB::connection()->getQueryLog()))->toBeLessThanOrEqual(15);
 
@@ -381,12 +381,12 @@ it('publishes whole-property offerings without unit inventory', function () {
     PropertyRate::factory()->for($property)->create([
         'billing_unit' => 'month',
         'amount' => '15000000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     PropertyRate::factory()->for($property)->create([
         'billing_unit' => 'week',
         'amount' => '12000000',
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
 
     $this->actingAs($user)
@@ -402,13 +402,13 @@ it('publishes whole-property offerings without unit inventory', function () {
             ->where('listing.rental_mode', PropertyRentalMode::WholeProperty->value)
             ->where('listing.whole_property_offering.type', PropertyRentalMode::WholeProperty->value)
             ->where('listing.whole_property_offering.availability', 'available_for_inquiry')
-            ->where('listing.whole_property_offering.starting_price.amount', '15000000.000')
-            ->where('listing.whole_property_offering.starting_price.currency', 'IDR')
+            ->where('listing.whole_property_offering.starting_price.amount', '12000000.000')
+            ->where('listing.whole_property_offering.starting_price.currency', 'INR')
             ->has('listing.whole_property_offering.rates', 2)
             ->where('listing.whole_property_offering.rates.0.billing_unit', 'week')
-            ->where('listing.whole_property_offering.rates.0.currency', 'USD')
+            ->where('listing.whole_property_offering.rates.0.currency', 'INR')
             ->where('listing.whole_property_offering.rates.1.billing_unit', 'month')
-            ->where('listing.whole_property_offering.rates.1.currency', 'IDR')
+            ->where('listing.whole_property_offering.rates.1.currency', 'INR')
             ->missing('listing.inventory')
             ->missing('listing.unit_types')
             ->missing('listing.whole_property_offering.starting_price.id'));
@@ -426,7 +426,7 @@ it('publishes whole-property offerings without unit inventory', function () {
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('listings.0.slug', $property->public_slug)
-            ->where('listings.0.whole_property_offering.starting_price.amount', '15000000.000')
+            ->where('listings.0.whole_property_offering.starting_price.amount', '12000000.000')
             ->missing('listings.0.inventory')
             ->missing('listings.0.unit_types'));
 
@@ -488,7 +488,7 @@ it('exposes hybrid offerings independently', function () {
 
     $rate = PropertyRate::factory()->for($property)->create([
         'amount' => '2500000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
 
     $this->get(route('public.portal.show', $property->public_slug))
@@ -789,7 +789,7 @@ it('exposes whole-property rental options without changing publication rules', f
     ]);
     PropertyRate::factory()->for($property)->create([
         'amount' => '1500000',
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
 
     $response = $this->actingAs($user)

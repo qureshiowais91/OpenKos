@@ -52,17 +52,17 @@ it('includes active expense summaries for the current and previous month', funct
         $owner = User::factory()->owner()->create();
         Expense::factory()->create([
             'amount' => '125.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-09-05',
         ]);
         Expense::factory()->create([
             'amount' => '75.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-08-05',
         ]);
         Expense::factory()->voided()->create([
             'amount' => '100.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-09-06',
         ]);
 
@@ -71,7 +71,7 @@ it('includes active expense summaries for the current and previous month', funct
             ->assertInertia(fn ($page) => $page
                 ->where('summary.has_data', true)
                 ->where('summary.this_month_count', 1)
-                ->where('summary.this_month.0.currency', 'USD')
+                ->where('summary.this_month.0.currency', 'INR')
                 ->where('summary.this_month.0.amount', '125.000')
                 ->where('summary.last_month.0.amount', '75.000'));
     } finally {
@@ -89,7 +89,7 @@ it('creates an expense with a currency snapshot', function (): void {
             'property_id' => $property->id,
             'expense_category_id' => $category->id,
             'amount' => '125.50',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-09-01',
             'vendor' => 'Water Company',
             'reference' => 'INV-123',
@@ -101,7 +101,7 @@ it('creates an expense with a currency snapshot', function (): void {
     expect($expense->property_id)->toBe($property->id)
         ->and($expense->expense_category_id)->toBe($category->id)
         ->and($expense->amount)->toBe('125.500')
-        ->and($expense->currency)->toBe('USD')
+        ->and($expense->currency)->toBe('INR')
         ->and($expense->status)->toBe(ExpenseStatus::Active);
 });
 
@@ -112,8 +112,8 @@ it('uses the existing currency minor-unit validation', function (): void {
         ->post(route('expenses.store'), [
             'property_id' => Property::factory()->create()->id,
             'expense_category_id' => ExpenseCategory::factory()->create()->id,
-            'amount' => '1.1',
-            'currency' => 'IDR',
+            'amount' => '1.111',
+            'currency' => 'INR',
             'expense_date' => '2026-09-01',
         ])
         ->assertSessionHasErrors('amount');
@@ -140,14 +140,14 @@ it('limits non-owner expenses to assigned properties', function (): void {
             'property_id' => $unassigned->id,
             'expense_category_id' => ExpenseCategory::factory()->create()->id,
             'amount' => '10.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-09-01',
         ])
         ->assertSessionHasErrors('property_id');
 });
 
 it('keeps the currency snapshot immutable', function (): void {
-    $expense = Expense::factory()->create(['currency' => 'USD']);
+    $expense = Expense::factory()->create(['currency' => 'INR']);
 
     expect(fn () => $expense->update(['currency' => 'EUR']))
         ->toThrow(LogicException::class);

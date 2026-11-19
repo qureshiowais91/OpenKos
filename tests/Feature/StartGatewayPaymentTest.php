@@ -51,7 +51,7 @@ function paymentGatewayResult(PaymentRequest $request, ?Money $amount = null): P
 }
 
 it('creates a provider attempt with exact currency-aware money and normalized instructions', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
     $invoice = Invoice::factory()->create([
         'total' => 1_500_000,
         'amount_paid' => 0,
@@ -61,8 +61,8 @@ it('creates a provider attempt with exact currency-aware money and normalized in
     $gateway->shouldReceive('createPayment')
         ->once()
         ->with(Mockery::on(function (PaymentRequest $request): bool {
-            return $request->amount->minorUnits === 1_500_000
-                && $request->amount->currency === 'IDR'
+            return $request->amount->minorUnits === 150_000_000
+                && $request->amount->currency === 'INR'
                 && $request->metadata['invoice_id'] !== null;
         }))
         ->andReturnUsing(fn (PaymentRequest $request) => paymentGatewayResult($request));
@@ -73,7 +73,7 @@ it('creates a provider attempt with exact currency-aware money and normalized in
         ->and($result->instructions->url)->toBe('https://example.test/checkout')
         ->and($result->instructions->entries[0]->value)->toBe('1234567890')
         ->and($result->attempt->fresh()->amount)->toBe('1500000.000')
-        ->and($result->attempt->fresh()->currency)->toBe('IDR')
+        ->and($result->attempt->fresh()->currency)->toBe('INR')
         ->and($result->attempt->fresh()->gateway_key)->toBe('test-gateway')
         ->and($result->attempt->fresh()->status)->toBe(PaymentStatus::Pending)
         ->and($result->attempt->fresh()->checkout_instructions['entries'][0]['key'])->toBe('va_number')
@@ -220,7 +220,7 @@ it('rechecks stale provider sessions before expiring them', function () {
             providerReference: $attempt->provider_reference,
             status: PaymentStatus::Pending,
             reference: $attempt->reference,
-            amount: new Money((int) $attempt->amount, $attempt->currency),
+            amount: new Money((int) ($attempt->amount * 100), $attempt->currency),
         ));
     $manager = Mockery::mock(PaymentGatewayManager::class);
     $manager->shouldReceive('find')->with('test-gateway')->zeroOrMoreTimes()->andReturn($gateway);
@@ -268,7 +268,7 @@ it('fails closed when the provider returns a different amount or currency', func
     $gateway->shouldReceive('key')->andReturn('test-gateway');
     $gateway->shouldReceive('createPayment')
         ->once()
-        ->andReturnUsing(fn (PaymentRequest $request) => paymentGatewayResult($request, new Money(1, 'USD')));
+        ->andReturnUsing(fn (PaymentRequest $request) => paymentGatewayResult($request, new Money(1, 'INR')));
 
     expect(fn () => startGatewayPaymentAction($gateway)->execute($invoice, User::factory()->owner()->create()))
         ->toThrow(PaymentGatewayCreationException::class);

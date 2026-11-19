@@ -11,7 +11,11 @@ import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import type { LoginPageProps } from '@/types/auth';
 
-export default function Login({ status, canResetPassword, redirect }: LoginPageProps) {
+export default function Login({
+    status,
+    canResetPassword,
+    redirect,
+}: LoginPageProps) {
     return (
         <>
             <Head title={t('Log in')} />
@@ -26,7 +30,11 @@ export default function Login({ status, canResetPassword, redirect }: LoginPageP
                 {({ processing, errors }) => (
                     <>
                         {redirect && (
-                            <input type="hidden" name="redirect" value={redirect} />
+                            <input
+                                type="hidden"
+                                name="redirect"
+                                value={redirect}
+                            />
                         )}
                         <div className="grid gap-6">
                             <div className="grid gap-2">

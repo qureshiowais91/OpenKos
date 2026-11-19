@@ -44,12 +44,7 @@ import { t } from '@/lib/i18n';
 import { PropertyLayout } from '@/pages/properties/layout';
 import { UnitTypeLayout } from '@/pages/properties/unit-types/layout';
 import properties from '@/routes/properties';
-import type {
-    AuthPageProps,
-    LeaseInfo,
-    Unit,
-    UnitsPageProps,
-} from '@/types';
+import type { AuthPageProps, LeaseInfo, Unit, UnitsPageProps } from '@/types';
 
 export default function Index({
     property,
@@ -81,9 +76,15 @@ export default function Index({
     const [bulkAssignmentOpen, setBulkAssignmentOpen] = useState(false);
 
     const table = useTable({
-        routeFn: () => (unitTypeWorkspace
-            ? { url: properties.unitTypes.units.url({ property, unitType: unitTypeWorkspace }) }
-            : { url: properties.units.index.url(property) }),
+        routeFn: () =>
+            unitTypeWorkspace
+                ? {
+                      url: properties.unitTypes.units.url({
+                          property,
+                          unitType: unitTypeWorkspace,
+                      }),
+                  }
+                : { url: properties.units.index.url(property) },
         params: {
             sort: currentSort,
             search: currentSearch,
@@ -612,10 +613,16 @@ export default function Index({
     );
 
     return unitTypeWorkspace ? (
-        <UnitTypeLayout property={property} unitType={unitTypeWorkspace} activeTab="units">
+        <UnitTypeLayout
+            property={property}
+            unitType={unitTypeWorkspace}
+            activeTab="units"
+        >
             {content}
         </UnitTypeLayout>
     ) : (
-        <PropertyLayout property={property} activeTab="units">{content}</PropertyLayout>
+        <PropertyLayout property={property} activeTab="units">
+            {content}
+        </PropertyLayout>
     );
 }

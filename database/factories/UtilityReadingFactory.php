@@ -35,7 +35,7 @@ class UtilityReadingFactory extends Factory
             'consumption' => '100',
             'adjustment_consumption' => null,
             'rate' => '1000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'reference' => null,
             'corrects_reading_id' => null,
         ];

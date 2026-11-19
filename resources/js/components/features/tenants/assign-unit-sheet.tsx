@@ -127,8 +127,14 @@ export default function AssignUnitSheet({
         setData((prev) => ({
             ...prev,
             start_date: activeLease?.start_date ?? prev.start_date,
-            unit_rate_id: activeLease || defaultRate?.source !== 'unit' ? null : (defaultRate?.id ?? null),
-            unit_type_rate_id: activeLease || defaultRate?.source !== 'unit_type' ? null : (defaultRate?.id ?? null),
+            unit_rate_id:
+                activeLease || defaultRate?.source !== 'unit'
+                    ? null
+                    : (defaultRate?.id ?? null),
+            unit_type_rate_id:
+                activeLease || defaultRate?.source !== 'unit_type'
+                    ? null
+                    : (defaultRate?.id ?? null),
             rent_amount: activeLease
                 ? (activeLease.rent_amount ?? '')
                 : (defaultRate?.amount ?? ''),
@@ -159,12 +165,13 @@ export default function AssignUnitSheet({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data.unit_id]);
 
-    const selectedRate = rates.find(
-        (rate) =>
-            rate.id === (data.unit_type_rate_id ?? data.unit_rate_id) &&
-            rate.source ===
-                (data.unit_type_rate_id !== null ? 'unit_type' : 'unit'),
-    ) ?? null;
+    const selectedRate =
+        rates.find(
+            (rate) =>
+                rate.id === (data.unit_type_rate_id ?? data.unit_rate_id) &&
+                rate.source ===
+                    (data.unit_type_rate_id !== null ? 'unit_type' : 'unit'),
+        ) ?? null;
     const currency =
         activeLease?.currency ?? selectedRate?.currency ?? displayCurrency;
     const monthlyCurrency = String(currency);
@@ -231,7 +238,8 @@ export default function AssignUnitSheet({
         setData((prev) => ({
             ...prev,
             unit_rate_id: rate.source === 'unit' ? (rate.id ?? null) : null,
-            unit_type_rate_id: rate.source === 'unit_type' ? (rate.id ?? null) : null,
+            unit_type_rate_id:
+                rate.source === 'unit_type' ? (rate.id ?? null) : null,
             rent_amount: rate.amount,
             billing_interval: String(rate.billing_interval),
             billing_unit: rate.billing_unit,
@@ -484,7 +492,8 @@ export default function AssignUnitSheet({
                                                 <label
                                                     key={rate.id}
                                                     className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 text-sm transition-colors ${
-                                                        (data.unit_type_rate_id ?? data.unit_rate_id) ===
+                                                        (data.unit_type_rate_id ??
+                                                            data.unit_rate_id) ===
                                                         rate.id
                                                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
                                                             : 'hover:bg-muted/50'
@@ -493,7 +502,8 @@ export default function AssignUnitSheet({
                                                     <input
                                                         type="radio"
                                                         checked={
-                                                            (data.unit_type_rate_id ?? data.unit_rate_id) ===
+                                                            (data.unit_type_rate_id ??
+                                                                data.unit_rate_id) ===
                                                             rate.id
                                                         }
                                                         onChange={() =>

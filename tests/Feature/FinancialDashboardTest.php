@@ -24,7 +24,7 @@ uses()->beforeEach(function (): void {
     $this->seed(RegionAndCitySeeder::class);
 });
 
-function createFinancialLease(Property $property, string $currency = 'USD'): Lease
+function createFinancialLease(Property $property, string $currency = 'INR'): Lease
 {
     $unit = Unit::factory()->for($property)->create([
         'status' => UnitStatus::Occupied,
@@ -81,7 +81,7 @@ test('financial dashboard separates accrual performance from cash attribution', 
 
     try {
         $user = User::factory()->owner()->create();
-        $property = Property::factory()->create(['name' => 'USD Property']);
+        $property = Property::factory()->create(['name' => 'INR Property']);
         $euroProperty = Property::factory()->create(['name' => 'EUR Property']);
         $usdLease = createFinancialLease($property);
         $eurLease = createFinancialLease($euroProperty, 'EUR');
@@ -102,14 +102,14 @@ test('financial dashboard separates accrual performance from cash attribution', 
             'property_id' => $property->id,
             'expense_category_id' => $category->id,
             'amount' => '300.000',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-09-10',
             'status' => ExpenseStatus::Active,
         ]);
         Expense::factory()->voided()->create([
             'property_id' => $property->id,
             'amount' => '100.000',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-09-10',
         ]);
         Expense::factory()->create([
@@ -126,46 +126,46 @@ test('financial dashboard separates accrual performance from cash attribution', 
                 ->where('filters.period', 'current_month')
                 ->where('financial.overview.revenue', [
                     ['currency' => 'EUR', 'amount' => '2000'],
-                    ['currency' => 'USD', 'amount' => '1000'],
+                    ['currency' => 'INR', 'amount' => '1000'],
                 ])
                 ->where('financial.overview.expenses', [
                     ['currency' => 'EUR', 'amount' => '500'],
-                    ['currency' => 'USD', 'amount' => '300'],
+                    ['currency' => 'INR', 'amount' => '300'],
                 ])
                 ->where('financial.overview.noi', [
                     ['currency' => 'EUR', 'amount' => '1500'],
-                    ['currency' => 'USD', 'amount' => '700'],
+                    ['currency' => 'INR', 'amount' => '700'],
                 ])
                 ->where('financial.collections.collected', [
                     ['currency' => 'EUR', 'amount' => '0'],
-                    ['currency' => 'USD', 'amount' => '400'],
+                    ['currency' => 'INR', 'amount' => '400'],
                 ])
                 ->where('financial.collections.outstanding', [
                     ['currency' => 'EUR', 'amount' => '2000'],
-                    ['currency' => 'USD', 'amount' => '600'],
+                    ['currency' => 'INR', 'amount' => '600'],
                 ])
                 ->where('financial.collections.collection_rate', [
                     ['currency' => 'EUR', 'rate' => '0.0'],
-                    ['currency' => 'USD', 'rate' => '40.0'],
+                    ['currency' => 'INR', 'rate' => '40.0'],
                 ])
                 ->where('financial.cash_flow.0.collected', [[
-                    'currency' => 'USD',
+                    'currency' => 'INR',
                     'amount' => '1100',
                 ]])
                 ->where('financial.property_performance', function (Collection $rows) use ($property): bool {
                     $performance = $rows->firstWhere('id', $property->id);
 
                     return $performance !== null
-                        && $performance['revenue'] === [['currency' => 'USD', 'amount' => '1000']]
-                        && $performance['expenses'] === [['currency' => 'USD', 'amount' => '300']]
-                        && $performance['noi'] === [['currency' => 'USD', 'amount' => '700']]
-                        && $performance['collected'] === [['currency' => 'USD', 'amount' => '400']]
-                        && $performance['outstanding'] === [['currency' => 'USD', 'amount' => '600']]
-                        && $performance['collection_rate'] === [['currency' => 'USD', 'rate' => '40.0']];
+                        && $performance['revenue'] === [['currency' => 'INR', 'amount' => '1000']]
+                        && $performance['expenses'] === [['currency' => 'INR', 'amount' => '300']]
+                        && $performance['noi'] === [['currency' => 'INR', 'amount' => '700']]
+                        && $performance['collected'] === [['currency' => 'INR', 'amount' => '400']]
+                        && $performance['outstanding'] === [['currency' => 'INR', 'amount' => '600']]
+                        && $performance['collection_rate'] === [['currency' => 'INR', 'rate' => '40.0']];
                 })
                 ->where('financial.expense_breakdown', function (Collection $breakdown) use ($category): bool {
                     return $breakdown->contains(fn (array $entry): bool => $entry['category_id'] === $category->id
-                        && $entry['amounts'] === [['currency' => 'USD', 'amount' => '300']]);
+                        && $entry['amounts'] === [['currency' => 'INR', 'amount' => '300']]);
                 })
                 ->where('financial.trends', fn ($trends) => count($trends) === 12)
             );
@@ -189,13 +189,13 @@ test('financial dashboard keeps ytd summaries separate from its twelve month tre
         Expense::factory()->create([
             'property_id' => $property->id,
             'amount' => '100.000',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-01-10',
         ]);
         Expense::factory()->create([
             'property_id' => $property->id,
             'amount' => '300.000',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'expense_date' => '2026-09-10',
         ]);
 
@@ -204,13 +204,13 @@ test('financial dashboard keeps ytd summaries separate from its twelve month tre
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->where('financial.period', 'ytd')
-                ->where('financial.overview.revenue', [['currency' => 'USD', 'amount' => '1600']])
-                ->where('financial.overview.expenses', [['currency' => 'USD', 'amount' => '400']])
-                ->where('financial.overview.noi', [['currency' => 'USD', 'amount' => '1200']])
-                ->where('financial.collections.collected', [['currency' => 'USD', 'amount' => '600']])
-                ->where('financial.collections.collection_rate', [['currency' => 'USD', 'rate' => '37.5']])
+                ->where('financial.overview.revenue', [['currency' => 'INR', 'amount' => '1600']])
+                ->where('financial.overview.expenses', [['currency' => 'INR', 'amount' => '400']])
+                ->where('financial.overview.noi', [['currency' => 'INR', 'amount' => '1200']])
+                ->where('financial.collections.collected', [['currency' => 'INR', 'amount' => '600']])
+                ->where('financial.collections.collection_rate', [['currency' => 'INR', 'rate' => '37.5']])
                 ->where('financial.cash_flow', fn ($cashFlow) => count($cashFlow) === 9)
-                ->where('financial.cash_flow.8.collected', [['currency' => 'USD', 'amount' => '600']])
+                ->where('financial.cash_flow.8.collected', [['currency' => 'INR', 'amount' => '600']])
                 ->where('financial.trends', fn ($trends) => count($trends) === 12)
                 ->where('financial.trends.3.month', '2026-01-01')
             );
@@ -239,7 +239,7 @@ test('financial dashboard enforces financial permission and property scope', fun
         ->get(route('dashboard.financial'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->where('financial.overview.revenue', [['currency' => 'USD', 'amount' => '100']])
+            ->where('financial.overview.revenue', [['currency' => 'INR', 'amount' => '100']])
             ->where('properties.0.id', $accessibleProperty->id)
             ->where('properties', fn ($properties) => count($properties) === 1)
         );

@@ -11,8 +11,16 @@ export default function PublicListingHead({
                 name="description"
                 content={metadata.description}
             />
-            <link head-key="canonical" rel="canonical" href={metadata.canonical} />
-            <meta head-key="og:title" property="og:title" content={metadata.openGraph.title} />
+            <link
+                head-key="canonical"
+                rel="canonical"
+                href={metadata.canonical}
+            />
+            <meta
+                head-key="og:title"
+                property="og:title"
+                content={metadata.openGraph.title}
+            />
             <meta
                 head-key="og:description"
                 property="og:description"
@@ -33,8 +41,16 @@ export default function PublicListingHead({
                 name="twitter:description"
                 content={metadata.twitter.description}
             />
-            <meta head-key="og:url" property="og:url" content={metadata.openGraph.url} />
-            <meta head-key="og:type" property="og:type" content={metadata.openGraph.type} />
+            <meta
+                head-key="og:url"
+                property="og:url"
+                content={metadata.openGraph.url}
+            />
+            <meta
+                head-key="og:type"
+                property="og:type"
+                content={metadata.openGraph.type}
+            />
             <meta
                 head-key="twitter:card"
                 name="twitter:card"
@@ -42,8 +58,16 @@ export default function PublicListingHead({
             />
             {metadata.openGraph.image && (
                 <>
-                    <meta head-key="og:image" property="og:image" content={metadata.openGraph.image} />
-                    <meta head-key="twitter:image" name="twitter:image" content={metadata.twitter.image ?? undefined} />
+                    <meta
+                        head-key="og:image"
+                        property="og:image"
+                        content={metadata.openGraph.image}
+                    />
+                    <meta
+                        head-key="twitter:image"
+                        name="twitter:image"
+                        content={metadata.twitter.image ?? undefined}
+                    />
                 </>
             )}
         </Head>

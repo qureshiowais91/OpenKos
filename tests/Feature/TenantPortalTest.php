@@ -63,7 +63,7 @@ test('tenant sees a payment-required dashboard action', function () {
             ->where('nextAction.invoice.id', $invoice->id)
             ->where('nextAction.invoice.amount', '1500000')
             ->where('accountSummary.outstanding_amounts', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '1500000.000',
             ]])
             ->where('accountSummary.payable_invoice_count', 1)
@@ -272,7 +272,7 @@ test('tenant sees only their invoices in billing', function () {
             ->where('actionableInvoices.data.0.outstanding', '1000000.000')
             ->where('actionableInvoices.data.0.payable_amount', '500000.000')
             ->where('outstandingSummary.amounts', [[
-                'currency' => 'IDR',
+                'currency' => 'INR',
                 'amount' => '500000.000',
             ]])
             ->where('outstandingSummary.count', 1)
@@ -479,7 +479,7 @@ test('tenant sees online payment unavailable when the gateway rejects the invoic
     $lease = Lease::factory()->create(['primary_tenant_id' => $tenant->id]);
     $invoice = Invoice::factory()->create([
         'lease_id' => $lease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
         'status' => InvoiceStatus::Pending,
     ]);
     bindTenantPortalGateway(Mockery::mock(PaymentGateway::class), currencySupport: false);
@@ -489,12 +489,12 @@ test('tenant sees online payment unavailable when the gateway rejects the invoic
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('onlinePaymentAvailable', false)
-            ->where('onlinePaymentUnavailableReason', 'Test Gateway is not available for USD payments.'));
+            ->where('onlinePaymentUnavailableReason', 'Test Gateway is not available for INR payments.'));
 
     $this->post(route('portal.billing.invoices.pay', $invoice))
         ->assertInertiaFlash('toast', [
             'type' => 'error',
-            'message' => 'Test Gateway is not available for USD payments.',
+            'message' => 'Test Gateway is not available for INR payments.',
         ]);
 
     expect($invoice->paymentAttempts()->count())->toBe(0);

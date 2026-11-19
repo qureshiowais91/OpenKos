@@ -10,13 +10,12 @@ use Database\Seeders\RoleAndPermissionSeeder;
 
 uses()->beforeEach(function (): void {
     $this->seed(RoleAndPermissionSeeder::class);
-    Setting::set('supported_currencies', ['IDR', 'USD']);
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
 });
 
 function propertyRatePayload(
     string $amount = '2500000',
-    string $currency = 'IDR',
+    string $currency = 'INR',
     int $interval = 1,
     string $unit = 'day',
     bool $active = true,
@@ -90,7 +89,7 @@ describe('property pricing', function (): void {
 
         expect($rate->property_id)->toBe($property->id)
             ->and($rate->amount)->toBe('2500000.000')
-            ->and($rate->currency)->toBe('IDR')
+            ->and($rate->currency)->toBe('INR')
             ->and($rate->billing_unit)->toBe(BillingUnit::Day)
             ->and($property->units()->count())->toBe(0);
     });
@@ -104,7 +103,7 @@ describe('property pricing', function (): void {
         $this->actingAs($owner)
             ->put(route('properties.pricing.update', $property), [
                 'updated_at' => $property->updated_at->toISOString(),
-                'rates' => [propertyRatePayload('12000000', 'IDR', 1, 'week')],
+                'rates' => [propertyRatePayload('12000000', 'INR', 1, 'week')],
             ])
             ->assertRedirect()
             ->assertSessionHasNoErrors();
@@ -162,22 +161,25 @@ describe('property pricing', function (): void {
             ->and(PropertyRate::query()->count())->toBe(2);
     });
 
-    it('selects a preferred currency before billing-period order for the default rate', function (): void {
+    it('selects the default rate by billing-period order', function (): void {
         $property = Property::factory()->create([
             'rental_mode' => PropertyRentalMode::WholeProperty,
         ]);
         PropertyRate::factory()->for($property)->create([
             'billing_unit' => BillingUnit::Day,
             'amount' => '2500000',
-            'currency' => 'USD',
+            'currency' => 'INR',
         ]);
-        $preferredRate = PropertyRate::factory()->for($property)->create([
+        $monthRate = PropertyRate::factory()->for($property)->create([
             'billing_unit' => BillingUnit::Month,
             'amount' => '35000000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
         ]);
 
-        expect($property->defaultActivePropertyRate()?->is($preferredRate))->toBeTrue();
+        // India-only app: every rate is INR, so the default is the first
+        // rate in billing-period order (day before month).
+        expect($property->defaultActivePropertyRate()->is($monthRate))->toBeFalse()
+            ->and($property->defaultActivePropertyRate()->billing_unit)->toBe(BillingUnit::Day);
     });
 
     it('rejects duplicate billing periods and currencies', function (): void {
@@ -187,7 +189,7 @@ describe('property pricing', function (): void {
         ]);
         PropertyRate::factory()->for($property)->create([
             'billing_unit' => BillingUnit::Day,
-            'currency' => 'IDR',
+            'currency' => 'INR',
         ]);
 
         $this->actingAs($owner)
@@ -198,7 +200,7 @@ describe('property pricing', function (): void {
             ->assertSessionHasErrors('rates.0.currency');
     });
 
-    it('allows one billing period per currency', function (): void {
+    it('allows distinct billing periods for the single supported currency', function (): void {
         $owner = User::factory()->owner()->create();
         $property = Property::factory()->create([
             'rental_mode' => PropertyRentalMode::WholeProperty,
@@ -208,8 +210,8 @@ describe('property pricing', function (): void {
             ->put(route('properties.pricing.update', $property), [
                 'updated_at' => $property->updated_at->toISOString(),
                 'rates' => [
-                    propertyRatePayload('2500000', 'IDR'),
-                    propertyRatePayload('2500', 'USD'),
+                    propertyRatePayload('2500000', 'INR', 1, 'day'),
+                    propertyRatePayload('2500', 'INR', 1, 'week'),
                 ],
             ])
             ->assertRedirect()
@@ -227,14 +229,14 @@ describe('property pricing', function (): void {
         $this->actingAs($owner)
             ->put(route('properties.pricing.update', $property), [
                 'updated_at' => $property->updated_at->toISOString(),
-                'rates' => [propertyRatePayload('2500000.50')],
+                'rates' => [propertyRatePayload('2500000.505')],
             ])
             ->assertSessionHasErrors('rates.0.amount');
 
         $this->actingAs($owner)
             ->put(route('properties.pricing.update', $property), [
                 'updated_at' => $property->updated_at->toISOString(),
-                'rates' => [propertyRatePayload('2500.123', 'USD')],
+                'rates' => [propertyRatePayload('2500.123', 'INR')],
             ])
             ->assertSessionHasErrors('rates.0.amount');
 
@@ -288,7 +290,7 @@ describe('property pricing', function (): void {
         $this->actingAs($owner)
             ->put(route('properties.pricing.update', $property), [
                 'updated_at' => $staleUpdatedAt,
-                'rates' => [array_merge(propertyRatePayload('3000000', 'IDR', 1, 'month'), [
+                'rates' => [array_merge(propertyRatePayload('3000000', 'INR', 1, 'month'), [
                     'id' => $rate->id,
                 ])],
             ])

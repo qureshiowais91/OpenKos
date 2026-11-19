@@ -47,21 +47,21 @@ it('seeds a complete currency-aware demo graph and can be rerun', function () {
         ->and(User::query()->whereIn('email', ['demo.staff@grihaflow.com', 'demo.tenant@grihaflow.com'])->count())->toBe(2);
 
     $usdLease = Lease::query()->where('reference', 'ope-184-demo-lease-004')->firstOrFail();
-    $usdInvoice = $usdLease->invoices()->where('currency', 'USD')->where('period_start', '<=', today())->latest('period_start')->firstOrFail();
+    $usdInvoice = $usdLease->invoices()->where('currency', 'INR')->where('period_start', '<=', today())->latest('period_start')->firstOrFail();
     $usdPayment = $usdInvoice->payments()->where('status', PaymentStatus::Confirmed)->firstOrFail();
     $idLease = Lease::query()->where('reference', 'ope-184-demo-lease-006')->firstOrFail();
-    $idInvoice = $idLease->invoices()->where('currency', 'IDR')->where('period_start', '<=', today())->latest('period_start')->firstOrFail();
+    $idInvoice = $idLease->invoices()->where('currency', 'INR')->where('period_start', '<=', today())->latest('period_start')->firstOrFail();
     $idPayment = $idInvoice->payments()->where('status', PaymentStatus::Confirmed)->firstOrFail();
 
-    expect($usdLease->currency)->toBe('USD')
-        ->and($usdInvoice->currency)->toBe('USD')
-        ->and($usdPayment->currency)->toBe('USD')
+    expect($usdLease->currency)->toBe('INR')
+        ->and($usdInvoice->currency)->toBe('INR')
+        ->and($usdPayment->currency)->toBe('INR')
         ->and($usdPayment->allocations()->where('invoice_id', $usdInvoice->id)->exists())->toBeTrue()
-        ->and($idLease->currency)->toBe('IDR')
-        ->and($idInvoice->currency)->toBe('IDR')
-        ->and($idPayment->currency)->toBe('IDR')
+        ->and($idLease->currency)->toBe('INR')
+        ->and($idInvoice->currency)->toBe('INR')
+        ->and($idPayment->currency)->toBe('INR')
         ->and($idPayment->allocations()->where('invoice_id', $idInvoice->id)->exists())->toBeTrue()
-        ->and(UnitRate::query()->where('currency', 'USD')->where('billing_interval', 1)->where('billing_unit', 'month')->exists())->toBeTrue()
+        ->and(UnitRate::query()->where('currency', 'INR')->where('billing_interval', 1)->where('billing_unit', 'month')->exists())->toBeTrue()
         ->and(Invoice::query()->where('status', InvoiceStatus::Partial)->whereHas('lease', fn ($query) => $query->where('reference', 'like', 'ope-184-demo-%'))->exists())->toBeTrue()
         ->and(Invoice::query()->where('status', InvoiceStatus::Paid)->whereHas('lease', fn ($query) => $query->where('reference', 'like', 'ope-184-demo-%'))->exists())->toBeTrue()
         ->and(Payment::query()->where('status', PaymentStatus::Pending)->where('reference_number', 'like', 'ope-184-demo-%')->exists())->toBeTrue()
@@ -115,7 +115,7 @@ it('preserves the OPE-177 dataset when the normal demo seed runs', function () {
     ]);
 
     $this->seed(LoadTestSeeder::class);
-    $region = Region::factory()->create(['country_code' => 'ID', 'name' => 'OPE-177 Test Region']);
+    $region = Region::factory()->create(['country_code' => 'IN', 'name' => 'OPE-177 Test Region']);
     $city = City::factory()->for($region)->create(['name' => 'OPE-177 Test City']);
     $this->seed(LoadTestDatasetSeeder::class);
 

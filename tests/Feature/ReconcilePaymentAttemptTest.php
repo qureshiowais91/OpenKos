@@ -34,13 +34,13 @@ it('settles a provider-reported payment through the shared accounting path', fun
         'provider_reference' => 'provider-1',
         'reference' => 'attempt-1',
         'amount' => 1_500_000,
-        'currency' => 'IDR',
+        'currency' => 'INR',
     ]);
     bindStatusLookupGateway(new PaymentProviderResult(
         providerReference: 'provider-1',
         status: PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
         metadata: ['provider_status' => 'COMPLETED'],
     ));
 
@@ -65,7 +65,7 @@ it('keeps an active provider payment pending without creating accounting', funct
         providerReference: 'provider-1',
         status: PaymentStatus::Pending,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
         metadata: ['provider_status' => 'ACTIVE'],
     ));
 
@@ -101,7 +101,7 @@ it('does not settle a fully paid invoice through an old gateway attempt', functi
         providerReference: 'provider-1',
         status: PaymentStatus::Settled,
         reference: $attempt->reference,
-        amount: new Money(1_500_000, 'IDR'),
+        amount: new Money(150_000_000, 'INR'),
     ));
 
     $result = app(ReconcilePaymentAttempt::class)->execute($attempt);

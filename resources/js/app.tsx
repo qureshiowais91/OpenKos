@@ -18,6 +18,30 @@ import { setTranslations } from '@/lib/i18n';
 import '@/plugins';
 import type { Auth } from '@/types';
 
+type Regional = {
+    country?: {
+        name?: string;
+        code?: string;
+        phone_code?: string;
+        postal_code_label?: string;
+        postal_code_pattern?: string;
+    };
+    currency?: { code?: string; symbol?: string; minor_units?: number };
+    timezone?: string;
+    locale?: {
+        app?: string;
+        intl?: string;
+        fallback?: string;
+        options?: Record<string, string>;
+    };
+    format?: {
+        date_format?: string;
+        time_format?: string;
+        numbering?: string;
+        measurement?: string;
+    };
+};
+
 type PageWithTimezone = {
     props?: {
         app?: {
@@ -25,6 +49,7 @@ type PageWithTimezone = {
             currency_scales?: Record<string, number>;
             locale?: string;
             intl_locale?: string;
+            regional?: Regional;
         };
         setting?: { currency?: string; locale?: string };
         i18n?: {
@@ -39,7 +64,10 @@ type PageWithTimezone = {
 function syncDisplaySettings(page: PageWithTimezone): void {
     setDisplayTimezone(page.props?.app?.timezone);
     setCurrencyScales(page.props?.app?.currency_scales);
-    setDisplayCurrency(page.props?.setting?.currency);
+    setDisplayCurrency(
+        page.props?.app?.regional?.currency?.code ??
+            page.props?.setting?.currency,
+    );
     setDisplayLocale(page.props?.app?.intl_locale);
     setTranslations(page.props?.i18n?.messages, page.props?.i18n?.fallback);
 

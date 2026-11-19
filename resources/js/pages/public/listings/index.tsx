@@ -67,9 +67,7 @@ export default function Index({
 
     return (
         <>
-            <PublicListingHead
-                metadata={metadata}
-            />
+            <PublicListingHead metadata={metadata} />
 
             <div className="mx-auto w-full max-w-[1360px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
                 <section className="relative isolate overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-primary/10 via-background to-secondary/60 px-6 py-8 shadow-sm sm:px-10 sm:py-10">

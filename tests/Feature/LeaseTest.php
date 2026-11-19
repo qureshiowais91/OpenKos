@@ -179,7 +179,7 @@ describe('CRUD', function () {
         $property = Property::factory()->create(['rental_mode' => PropertyRentalMode::WholeProperty]);
         $rate = PropertyRate::factory()->for($property)->create([
             'amount' => '3000000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
         ]);
         $tenant = Tenant::factory()->create();
         $lease = Lease::factory()->wholeProperty($property)->create([
@@ -233,9 +233,9 @@ describe('CRUD', function () {
         [$property, $unit] = createPropertyWithUnit();
         $usdRate = $unit->rates()->create([
             'billing_interval' => 1,
-            'billing_unit' => 'month',
+            'billing_unit' => 'week',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
         $user = User::factory()->owner()->create();
@@ -249,7 +249,7 @@ describe('CRUD', function () {
             ])
             ->assertRedirect();
 
-        expect(Lease::firstOrFail()->currency)->toBe('USD')
+        expect(Lease::firstOrFail()->currency)->toBe('INR')
             ->and(Lease::firstOrFail()->rent_amount)->toBe('95.000');
     });
 
@@ -257,9 +257,9 @@ describe('CRUD', function () {
         [$property, $unit] = createPropertyWithUnit();
         $usdRate = $unit->rates()->create([
             'billing_interval' => 1,
-            'billing_unit' => 'month',
+            'billing_unit' => 'week',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
         $user = User::factory()->owner()->create();
@@ -277,7 +277,7 @@ describe('CRUD', function () {
             ->assertSessionHasNoErrors();
 
         expect(Lease::firstOrFail()->billing_interval)->toBe(1)
-            ->and(Lease::firstOrFail()->billing_unit->value)->toBe('month');
+            ->and(Lease::firstOrFail()->billing_unit->value)->toBe('week');
     });
 
     it('uses the complete default rate when no rate is selected', function () {
@@ -287,7 +287,7 @@ describe('CRUD', function () {
             'billing_interval' => 3,
             'billing_unit' => 'month',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
         $user = User::factory()->owner()->create();
@@ -307,19 +307,19 @@ describe('CRUD', function () {
 
         expect($lease->unit_rate_id)->toBe($defaultRate->id)
             ->and($lease->rent_amount)->toBe('95.000')
-            ->and($lease->currency)->toBe('USD')
+            ->and($lease->currency)->toBe('INR')
             ->and($lease->billing_interval)->toBe(3)
             ->and($lease->billing_unit->value)->toBe('month');
     });
 
     it('inherits the configured currency from the default rate', function () {
         [$property, $unit] = createPropertyWithUnit();
-        Setting::set('currency', 'USD');
+        Setting::set('currency', 'INR');
         $unit->rates()->create([
             'billing_interval' => 1,
-            'billing_unit' => 'month',
+            'billing_unit' => 'week',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
         $user = User::factory()->owner()->create();
@@ -332,7 +332,7 @@ describe('CRUD', function () {
             ])
             ->assertRedirect();
 
-        expect(Lease::firstOrFail()->currency)->toBe('USD')
+        expect(Lease::firstOrFail()->currency)->toBe('INR')
             ->and(Lease::firstOrFail()->rent_amount)->toBe('95.000');
     });
 
@@ -437,9 +437,9 @@ describe('CRUD', function () {
         $unit->update(['capacity' => 2]);
         $usdRate = $unit->rates()->create([
             'billing_interval' => 1,
-            'billing_unit' => 'month',
+            'billing_unit' => 'week',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
         $user = User::factory()->owner()->create();
@@ -450,7 +450,7 @@ describe('CRUD', function () {
             'unit_id' => $unit->id,
             'unit_rate_id' => $unit->rates()->firstOrFail()->id,
             'rent_amount' => '1000000',
-            'currency' => 'IDR',
+            'currency' => 'INR',
         ]);
 
         $this->actingAs($user)
@@ -466,13 +466,13 @@ describe('CRUD', function () {
 
     it('validates existing lease amounts using the existing currency', function () {
         [$property, $unit] = createPropertyWithUnit();
-        Setting::set('currency', 'IDR');
+        Setting::set('currency', 'INR');
         $unit->update(['capacity' => 2]);
         $usdRate = $unit->rates()->create([
             'billing_interval' => 1,
-            'billing_unit' => 'month',
+            'billing_unit' => 'week',
             'amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'is_active' => true,
         ]);
         $user = User::factory()->owner()->create();
@@ -483,7 +483,7 @@ describe('CRUD', function () {
             'unit_id' => $unit->id,
             'unit_rate_id' => $usdRate->id,
             'rent_amount' => '95.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'billing_interval' => 1,
             'billing_unit' => 'month',
             'billing_strategy' => 'advance',

@@ -6,7 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate, formatPrice } from '@/lib/formatters';
 import { t } from '@/lib/i18n';
-import { index as applicationsIndex, show as applicationShow } from '@/routes/applications';
+import {
+    index as applicationsIndex,
+    show as applicationShow,
+} from '@/routes/applications';
 import { dashboard as portalDashboard } from '@/routes/portal';
 import { index as billingIndex } from '@/routes/portal/billing';
 import { payments as paymentHistory } from '@/routes/portal/billing/history';
@@ -98,10 +101,19 @@ function ApplicantApplicationsCard({
                     <div className="text-sm text-muted-foreground">
                         {t('No active applications.')}
                         <span className="mt-1 block">
-                            {t('Browse available properties and submit an application.')}
+                            {t(
+                                'Browse available properties and submit an application.',
+                            )}
                         </span>
-                        <Button asChild size="sm" variant="outline" className="mt-3">
-                            <Link href={publicIndex()}>{t('Browse properties')}</Link>
+                        <Button
+                            asChild
+                            size="sm"
+                            variant="outline"
+                            className="mt-3"
+                        >
+                            <Link href={publicIndex()}>
+                                {t('Browse properties')}
+                            </Link>
                         </Button>
                     </div>
                 ) : (
@@ -112,9 +124,13 @@ function ApplicantApplicationsCard({
                             className="flex items-center justify-between gap-3 border-b py-2 last:border-0 last:pb-0"
                         >
                             <span className="min-w-0 truncate text-sm font-medium">
-                                {application.unit_type_name ?? application.property_name}
+                                {application.unit_type_name ??
+                                    application.property_name}
                             </span>
-                            <StatusBadge domain="application" value={application.status} />
+                            <StatusBadge
+                                domain="application"
+                                value={application.status}
+                            />
                         </Link>
                     ))
                 )}

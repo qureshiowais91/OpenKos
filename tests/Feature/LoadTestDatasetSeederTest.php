@@ -41,7 +41,7 @@ function configureDataset(bool $fixturesEnabled = true, bool $datasetEnabled = t
 function seedDatasetBaseData(): void
 {
     $region = Region::factory()->create([
-        'country_code' => 'ID',
+        'country_code' => 'IN',
         'name' => 'Load Test Region',
     ]);
 

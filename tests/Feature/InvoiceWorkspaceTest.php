@@ -163,14 +163,14 @@ describe('invoice workspace show', function () {
             'reference' => 'attempt-1',
             'provider_reference' => 'provider-1',
             'amount' => 1_500_000,
-            'currency' => 'IDR',
+            'currency' => 'INR',
         ]);
         $gateway = Mockery::mock(PaymentGateway::class, PaymentGatewayStatusLookup::class);
         $gateway->shouldReceive('lookupPaymentStatus')->once()->andReturn(new PaymentProviderResult(
             providerReference: 'provider-1',
             status: GatewayPaymentStatus::Settled,
             reference: 'attempt-1',
-            amount: new Money(1_500_000, 'IDR'),
+            amount: new Money(150_000_000, 'INR'),
         ));
         $manager = Mockery::mock(PaymentGatewayManager::class);
         $manager->shouldReceive('find')->with('test-gateway')->andReturn($gateway);

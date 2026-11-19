@@ -23,7 +23,10 @@ export default function PublicPricingOptions({
     return (
         <div className="space-y-5">
             {Object.entries(groups).map(([currency, currencyPrices]) => (
-                <section key={currency} className="border-t pt-3 first:border-t-0 first:pt-0">
+                <section
+                    key={currency}
+                    className="border-t pt-3 first:border-t-0 first:pt-0"
+                >
                     <h3 className="mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                         {currency}
                     </h3>

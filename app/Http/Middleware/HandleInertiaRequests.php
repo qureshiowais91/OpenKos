@@ -53,8 +53,9 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'app' => [
-                'timezone' => config('app.display_timezone', 'UTC'),
+                'timezone' => config('app.display_timezone', config('regional.timezone', 'Asia/Kolkata')),
                 'currency_scales' => app(MoneyConverter::class)->scales(),
+                'regional' => config('regional'),
                 'locale' => $locale,
                 'intl_locale' => $this->locale->intlLocale($locale),
                 'locales' => $this->locale->options(),

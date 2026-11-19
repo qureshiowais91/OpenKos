@@ -226,7 +226,8 @@ export function parseE164(
         digits = digits.slice(1);
     }
 
-    const indonesia = countryCodes.find((c) => c.iso2 === 'ID')!;
+    // India-only app: unprefixed numbers default to +91.
+    const india = countryCodes.find((c) => c.iso2 === 'IN')!;
 
-    return { ...indonesia, number: digits };
+    return { ...india, number: digits };
 }

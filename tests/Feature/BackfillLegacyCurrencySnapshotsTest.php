@@ -8,7 +8,7 @@ use App\Models\Unit;
 use Illuminate\Support\Facades\DB;
 
 it('backfills null currency snapshots from the current setting', function () {
-    Setting::set('currency', 'IDR');
+    Setting::set('currency', 'INR');
 
     $legacyUnit = Unit::factory()->create();
     $legacyRate = $legacyUnit->rates()->firstOrFail();
@@ -16,33 +16,33 @@ it('backfills null currency snapshots from the current setting', function () {
         'unit_id' => $legacyUnit->id,
         'unit_rate_id' => $legacyRate->id,
         'rent_amount' => 1_500_000,
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
     $legacyInvoice = Invoice::factory()->create([
         'lease_id' => $legacyLease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
     $legacyPayment = Payment::factory()->create([
         'invoice_id' => $legacyInvoice->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
 
     $explicitUnit = Unit::factory()->create();
     $explicitRate = $explicitUnit->rates()->firstOrFail();
-    DB::table('unit_rates')->where('id', $explicitRate->id)->update(['currency' => 'USD']);
+    DB::table('unit_rates')->where('id', $explicitRate->id)->update(['currency' => 'INR']);
     $explicitLease = Lease::factory()->create([
         'unit_id' => $explicitUnit->id,
         'unit_rate_id' => $explicitRate->id,
         'rent_amount' => 1_500_000,
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
     $explicitInvoice = Invoice::factory()->create([
         'lease_id' => $explicitLease->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
     $explicitPayment = Payment::factory()->create([
         'invoice_id' => $explicitInvoice->id,
-        'currency' => 'USD',
+        'currency' => 'INR',
     ]);
 
     DB::table('unit_rates')->where('id', $legacyRate->id)->update(['currency' => null]);
@@ -53,12 +53,12 @@ it('backfills null currency snapshots from the current setting', function () {
     $migration = require database_path('migrations/2026_08_21_092958_backfill_legacy_currency_snapshots.php');
     $migration->up();
 
-    expect(DB::table('unit_rates')->where('id', $legacyRate->id)->value('currency'))->toBe('IDR')
-        ->and(DB::table('leases')->where('id', $legacyLease->id)->value('currency'))->toBe('IDR')
-        ->and(DB::table('invoices')->where('id', $legacyInvoice->id)->value('currency'))->toBe('IDR')
-        ->and(DB::table('payments')->where('id', $legacyPayment->id)->value('currency'))->toBe('IDR')
-        ->and(DB::table('unit_rates')->where('id', $explicitRate->id)->value('currency'))->toBe('USD')
-        ->and(DB::table('leases')->where('id', $explicitLease->id)->value('currency'))->toBe('USD')
-        ->and(DB::table('invoices')->where('id', $explicitInvoice->id)->value('currency'))->toBe('USD')
-        ->and(DB::table('payments')->where('id', $explicitPayment->id)->value('currency'))->toBe('USD');
+    expect(DB::table('unit_rates')->where('id', $legacyRate->id)->value('currency'))->toBe('INR')
+        ->and(DB::table('leases')->where('id', $legacyLease->id)->value('currency'))->toBe('INR')
+        ->and(DB::table('invoices')->where('id', $legacyInvoice->id)->value('currency'))->toBe('INR')
+        ->and(DB::table('payments')->where('id', $legacyPayment->id)->value('currency'))->toBe('INR')
+        ->and(DB::table('unit_rates')->where('id', $explicitRate->id)->value('currency'))->toBe('INR')
+        ->and(DB::table('leases')->where('id', $explicitLease->id)->value('currency'))->toBe('INR')
+        ->and(DB::table('invoices')->where('id', $explicitInvoice->id)->value('currency'))->toBe('INR')
+        ->and(DB::table('payments')->where('id', $explicitPayment->id)->value('currency'))->toBe('INR');
 });

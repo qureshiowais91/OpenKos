@@ -23,7 +23,7 @@ class PaymentAttemptFactory extends Factory
             'reference' => fake()->unique()->uuid(),
             'provider_reference' => fake()->unique()->uuid(),
             'amount' => fake()->numberBetween(500_000, 3_000_000),
-            'currency' => 'IDR',
+            'currency' => 'INR',
             'status' => PaymentStatus::Pending,
             'expires_at' => now()->addHour(),
             'checkout_instructions' => [

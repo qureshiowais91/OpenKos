@@ -147,7 +147,7 @@ it('does not backfill historical occurrences after a cadence or start-date edit'
             'property_id' => $newProperty->id,
             'expense_category_id' => $newCategory->id,
             'amount' => '750000.00',
-            'currency' => 'USD',
+            'currency' => 'INR',
             'vendor' => 'New vendor',
             'description' => 'Updated description',
             'billing_interval' => 1,
@@ -160,7 +160,7 @@ it('does not backfill historical occurrences after a cadence or start-date edit'
     expect($generated->refresh()->amount)->toBe('500000.000')
         ->and($generated->property_id)->toBe($recurringExpense->getRawOriginal('property_id'))
         ->and($generated->expense_category_id)->toBe($recurringExpense->getRawOriginal('expense_category_id'))
-        ->and($generated->currency)->toBe('IDR')
+        ->and($generated->currency)->toBe('INR')
         ->and($generated->vendor)->not->toBe('New vendor')
         ->and($generated->description)->not->toBe('Updated description')
         ->and($recurringExpense->refresh()->next_due_on->toDateString())->toBe('2026-02-15');
@@ -173,7 +173,7 @@ it('does not backfill historical occurrences after a cadence or start-date edit'
     expect($futureExpense->amount)->toBe('750000.000')
         ->and($futureExpense->property_id)->toBe($newProperty->id)
         ->and($futureExpense->expense_category_id)->toBe($newCategory->id)
-        ->and($futureExpense->currency)->toBe('USD')
+        ->and($futureExpense->currency)->toBe('INR')
         ->and($futureExpense->vendor)->toBe('New vendor')
         ->and($futureExpense->description)->toBe('Updated description');
 });

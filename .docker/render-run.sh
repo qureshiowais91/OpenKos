@@ -28,14 +28,11 @@ while :; do php artisan queue:work --sleep=3 --tries=3 --timeout=90 --no-interac
 
 # ponytail: demo world is the native seeder chain (roles, regions, owner,
 # tenants, ope-184-demo-* properties, leases, invoices, maintenance) — English
-# UI over the IDR-priced demo data, no custom fixtures to maintain
+# UI over INR-priced demo data, no custom fixtures to maintain. Regional
+# settings come from SettingSeeder via config/regional.php.
 if [ "${DEMO_MODE:-false}" = true ]; then
     php artisan db:seed --force --quiet
-    php artisan tinker --execute '
-        App\Models\Setting::set("locale", "en");
-        App\Models\Setting::set("timezone", "UTC");
-        echo "demo world seeded\n";
-    '
+    echo "demo world seeded"
 fi
 
 # ponytail: free Render tier has no shell/one-off jobs, so the first owner is
@@ -52,12 +49,7 @@ if [ -n "${GRIHAFLOW_OWNER_EMAIL:-}" ] && [ -n "${GRIHAFLOW_OWNER_PASSWORD:-}" ]
             ]);
             $u->markEmailAsVerified();
             $u->assignRole("owner");
-            App\Models\Setting::set("site_name", "GrihaFlow");
-            App\Models\Setting::set("country_code", "XX");
-            App\Models\Setting::set("locale", "en");
-            App\Models\Setting::set("currency", "USD");
-            App\Models\Setting::set("supported_currencies", ["USD"]);
-            App\Models\Setting::set("timezone", "UTC");
+            (new Database\Seeders\SettingSeeder)->run();
             echo "owner account created\n";
         }
     '

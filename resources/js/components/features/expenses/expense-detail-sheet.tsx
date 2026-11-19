@@ -128,11 +128,15 @@ export default function ExpenseDetailSheet({
 
                             {expense.recurring_expense && (
                                 <section className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm">
-                                    <p className="font-medium">{t('Recurring expense')}</p>
+                                    <p className="font-medium">
+                                        {t('Recurring expense')}
+                                    </p>
                                     <p className="mt-1 text-muted-foreground">
                                         {formatBillingPeriod(
-                                            expense.recurring_expense.billing_interval,
-                                            expense.recurring_expense.billing_unit,
+                                            expense.recurring_expense
+                                                .billing_interval,
+                                            expense.recurring_expense
+                                                .billing_unit,
                                         )}
                                     </p>
                                 </section>

@@ -42,16 +42,16 @@ describe('Setting', function () {
     });
 
     it('returns only specified keys', function () {
-        Setting::set('site_name', 'Kos Budi');
-        Setting::set('country_code', 'ID');
-        Setting::set('locale', 'id');
+        Setting::set('site_name', 'My Property');
+        Setting::set('country_code', 'IN');
+        Setting::set('locale', 'en-IN');
 
         $result = Setting::some(['site_name', 'locale']);
 
         expect($result)->toHaveKeys(['site_name', 'locale']);
         expect($result)->not->toHaveKey('country_code');
-        expect($result['site_name'])->toBe('Kos Budi');
-        expect($result['locale'])->toBe('id');
+        expect($result['site_name'])->toBe('My Property');
+        expect($result['locale'])->toBe('en-IN');
     });
 
     it('loads stored settings once per lifecycle', function () {
@@ -343,12 +343,12 @@ describe('Setting', function () {
     });
 
     it('includes defaults when getting all', function () {
-        Setting::set('site_name', 'Kos Saya');
+        Setting::set('site_name', 'My Property');
 
         $all = Setting::get();
 
-        expect($all['site_name'])->toBe('Kos Saya');
-        expect($all['locale'])->toBe('id');
-        expect($all['timezone'])->toBe('Asia/Jakarta');
+        expect($all['site_name'])->toBe('My Property');
+        expect($all['locale'])->toBe('en');
+        expect($all['timezone'])->toBe('Asia/Kolkata');
     });
 });
